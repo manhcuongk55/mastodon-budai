@@ -196,15 +196,15 @@ const Firehose = ({ feedType, multiColumn }) => {
       {(canViewFeed(signedIn, permissions, localLiveFeedAccess) && canViewFeed(signedIn, permissions, remoteLiveFeedAccess)) && (
         <div className='account__section-headline'>
           <NavLink exact to='/public/local'>
-            <FormattedMessage tagName='div' id='firehose.local' defaultMessage='This server' />
+            <FormattedMessage tagName='div' id='firehose.local' defaultMessage='✅ Trust' />
           </NavLink>
 
           <NavLink exact to='/public/remote'>
-            <FormattedMessage tagName='div' id='firehose.remote' defaultMessage='Other servers' />
+            <FormattedMessage tagName='div' id='firehose.remote' defaultMessage='🛡️ Safe' />
           </NavLink>
 
           <NavLink exact to='/public'>
-            <FormattedMessage tagName='div' id='firehose.all' defaultMessage='All' />
+            <FormattedMessage tagName='div' id='firehose.all' defaultMessage='❌ Fake' />
           </NavLink>
         </div>
       )}
