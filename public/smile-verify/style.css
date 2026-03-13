@@ -1,51 +1,100 @@
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;width:100%;font-family:'Inter',-apple-system,sans-serif;background:#000;color:#fff;overflow:hidden}
-.page{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column}
-.cam{flex:1;position:relative;overflow:hidden;background:#111}
-.cam video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+/* 🏴‍☠️ MAKAI — One Piece Theme */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  background:#0a0e1a;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  height:100%;overflow:hidden;
+  -webkit-user-select:none;user-select:none;
+}
+
+/* Page */
+.page{position:fixed;inset:0;display:flex;flex-direction:column;background:#0a0e1a}
+
+/* Camera area */
+.cam{flex:1;position:relative;overflow:hidden;background:linear-gradient(180deg,#0d1526 0%,#1a1040 50%,#0a0e1a 100%)}
+.cam video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 .cam canvas{display:none}
-.cam .preview{position:absolute;top:0;left:0;width:100%;height:100%;display:none}
-.cam .preview img{width:100%;height:100%;object-fit:cover}
-.guide{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(240px,60vw);height:min(240px,60vw);border-radius:50%;border:3px solid rgba(74,222,128,0.5);box-shadow:0 0 0 9999px rgba(0,0,0,0.4);z-index:5;pointer-events:none}
-.top{position:absolute;top:0;left:0;right:0;z-index:10;padding:calc(env(safe-area-inset-top,12px) + 8px) 0 16px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);text-align:center}
-.top span{font-size:14px;font-weight:800;letter-spacing:2px;color:#4ade80}
-.fallback{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.fallback .e{font-size:80px}
-.fallback p{font-size:18px;color:rgba(255,255,255,.5)}
-.bot{position:relative;z-index:10;padding:20px 20px calc(env(safe-area-inset-bottom,8px) + 20px);background:#000;text-align:center}
-.bot h1{font-size:28px;font-weight:800;margin-bottom:12px}
-.bot .sub{font-size:15px;color:rgba(255,255,255,.4);margin-bottom:20px}
-.snap{width:76px;height:76px;border-radius:50%;border:4px solid #fff;background:transparent;cursor:pointer;margin:0 auto;display:flex;align-items:center;justify-content:center}
-.snap:active{transform:scale(.9)}
-.snap-in{width:60px;height:60px;border-radius:50%;background:#fff}
-.btns{display:flex;gap:10px;margin-top:12px}
-.b{flex:1;padding:16px;border-radius:14px;border:none;font-family:inherit;font-size:17px;font-weight:700;cursor:pointer}
-.b:active{transform:scale(.97)}
-.b-green{background:#4ade80;color:#000}
-.b-dark{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.12)}
-.b-full{width:100%;padding:16px;border-radius:14px;border:none;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;background:#4ade80;color:#000;margin-top:12px}
-.ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
-.ov.on{display:flex;animation:fi .4s ease}
-@keyframes fi{from{opacity:0}to{opacity:1}}
-.ov h1{font-size:32px;font-weight:800;margin-bottom:8px}
-.ov .sub{font-size:16px;color:rgba(255,255,255,.4);margin-bottom:24px}
-.vp{display:flex;align-items:center;gap:12px;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;margin-bottom:8px;text-align:left;width:100%;max-width:360px;transition:.4s}
-.vp.ok{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
-.vp .em{font-size:32px}
-.vp .nm{font-weight:700;font-size:16px}
-.vp .st{font-size:13px;color:rgba(255,255,255,.3);margin-top:2px}
-.vp.ok .st{color:#4ade80}
-.vp .ck{margin-left:auto;font-size:24px;opacity:.12;transition:.4s}
-.vp.ok .ck{opacity:1}
-.sid{width:100px;height:100px;border-radius:50%;border:3px solid #4ade80;overflow:hidden;margin:0 auto 16px;box-shadow:0 0 30px rgba(74,222,128,.2)}
-.sid img{width:100%;height:100%;object-fit:cover}
-.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0 20px}
-.tag{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700}
-.tg{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
-.tb{background:rgba(129,140,248,.12);color:#818cf8;border:1px solid rgba(129,140,248,.2)}
-.sp{width:20px;height:20px;border:2px solid rgba(255,255,255,.15);border-top-color:#4ade80;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.h{display:none!important}
-.name-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:18px;font-weight:600;text-align:center;margin-bottom:12px;outline:none}
-.name-input:focus{border-color:#4ade80;background:rgba(74,222,128,.06)}
+.preview{display:none;position:absolute;inset:0}
+.preview img{width:100%;height:100%;object-fit:cover}
+
+/* Top bar */
+.top{position:absolute;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top,20px) + 8px) 16px 8px;
+  background:linear-gradient(180deg,rgba(10,14,26,.9) 0%,transparent 100%);
+  text-align:center;font-size:16px;font-weight:800;letter-spacing:2px;color:#e74c3c;z-index:9}
+
+/* Fallback */
+.fallback{display:none;flex-direction:column;align-items:center;justify-content:center;
+  position:absolute;inset:0;background:linear-gradient(135deg,#0d1526,#1a0a0a);gap:16px}
+.fallback .e{font-size:64px}
+.fallback p{font-size:18px;color:rgba(255,255,255,.6)}
+.fallback input{width:80%;max-width:280px;padding:14px 24px;border-radius:12px;border:2px solid #e74c3c;
+  background:rgba(231,76,60,.1);color:#fff;font-size:16px;cursor:pointer}
+
+/* Bottom controls */
+.bot{padding:20px 24px calc(env(safe-area-inset-bottom,8px) + 16px);
+  background:linear-gradient(0deg,#0a0e1a 0%,rgba(10,14,26,.95) 100%);text-align:center}
+.bot h1{font-size:24px;font-weight:800;margin-bottom:16px;color:#fff;text-shadow:0 0 20px rgba(231,76,60,.3)}
+.h{display:none}
+
+/* Snap button — Straw Hat style */
+.snap{width:80px;height:80px;border-radius:50%;border:4px solid #e74c3c;
+  background:rgba(231,76,60,.15);cursor:pointer;margin:0 auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 30px rgba(231,76,60,.3),inset 0 0 20px rgba(231,76,60,.1);
+  transition:all .2s;position:relative}
+.snap:active{transform:scale(.9);box-shadow:0 0 50px rgba(231,76,60,.6)}
+.snap-in{width:56px;height:56px;border-radius:50%;background:#e74c3c;
+  box-shadow:0 0 15px rgba(231,76,60,.5)}
+
+/* Name input */
+.name-input{width:100%;padding:14px 20px;border-radius:14px;border:2px solid rgba(231,76,60,.3);
+  background:rgba(231,76,60,.05);color:#fff;font-size:18px;font-weight:600;text-align:center;
+  outline:none;margin-bottom:12px}
+.name-input:focus{border-color:#e74c3c;box-shadow:0 0 20px rgba(231,76,60,.2)}
 .name-input::placeholder{color:rgba(255,255,255,.3)}
+
+/* Buttons */
+.btns{display:flex;gap:12px}
+.b{flex:1;padding:14px;border-radius:14px;border:none;font-size:16px;font-weight:700;cursor:pointer}
+.b-dark{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6)}
+.b-green{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;
+  box-shadow:0 4px 20px rgba(231,76,60,.4)}
+.b-green:active{transform:scale(.97)}
+
+/* Overlay screens */
+.ov{position:fixed;inset:0;background:linear-gradient(180deg,#0a0e1a 0%,#1a0a0a 50%,#0a0e1a 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;z-index:99;opacity:0;pointer-events:none;
+  transition:opacity .4s}
+.ov.on{opacity:1;pointer-events:auto}
+.ov h1{font-size:28px;font-weight:800;margin-bottom:8px;text-shadow:0 0 30px rgba(231,76,60,.3)}
+.ov .sub{color:rgba(255,255,255,.5);margin-bottom:24px;font-size:15px}
+
+/* Verifier cards */
+.vp{display:flex;align-items:center;gap:12px;padding:14px 16px;margin:8px 0;
+  border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);
+  width:100%;max-width:340px;transition:all .5s}
+.vp.ok{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.2)}
+.em{font-size:32px}
+.nm{font-size:15px;font-weight:700;text-align:left}
+.st{font-size:13px;color:rgba(255,255,255,.4);text-align:left}
+.ck{margin-left:auto;font-size:20px;opacity:.2;transition:opacity .5s}
+.vp.ok .ck{opacity:1}
+
+/* Full-width button */
+.b-full{width:100%;max-width:340px;padding:16px;border-radius:14px;border:none;
+  font-size:18px;font-weight:700;cursor:pointer;margin-top:16px;
+  background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;
+  box-shadow:0 4px 30px rgba(231,76,60,.4);transition:all .2s}
+.b-full:active{transform:scale(.97)}
+.b-full:disabled{opacity:.5}
+
+/* Success identity card */
+.sid{width:120px;height:120px;border-radius:50%;overflow:hidden;margin-bottom:16px;
+  border:4px solid #e74c3c;box-shadow:0 0 40px rgba(231,76,60,.3)}
+.sid img{width:100%;height:100%;object-fit:cover}
+
+/* Tags */
+.tags{display:flex;gap:8px;margin:12px 0 20px;flex-wrap:wrap;justify-content:center}
+.tag{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700}
+.tg{background:rgba(231,76,60,.1);color:#e74c3c;border:1px solid rgba(231,76,60,.15)}
