@@ -204,7 +204,7 @@ const Firehose = ({ feedType, multiColumn }) => {
           </NavLink>
 
           <NavLink exact to='/public'>
-            <FormattedMessage tagName='div' id='firehose.all' defaultMessage='❌ Fake' />
+            <FormattedMessage tagName='div' id='firehose.all' defaultMessage='All' />
           </NavLink>
         </div>
       )}
