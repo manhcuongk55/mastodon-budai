@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAKAI – AI for Emotional Marketing & Truth</title>
+  <meta name="description" content="MAKAI – Mạng xã hội sự thật. Emotion Engine + Truth Verification.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a1a;
+      --bg-secondary: #12122a;
+      --bg-card: #1a1a3e;
+      --bg-card-hover: #222255;
+      --text-primary: #f0f0ff;
+      --text-secondary: #a0a0cc;
+      --text-muted: #6060a0;
+      --accent-hope: #4ade80;
+      --accent-fear: #f87171;
+      --accent-curiosity: #fbbf24;
+      --accent-empathy: #f472b6;
+      --accent-pride: #818cf8;
+      --accent-surprise: #22d3ee;
+      --accent-gradient: linear-gradient(135deg, #818cf8, #f472b6, #fbbf24);
+      --border: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.03);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 50%, rgba(129,140,248,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(244,114,182,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 50% 80%, rgba(34,211,238,0.05) 0%, transparent 50%);
+      animation: bgFloat 20s ease-in-out infinite;
+      z-index: 0;
+    }
+    @keyframes bgFloat {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2%, -2%) rotate(1deg); }
+      66% { transform: translate(-1%, 1%) rotate(-0.5deg); }
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 40px 0 30px;
+    }
+
+    .logo {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .header h1 span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 10px 24px;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      background: var(--glass);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .tab:hover { border-color: rgba(129,140,248,0.3); color: var(--text-primary); }
+    .tab.active {
+      background: linear-gradient(135deg, rgba(129,140,248,0.2), rgba(244,114,182,0.2));
+      border-color: rgba(129,140,248,0.5);
+      color: #fff;
+    }
+
+    /* Panels */
+    .panel { display: none; animation: fadeIn 0.4s ease; }
+    .panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Textarea */
+    textarea, input, select {
+      width: 100%;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 15px;
+      resize: vertical;
+      transition: border-color 0.3s;
+    }
+    textarea:focus, input:focus, select:focus {
+      outline: none;
+      border-color: rgba(129,140,248,0.5);
+    }
+    textarea { min-height: 120px; }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0cc' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    select option { background: var(--bg-card); color: var(--text-primary); }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 50px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(129,140,248,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(129,140,248,0.4);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    .btn-post {
+      background: linear-gradient(135deg, #4ade80, #22d3ee);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* Emotion Bars */
+    .emotion-bar {
+      margin-bottom: 14px;
+    }
+
+    .emotion-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .emotion-name {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .emotion-score {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .emotion-track {
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .emotion-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0;
+    }
+
+    /* Viral Score */
+    .viral-score-container {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .viral-score-ring {
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+
+    .viral-score-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .viral-score-ring circle {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .viral-score-ring .track { stroke: rgba(255,255,255,0.05); }
+    .viral-score-ring .fill {
+      stroke: url(#scoreGradient);
+      stroke-linecap: round;
+      stroke-dasharray: 502;
+      stroke-dashoffset: 502;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .viral-score-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: 900;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .viral-score-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .viral-verdict {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    /* Suggestions */
+    .suggestion {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .suggestion:hover { border-color: rgba(129,140,248,0.3); background: rgba(129,140,248,0.05); }
+
+    .suggestion-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: rgba(129,140,248,0.1);
+    }
+
+    .suggestion-text { font-size: 14px; line-height: 1.6; color: var(--text-secondary); }
+    .suggestion-text strong { color: var(--text-primary); }
+
+    /* Generated Content */
+    .generated-content {
+      background: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(244,114,182,0.05));
+      border: 1px solid rgba(129,140,248,0.2);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 16px;
+      white-space: pre-wrap;
+      line-height: 1.8;
+      font-size: 15px;
+      position: relative;
+    }
+
+    .generated-content::before {
+      content: '✨ AI Generated';
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: var(--bg-card);
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-pride);
+      letter-spacing: 1px;
+    }
+
+    /* Emotion Chips */
+    .emotion-chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .emotion-chip {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+      user-select: none;
+    }
+    .emotion-chip:hover { transform: scale(1.05); }
+    .emotion-chip.selected { transform: scale(1.05); }
+
+    .chip-hope { background: rgba(74,222,128,0.1); color: var(--accent-hope); border-color: rgba(74,222,128,0.2); }
+    .chip-hope.selected { background: rgba(74,222,128,0.25); border-color: var(--accent-hope); }
+    .chip-fear { background: rgba(248,113,113,0.1); color: var(--accent-fear); border-color: rgba(248,113,113,0.2); }
+    .chip-fear.selected { background: rgba(248,113,113,0.25); border-color: var(--accent-fear); }
+    .chip-curiosity { background: rgba(251,191,36,0.1); color: var(--accent-curiosity); border-color: rgba(251,191,36,0.2); }
+    .chip-curiosity.selected { background: rgba(251,191,36,0.25); border-color: var(--accent-curiosity); }
+    .chip-empathy { background: rgba(244,114,182,0.1); color: var(--accent-empathy); border-color: rgba(244,114,182,0.2); }
+    .chip-empathy.selected { background: rgba(244,114,182,0.25); border-color: var(--accent-empathy); }
+    .chip-pride { background: rgba(129,140,248,0.1); color: var(--accent-pride); border-color: rgba(129,140,248,0.2); }
+    .chip-pride.selected { background: rgba(129,140,248,0.25); border-color: var(--accent-pride); }
+    .chip-surprise { background: rgba(34,211,238,0.1); color: var(--accent-surprise); border-color: rgba(34,211,238,0.2); }
+    .chip-surprise.selected { background: rgba(34,211,238,0.25); border-color: var(--accent-surprise); }
+
+    /* Results area */
+    .results { margin-top: 24px; }
+    .results.hidden { display: none; }
+
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* Actions */
+    .actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+
+    /* Loading */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .loading.active { display: block; }
+
+    .loading-dots span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-pride);
+      margin: 0 4px;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+    .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      margin-bottom: 16px;
+      transition: color 0.3s;
+    }
+    .back-link:hover { color: var(--text-primary); }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .footer a { color: var(--accent-pride); text-decoration: none; }
+
+    /* Copy notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent-pride);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 14px;
+      z-index: 999;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 30px rgba(129,140,248,0.4);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ============ TRUTH VERIFICATION ============ */
+    .truth-hero {
+      text-align: center;
+      padding: 20px 0 30px;
+    }
+    .truth-hero h2 {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .truth-hero p { color: var(--text-secondary); font-size: 15px; }
+
+    .truth-content-preview {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 20px 0;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      min-height: 80px;
+      position: relative;
+    }
+    .truth-content-preview::before {
+      content: '📄 Nội dung cần xác minh';
+      position: absolute;
+      top: -10px;
+      left: 16px;
+      background: var(--bg-card);
+      padding: 0 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .truth-buttons {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    .truth-btn {
+      flex: 1;
+      max-width: 280px;
+      padding: 28px 20px;
+      border-radius: 20px;
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      font-family: inherit;
+    }
+    .truth-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .truth-btn:hover { transform: translateY(-4px); }
+    .truth-btn:active { transform: translateY(-1px) scale(0.98); }
+
+    .truth-btn-real {
+      background: rgba(74,222,128,0.08);
+      border-color: rgba(74,222,128,0.3);
+    }
+    .truth-btn-real:hover {
+      background: rgba(74,222,128,0.15);
+      border-color: var(--accent-hope);
+      box-shadow: 0 8px 40px rgba(74,222,128,0.25);
+    }
+    .truth-btn-real.voted {
+      background: rgba(74,222,128,0.2);
+      border-color: var(--accent-hope);
+      box-shadow: 0 0 60px rgba(74,222,128,0.3);
+    }
+
+    .truth-btn-fake {
+      background: rgba(248,113,113,0.08);
+      border-color: rgba(248,113,113,0.3);
+    }
+    .truth-btn-fake:hover {
+      background: rgba(248,113,113,0.15);
+      border-color: var(--accent-fear);
+      box-shadow: 0 8px 40px rgba(248,113,113,0.25);
+    }
+    .truth-btn-fake.voted {
+      background: rgba(248,113,113,0.2);
+      border-color: var(--accent-fear);
+      box-shadow: 0 0 60px rgba(248,113,113,0.3);
+    }
+
+    .truth-btn-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .truth-btn-label {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .truth-btn-real .truth-btn-label { color: var(--accent-hope); }
+    .truth-btn-fake .truth-btn-label { color: var(--accent-fear); }
+
+    .truth-btn-count {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    /* Trust Score Bar */
+    .trust-meter {
+      margin: 30px 0;
+    }
+    .trust-meter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .trust-meter-label {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-secondary);
+    }
+    .trust-meter-value {
+      font-size: 32px;
+      font-weight: 900;
+    }
+    .trust-meter-track {
+      height: 16px;
+      background: linear-gradient(90deg, rgba(248,113,113,0.15), rgba(255,255,255,0.05), rgba(74,222,128,0.15));
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .trust-meter-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .trust-meter-indicator {
+      position: absolute;
+      top: -6px;
+      width: 4px;
+      height: 28px;
+      background: #fff;
+      border-radius: 4px;
+      transition: left 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 12px rgba(255,255,255,0.5);
+    }
+    .trust-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .trust-label-fake { color: var(--accent-fear); }
+    .trust-label-real { color: var(--accent-hope); }
+
+    .trust-verdict {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      animation: fadeIn 0.5s ease;
+    }
+    .trust-verdict.real {
+      background: rgba(74,222,128,0.1);
+      color: var(--accent-hope);
+      border: 1px solid rgba(74,222,128,0.2);
+    }
+    .trust-verdict.fake {
+      background: rgba(248,113,113,0.1);
+      color: var(--accent-fear);
+      border: 1px solid rgba(248,113,113,0.2);
+    }
+    .trust-verdict.neutral {
+      background: rgba(251,191,36,0.1);
+      color: var(--accent-curiosity);
+      border: 1px solid rgba(251,191,36,0.2);
+    }
+
+    /* Recent votes animation */
+    .recent-votes {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin: 16px 0;
+      min-height: 32px;
+      flex-wrap: wrap;
+    }
+    .vote-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .vote-bubble.real {
+      background: rgba(74,222,128,0.15);
+      color: var(--accent-hope);
+    }
+    .vote-bubble.fake {
+      background: rgba(248,113,113,0.15);
+      color: var(--accent-fear);
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Pulse animation for voted button */
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(74,222,128,0); }
+    }
+    .truth-btn-real.voted { animation: pulse 2s infinite; }
+    @keyframes pulseFake {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(248,113,113,0); }
+    }
+    .truth-btn-fake.voted { animation: pulseFake 2s infinite; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a href="/" class="back-link">← Quay lại MAKAI</a>
+
+  <header class="header">
+    <div class="logo">MAKAI by Smile Budai</div>
+    <h1>🔥 <span>Emotion Engine</span></h1>
+    <p>AI phân tích cảm xúc & tạo content viral. Công thức: Sản phẩm + Vấn đề + Cảm xúc = Content Viral</p>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="truth">✅ Thật / Giả</div>
+    <div class="tab" data-tab="analyzer">🔍 Phân tích Content</div>
+    <div class="tab" data-tab="generator">⚡ Tạo Content Viral</div>
+    <div class="tab" data-tab="hooks">🎯 Hook Generator</div>
+  </div>
+
+  <!-- TAB 0: TRUTH VERIFICATION (DEFAULT) -->
+  <div class="panel active" id="panel-truth">
+    <div class="card">
+      <div class="truth-hero">
+        <h2>🛡️ Xác minh Sự thật</h2>
+        <p>Mạng xã hội của sự thật — cộng đồng cùng xác minh. Chỉ 2 nút. Đơn giản. Minh bạch.</p>
+      </div>
+
+      <div class="form-group">
+        <label>📋 Dán nội dung cần xác minh</label>
+        <textarea id="truthInput" placeholder="Dán bài viết, tin tức, quảng cáo vào đây để cộng đồng xác minh thật/giả...&#10;&#10;Ví dụ: Căn hộ 2PN quận 7 giá chỉ 1.2 tỷ, pháp lý sổ hồng riêng, bàn giao quý 4/2026."></textarea>
+      </div>
+
+      <div id="truthContentPreview" class="truth-content-preview" style="display:none"></div>
+
+      <div class="truth-buttons">
+        <button class="truth-btn truth-btn-real" id="btnReal" onclick="voteTruth('real')">
+          <span class="truth-btn-icon">✅</span>
+          <span class="truth-btn-label">THẬT</span>
+          <div class="truth-btn-count" id="realCount">0 votes</div>
+        </button>
+        <button class="truth-btn truth-btn-fake" id="btnFake" onclick="voteTruth('fake')">
+          <span class="truth-btn-icon">❌</span>
+          <span class="truth-btn-label">GIẢ</span>
+          <div class="truth-btn-count" id="fakeCount">0 votes</div>
+        </button>
+      </div>
+
+      <div class="recent-votes" id="recentVotes"></div>
+
+      <div id="trustResult" style="display:none">
+        <div class="trust-meter">
+          <div class="trust-meter-header">
+            <span class="trust-meter-label">🛡️ Trust Score</span>
+            <span class="trust-meter-value" id="trustScoreValue" style="color:var(--text-primary)">—</span>
+          </div>
+          <div class="trust-meter-track">
+            <div class="trust-meter-fill" id="trustFill" style="width:50%;background:var(--accent-curiosity)"></div>
+            <div class="trust-meter-indicator" id="trustIndicator" style="left:50%"></div>
+          </div>
+          <div class="trust-labels">
+            <span class="trust-label-fake">❌ GIẢ</span>
+            <span style="color:var(--text-muted)">CHƯA RÕ</span>
+            <span class="trust-label-real">✅ THẬT</span>
+          </div>
+        </div>
+        <div class="trust-verdict" id="trustVerdict"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 1: Content Analyzer -->
+  <div class="panel" id="panel-analyzer">
+    <div class="card">
+      <h3>🔍 Phân tích cảm xúc nội dung</h3>
+      <p style="color:var(--text-secondary);margin-bottom:16px;font-size:14px;">Dán content vào đây, AI sẽ phân tích mức độ cảm xúc và cho điểm viral.</p>
+      <div class="form-group">
+        <textarea id="analyzeInput" placeholder="Dán nội dung marketing vào đây...&#10;&#10;Ví dụ: 90% người mua nhà lần đầu đều mắc sai lầm này. Đừng để mình là một trong số đó."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="analyzeContent()">🔍 Phân tích ngay</button>
+    </div>
+
+    <div class="loading" id="analyzeLoading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p style="margin-top:12px;color:var(--text-secondary)">AI đang phân tích cảm xúc...</p>
+    </div>
+
+    <div class="results hidden" id="analyzeResults">
+      <div class="grid-2">
+        <div class="card">
+          <h3>📊 Emotion Score</h3>
+          <div id="emotionBars"></div>
+        </div>
+        <div class="card">
+          <div class="viral-score-container">
+            <div class="viral-score-ring">
+              <svg viewBox="0 0 180 180">
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#818cf8"/>
+                    <stop offset="50%" style="stop-color:#f472b6"/>
+                    <stop offset="100%" style="stop-color:#fbbf24"/>
+                  </linearGradient>
+                </defs>
+                <circle class="track" cx="90" cy="90" r="80"/>
+                <circle class="fill" id="scoreCircle" cx="90" cy="90" r="80"/>
+              </svg>
+              <div class="viral-score-value" id="viralScoreValue">0</div>
+            </div>
+            <div class="viral-score-label">Viral Score</div>
+            <div class="viral-verdict" id="viralVerdict"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>💡 Gợi ý tăng cảm xúc</h3>
+        <div id="suggestions"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-secondary" onclick="copyResults()">📋 Copy kết quả</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Campaign Generator -->
+  <div class="panel" id="panel-generator">
+    <div class="card">
+      <h3>⚡ Tạo Content Viral từ Công thức Cảm xúc</h3>
+      <p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Nhập sản phẩm + vấn đề khách hàng → AI tạo content theo từng loại cảm xúc</p>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>🏷️ Sản phẩm / Dịch vụ</label>
+          <input type="text" id="product" placeholder="Ví dụ: Căn hộ chung cư cao cấp">
+        </div>
+        <div class="form-group">
+          <label>😰 Vấn đề khách hàng</label>
+          <input type="text" id="problem" placeholder="Ví dụ: Sợ bị lừa khi mua nhà">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>🎯 Đối tượng khách hàng</label>
+        <input type="text" id="audience" placeholder="Ví dụ: Vợ chồng trẻ, 25-35 tuổi, thu nhập 20-40 triệu">
+      </div>
+
+      <div class="form-group">
+        <label>🎭 Chọn cảm xúc mục tiêu</label>
+        <div class="emotion-chips">
+          <div class="emotion-chip chip-hope selected" data-emotion="hope" onclick="toggleEmotion(this)">🌟 Hy vọng</div>
+          <div class="emotion-chip chip-fear" data-emotion="fear" onclick="toggleEmotion(this)">😨 Sợ hãi</div>
+          <div class="emotion-chip chip-curiosity" data-emotion="curiosity" onclick="toggleEmotion(this)">🤔 Tò mò</div>
+          <div class="emotion-chip chip-empathy" data-emotion="empathy" onclick="toggleEmotion(this)">💗 Đồng cảm</div>
+          <div class="emotion-chip chip-pride" data-emotion="pride" onclick="toggleEmotion(this)">🏆 Tự hào</div>
+          <div class="emotion-chip chip-surprise" data-emotion="surprise" onclick="toggleEmotion(this)">😲 Bất ngờ</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateCampaign()">⚡ Tạo Content Viral</button>
+    </div>
+
+    <div class="loading" id="generateLoading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p style="margin-top:12px;color:var(--text-secondary)">AI đang tạo content...</p>
+    </div>
+
+    <div class="results hidden" id="generateResults"></div>
+  </div>
+
+  <!-- TAB 3: Hook Generator -->
+  <div class="panel" id="panel-hooks">
+    <div class="card">
+      <h3>🎯 Hook Generator – Câu mở đầu viral</h3>
+      <p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Tạo 10+ câu hook cho bài viết / video, phân theo 6 loại cảm xúc</p>
+
+      <div class="form-group">
+        <label>📌 Chủ đề</label>
+        <input type="text" id="hookTopic" placeholder="Ví dụ: Mua nhà lần đầu">
+      </div>
+
+      <div class="form-group">
+        <label>📱 Nền tảng</label>
+        <select id="hookPlatform">
+          <option value="facebook">Facebook</option>
+          <option value="tiktok">TikTok</option>
+          <option value="zalo">Zalo</option>
+          <option value="youtube">YouTube</option>
+          <option value="instagram">Instagram</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateHooks()">🎯 Tạo Hook</button>
+    </div>
+
+    <div class="loading" id="hookLoading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <p style="margin-top:12px;color:var(--text-secondary)">AI đang tạo hook viral...</p>
+    </div>
+
+    <div class="results hidden" id="hookResults"></div>
+  </div>
+
+  <footer class="footer">
+    <p>🔥 <a href="/">MAKAI</a> – AI for Emotional Marketing | Smile Budai</p>
+    <p style="margin-top:4px">🪷 Bát Nhã soi tâm – Trí tuệ dẫn đường</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast">✅ Đã copy!</div>
+
+<script>
+// ============ EMOTION DICTIONARY ============
+const EMOTIONS = {
+  hope: {
+    name: 'Hy vọng', icon: '🌟', color: '#4ade80',
+    keywords: ['thay đổi','cơ hội','tương lai','giấc mơ','thành công','phát triển','khả năng','tiềm năng','hy vọng','tốt đẹp','hạnh phúc','may mắn','đạt được','chiến thắng','vươn lên','nỗ lực','bạn có thể','đừng bỏ cuộc','cải thiện','mới','bắt đầu','con đường','sáng','niềm tin','đáng giá','xứng đáng','cách mạng','đột phá','truyền cảm hứng'],
+    hooks: [
+      'Bạn cũng có thể {action} – đây là cách',
+      'Câu chuyện {subject} từ số 0 đến thành công',
+      '{subject} đã thay đổi cuộc đời tôi như thế nào',
+      'Chỉ cần 1 quyết định đúng, {result}',
+      'Tôi ước mình biết điều này sớm hơn về {subject}'
+    ]
+  },
+  fear: {
+    name: 'Sợ hãi', icon: '😨', color: '#f87171',
+    keywords: ['sai lầm','nguy hiểm','cảnh báo','đừng','tránh','rủi ro','mất','thiệt hại','lừa','gian lận','hối hận','quá muộn','không bao giờ','thất bại','thua lỗ','phá sản','sập bẫy','cạm bẫy','90%','số liệu','vấn đề','khủng hoảng','sống còn','cẩn thận','dừng lại','chú ý','nghiêm trọng','hậu quả'],
+    hooks: [
+      '90% người {subject} đều mắc sai lầm này',
+      'ĐỪNG {action} nếu chưa biết điều này',
+      '{number} sai lầm chết người khi {subject}',
+      'Cảnh báo: {subject} có thể khiến bạn {result}',
+      'Tôi đã mất {loss} vì không biết điều này về {subject}'
+    ]
+  },
+  curiosity: {
+    name: 'Tò mò', icon: '🤔', color: '#fbbf24',
+    keywords: ['bí mật','ít ai biết','sự thật','thực ra','bất ngờ','hóa ra','tại sao','lý do','cách','bí quyết','tiết lộ','đằng sau','câu chuyện','khám phá','nghiên cứu','chưa ai','lần đầu','không ngờ','đúng nhưng','sai nhưng','ngạc nhiên','đố bạn','thú vị','hiếm','lạ','khác biệt','mới nhất'],
+    hooks: [
+      'Một điều ít ai biết về {subject}',
+      'Sự thật đằng sau {subject} sẽ khiến bạn ngạc nhiên',
+      'Tại sao {subject}? Câu trả lời không như bạn nghĩ',
+      'Bí quyết {subject} mà chuyên gia không nói cho bạn',
+      '{number} sự thật thú vị về {subject} bạn chưa biết'
+    ]
+  },
+  empathy: {
+    name: 'Đồng cảm', icon: '💗', color: '#f472b6',
+    keywords: ['hiểu','cảm giác','ai từng','mình cũng','khó khăn','đau','buồn','vất vả','cô đơn','một mình','trải qua','chịu đựng','chia sẻ','đồng hành','thương','yêu','gia đình','con cái','bố mẹ','tuổi trẻ','cuộc sống','con đường','người như tôi','chúng ta','cùng nhau','trái tim','nước mắt','nụ cười','kỷ niệm'],
+    hooks: [
+      'Ai từng {experience} chắc hiểu cảm giác này',
+      'Gửi những người đang {situation}',
+      'Câu chuyện này dành cho những ai {experience}',
+      'Mình cũng từng {experience}, và đây là điều mình học được',
+      'Nếu bạn đang {situation}, bạn không đơn độc'
+    ]
+  },
+  pride: {
+    name: 'Tự hào', icon: '🏆', color: '#818cf8',
+    keywords: ['tự hào','đầu tiên','người việt','việt nam','kỷ lục','vinh dự','thành tựu','đạt được','chinh phục','xuất sắc','giỏi nhất','top','số 1','thế giới','quốc tế','đẳng cấp','chất lượng','hàng đầu','tiên phong','dẫn đầu','vượt trội','khác biệt','nổi bật','ấn tượng','phi thường','siêu','kiêu hãnh','danh dự'],
+    hooks: [
+      'Người Việt đang làm điều thế giới ngạc nhiên về {subject}',
+      '{subject} Việt Nam vừa đạt kỷ lục {result}',
+      'Tại sao {subject} Việt Nam được thế giới ngưỡng mộ',
+      'Lần đầu tiên {subject} Việt Nam {achievement}',
+      'Đây là lý do {subject} Việt Nam thuộc top thế giới'
+    ]
+  },
+  surprise: {
+    name: 'Bất ngờ', icon: '😲', color: '#22d3ee',
+    keywords: ['bất ngờ','không thể tin','shock','sốc','kinh ngạc','choáng','lần đầu','chưa từng','kỷ lục','phá vỡ','đảo lộn','ngoài sức tưởng','không ai ngờ','wow','đỉnh','đỉnh cao','điên rồ','khó tin','nổ','dữ dội','siêu','mega','khủng','cực','max','nhất'],
+    hooks: [
+      'Một {subject} {detail} nhưng {twist}',
+      'Không ai ngờ {subject} lại {result}',
+      'Chuyện không thể tin về {subject}',
+      '{subject} vừa phá vỡ mọi kỷ lục với {result}',
+      'Bạn sẽ không tin {subject} có thể {result}'
+    ]
+  }
+};
+
+// ============ TAB SWITCHING ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ============ EMOTION CHIP TOGGLE ============
+function toggleEmotion(chip) {
+  chip.classList.toggle('selected');
+}
+
+// ============ CONTENT ANALYZER ============
+function analyzeContent() {
+  const text = document.getElementById('analyzeInput').value.trim();
+  if (!text) { alert('Vui lòng nhập nội dung cần phân tích'); return; }
+
+  document.getElementById('analyzeResults').classList.add('hidden');
+  document.getElementById('analyzeLoading').classList.add('active');
+
+  setTimeout(() => {
+    const scores = analyzeEmotions(text);
+    displayAnalysis(scores, text);
+    document.getElementById('analyzeLoading').classList.remove('active');
+    document.getElementById('analyzeResults').classList.remove('hidden');
+  }, 1500);
+}
+
+function analyzeEmotions(text) {
+  const lower = text.toLowerCase();
+  const words = lower.split(/\s+/);
+  const totalWords = words.length;
+  const scores = {};
+
+  for (const [key, emotion] of Object.entries(EMOTIONS)) {
+    let matchCount = 0;
+    let matchedKeywords = [];
+    for (const kw of emotion.keywords) {
+      if (lower.includes(kw)) {
+        matchCount++;
+        matchedKeywords.push(kw);
+      }
+    }
+    // Score = keyword density * length bonus * structure bonus
+    let score = Math.min((matchCount / emotion.keywords.length) * 300, 85);
+    // Bonus for punctuation (!, ?, ...)
+    const exclamations = (text.match(/!/g) || []).length;
+    const questions = (text.match(/\?/g) || []).length;
+    if (exclamations > 0) score += Math.min(exclamations * 3, 10);
+    if (questions > 0 && key === 'curiosity') score += Math.min(questions * 5, 15);
+    // Bonus for numbers (data = credibility)
+    const numbers = (text.match(/\d+/g) || []).length;
+    if (numbers > 0 && key === 'fear') score += Math.min(numbers * 4, 12);
+    // Bonus for emoji
+    const emojis = (text.match(/[\u{1F300}-\u{1FAFF}]/gu) || []).length;
+    if (emojis > 0) score += Math.min(emojis * 2, 8);
+    // Length bonus
+    if (totalWords > 30) score += 5;
+    if (totalWords > 80) score += 5;
+    // Random small variation for realism
+    score += (Math.random() * 8 - 4);
+    scores[key] = { score: Math.max(5, Math.min(Math.round(score), 98)), matched: matchedKeywords };
+  }
+  return scores;
+}
+
+function displayAnalysis(scores, text) {
+  const barsHtml = Object.entries(scores)
+    .sort((a, b) => b[1].score - a[1].score)
+    .map(([key, data]) => {
+      const e = EMOTIONS[key];
+      return `
+        <div class="emotion-bar">
+          <div class="emotion-bar-header">
+            <span class="emotion-name">${e.icon} ${e.name}</span>
+            <span class="emotion-score" style="color:${e.color}">${data.score}</span>
+          </div>
+          <div class="emotion-track">
+            <div class="emotion-fill" style="background:${e.color};width:0" data-width="${data.score}%"></div>
+          </div>
+        </div>`;
+    }).join('');
+  document.getElementById('emotionBars').innerHTML = barsHtml;
+
+  // Animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.emotion-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width;
+    });
+  });
+
+  // Viral score
+  const allScores = Object.values(scores).map(s => s.score);
+  const maxScore = Math.max(...allScores);
+  const avgScore = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+  const viralScore = Math.round(maxScore * 0.6 + avgScore * 0.4);
+
+  const circle = document.getElementById('scoreCircle');
+  const offset = 502 - (502 * viralScore / 100);
+  setTimeout(() => { circle.style.strokeDashoffset = offset; }, 100);
+
+  // Animate number
+  animateNumber('viralScoreValue', 0, viralScore, 1500);
+
+  // Verdict
+  let verdict = '';
+  if (viralScore >= 80) verdict = '🔥 VIRAL POTENTIAL CỰC CAO!';
+  else if (viralScore >= 60) verdict = '✨ Tiềm năng tốt!';
+  else if (viralScore >= 40) verdict = '⚠️ Cần thêm cảm xúc';
+  else verdict = '💤 Chưa đủ chạm cảm xúc';
+  document.getElementById('viralVerdict').innerHTML = verdict;
+
+  // Suggestions
+  const sorted = Object.entries(scores).sort((a, b) => a[1].score - b[1].score);
+  const weakest = sorted.slice(0, 3);
+  const strongest = sorted[sorted.length - 1];
+
+  let suggestionsHtml = `
+    <div class="suggestion">
+      <div class="suggestion-icon">✅</div>
+      <div class="suggestion-text"><strong>Cảm xúc mạnh nhất:</strong> ${EMOTIONS[strongest[0]].icon} ${EMOTIONS[strongest[0]].name} (${strongest[1].score}/100). Đây là điểm mạnh của content này.</div>
+    </div>`;
+
+  weakest.forEach(([key, data]) => {
+    const e = EMOTIONS[key];
+    const tip = getSuggestion(key, data.score);
+    suggestionsHtml += `
+      <div class="suggestion">
+        <div class="suggestion-icon" style="background:${e.color}22">${e.icon}</div>
+        <div class="suggestion-text"><strong>Tăng ${e.name} (${data.score}/100):</strong> ${tip}</div>
+      </div>`;
+  });
+
+  document.getElementById('suggestions').innerHTML = suggestionsHtml;
+}
+
+function getSuggestion(emotion, score) {
+  const tips = {
+    hope: 'Thêm câu khích lệ như "Bạn hoàn toàn có thể...", "Đây là cơ hội để...", hoặc kết bài bằng viễn cảnh tích cực.',
+    fear: 'Thêm số liệu cụ thể (VD: "90% người..."), cảnh báo hậu quả, hoặc deadline tạo urgency ("Chỉ còn 3 ngày").',
+    curiosity: 'Mở đầu bằng câu hỏi, thêm "Ít ai biết rằng...", hoặc hé lộ bí mật ("Sự thật đằng sau...").',
+    empathy: 'Kể câu chuyện cá nhân, dùng "Mình cũng từng...", hoặc nói trực tiếp đến cảm xúc người đọc.',
+    pride: 'Nhắc đến thành tựu Việt Nam, dùng "Lần đầu tiên...", hoặc so sánh với tiêu chuẩn quốc tế.',
+    surprise: 'Thêm con số bất ngờ, twist cuối bài, hoặc sự đối lập (VD: "30m² nhưng giá 5 tỷ").'
+  };
+  return tips[emotion] || '';
+}
+
+// ============ CAMPAIGN GENERATOR ============
+function generateCampaign() {
+  const product = document.getElementById('product').value.trim();
+  const problem = document.getElementById('problem').value.trim();
+  const audience = document.getElementById('audience').value.trim();
+
+  if (!product || !problem) { alert('Vui lòng nhập sản phẩm và vấn đề khách hàng'); return; }
+
+  const selectedEmotions = [...document.querySelectorAll('.emotion-chip.selected')].map(c => c.dataset.emotion);
+  if (selectedEmotions.length === 0) { alert('Chọn ít nhất 1 cảm xúc mục tiêu'); return; }
+
+  document.getElementById('generateResults').classList.add('hidden');
+  document.getElementById('generateLoading').classList.add('active');
+
+  setTimeout(() => {
+    let html = '';
+
+    selectedEmotions.forEach(emotionKey => {
+      const e = EMOTIONS[emotionKey];
+      const content = generateContent(product, problem, audience, emotionKey);
+
+      html += `
+        <div class="card">
+          <h3>${e.icon} Chiến dịch ${e.name}</h3>
+          <div class="generated-content">${content}</div>
+          <div class="actions">
+            <button class="btn btn-secondary" onclick="copyText(this)">📋 Copy</button>
+            <button class="btn btn-post" onclick="postToMakai(this)">📤 Đăng lên MAKAI</button>
+          </div>
+        </div>`;
+    });
+
+    document.getElementById('generateLoading').classList.remove('active');
+    document.getElementById('generateResults').innerHTML = html;
+    document.getElementById('generateResults').classList.remove('hidden');
+  }, 2000);
+}
+
+function generateContent(product, problem, audience, emotionKey) {
+  const templates = {
+    hope: [
+      `✨ ${product} – Giấc mơ trong tầm tay\n\nBạn đã từng nghĩ "${problem}"?\n\nĐừng lo. Hàng nghìn người cũng từng như vậy – và họ đã tìm được giải pháp.\n\n${product} được tạo ra dành cho ${audience || 'những người như bạn'} – những người dám mơ ước và sẵn sàng hành động.\n\n🌟 Bắt đầu hành trình của bạn ngay hôm nay.\n\n#MAKAI #${product.replace(/\s+/g,'')} #SmileBudai`,
+      `💫 Câu chuyện của bạn bắt đầu từ đây\n\n"${problem}" – đó là nỗi sợ của rất nhiều người.\n\nNhưng… nếu có một cách để bạn hoàn toàn yên tâm?\n\n${product} giúp ${audience || 'bạn'} biến lo lắng thành tự tin.\n\nMỗi giấc mơ đều xứng đáng được thực hiện ✨\n\n#MAKAI #Marketing #EmotionalContent`
+    ],
+    fear: [
+      `⚠️ CẢNH BÁO: ${problem}\n\n90% ${audience || 'khách hàng'} đều mắc sai lầm này khi tìm hiểu về ${product}.\n\nSai lầm #1: Không kiểm tra kỹ trước khi quyết định\nSai lầm #2: Tin vào quảng cáo mà không xác minh\nSai lầm #3: Bỏ qua các dấu hiệu cảnh báo\n\n❌ Đừng để mình là người tiếp theo hối hận.\n\n✅ ${product} cam kết minh bạch 100%. Kiểm chứng ngay.\n\n#MAKAI #CanhBao #AnToan`,
+      `🚨 5 SAI LẦM CHẾT NGƯỜI khi ${problem}\n\nĐây là những sai lầm mà ${audience || 'rất nhiều người'} đang mắc phải MỖI NGÀY:\n\n1️⃣ Không so sánh giá – mất tiền oan\n2️⃣ Không đọc hợp đồng kỹ – dính bẫy\n3️⃣ Quá tin lời hứa miệng – không bằng chứng\n\n${product} giúp bạn tránh TẤT CẢ những sai lầm trên.\n\nĐừng chờ đến khi quá muộn ⏰\n\n#MAKAI #SmileBudai`
+    ],
+    curiosity: [
+      `🤔 Bạn có biết sự thật này về ${product}?\n\nMột điều ít ai nhắc đến: ${problem}... nhưng thực tế lại hoàn toàn khác!\n\nSau khi nghiên cứu hàng trăm trường hợp, chúng tôi phát hiện:\n\n📊 Sự thật #1: Không đúng như truyền thông nói\n🔍 Sự thật #2: Có giải pháp đơn giản đã tồn tại\n💡 Sự thật #3: Chỉ 10% người biết cách này\n\n→ Tìm hiểu thêm tại ${product}\n\n#MAKAI #SuThat #Marketing`,
+      `❓ TẠI SAO ${product} lại khác biệt?\n\nĐa số ${audience || 'mọi người'} nghĩ rằng "${problem}"...\n\nNhưng sự thật đằng sau sẽ khiến bạn ngạc nhiên 😲\n\nComment "TELL ME" để biết câu trả lời!\n\n#MAKAI #BíQuyết #ContentViral`
+    ],
+    empathy: [
+      `💗 Gửi những ${audience || 'người'} đang ${problem}...\n\nMình hiểu cảm giác đó. Mình cũng từng như vậy.\n\nNhững đêm trằn trọc, những câu hỏi không có lời đáp, cảm giác không ai hiểu mình...\n\nNhưng rồi mình tìm được ${product}. Và cuộc sống thay đổi.\n\nBạn không đơn độc. Chúng ta cùng nhau ❤️\n\nNếu bạn cũng đang cảm thấy như vậy, hãy chia sẻ câu chuyện của bạn 👇\n\n#MAKAI #SmileBudai #ChiaSeYeuThuong`,
+      `🫂 "Ai từng ${problem} chắc hiểu cảm giác này..."\n\nKhông phải ai cũng may mắn.\nKhông phải ai cũng có người đồng hành.\n\nNhưng ${product} ra đời với sứ mệnh: Không để ai phải một mình.\n\nDành cho ${audience || 'tất cả những người'} đang cần sự hỗ trợ 💛\n\n#MAKAI #DongCam`
+    ],
+    pride: [
+      `🇻🇳 ${product} – Niềm tự hào Việt Nam!\n\n${audience || 'Người Việt'} đang làm điều thế giới ngưỡng mộ.\n\nTrong khi "${problem}" là vấn đề toàn cầu, giải pháp lại đến từ Việt Nam.\n\n🏆 Chất lượng đạt chuẩn quốc tế\n🏆 Thiết kế bởi người Việt, cho người Việt\n🏆 Được công nhận bởi chuyên gia hàng đầu\n\n${product} – Tự hào sáng tạo Việt 🔥\n\n#MAKAI #TuHaoViet #SmileBudai`,
+      `🏆 LỊCH SỬ ĐƯỢC VIẾT HÔM NAY!\n\n${product} chính thức trở thành giải pháp hàng đầu cho ${audience || 'thị trường Việt Nam'}.\n\n"${problem}" – vấn đề tồn tại bao lâu nay, cuối cùng đã có lời giải.\n\nVà lời giải đó đến từ chính trí tuệ Việt 🇻🇳\n\n#MAKAI #DangCapViet`
+    ],
+    surprise: [
+      `😲 KHÔNG THỂ TIN!\n\n${product} – nhưng với điều kiện bạn không ngờ tới.\n\n"${problem}" – ai cũng nghĩ đây là vấn đề không giải được.\n\nNhưng kết quả thực tế:\n📈 Tăng 300% hiệu quả\n💰 Tiết kiệm 50% chi phí\n⚡ Chỉ mất 5 phút\n\nĐiều khiến ${audience || 'mọi người'} bất ngờ nhất? MIỄN PHÍ hoàn toàn.\n\nComment "WOW" nếu bạn muốn thử!\n\n#MAKAI #BatNgo #Viral`,
+      `🤯 ${product}: Câu chuyện không ai ngờ tới\n\n"${problem}" – tất cả đều nghĩ vậy.\n\nCho đến khi ${product} xuất hiện và đảo lộn mọi thứ.\n\nKết quả? Ngoài sức tưởng tượng.\n\nTag 3 người bạn cần biết điều này! 👇\n\n#MAKAI #KhongTheKhoiTin`
+    ]
+  };
+
+  const options = templates[emotionKey] || templates.hope;
+  return options[Math.floor(Math.random() * options.length)];
+}
+
+// ============ HOOK GENERATOR ============
+function generateHooks() {
+  const topic = document.getElementById('hookTopic').value.trim();
+  if (!topic) { alert('Vui lòng nhập chủ đề'); return; }
+
+  const platform = document.getElementById('hookPlatform').value;
+
+  document.getElementById('hookResults').classList.add('hidden');
+  document.getElementById('hookLoading').classList.add('active');
+
+  setTimeout(() => {
+    let html = '';
+
+    for (const [key, emotion] of Object.entries(EMOTIONS)) {
+      const hooks = emotion.hooks.map(h =>
+        h.replace(/{subject}/g, topic)
+         .replace(/{action}/g, 'tìm hiểu ' + topic)
+         .replace(/{result}/g, 'thay đổi hoàn toàn')
+         .replace(/{experience}/g, topic)
+         .replace(/{situation}/g, 'tìm hiểu ' + topic)
+         .replace(/{detail}/g, 'bình thường')
+         .replace(/{twist}/g, 'kết quả ngoài sức tưởng tượng')
+         .replace(/{number}/g, '' + (3 + Math.floor(Math.random() * 5)))
+         .replace(/{loss}/g, 'rất nhiều tiền')
+         .replace(/{achievement}/g, 'đạt thành tựu lớn')
+      );
+
+      const platformTip = {
+        facebook: '→ Phù hợp: bài viết dài, kèm video',
+        tiktok: '→ Phù hợp: 3 giây đầu video, text overlay',
+        zalo: '→ Phù hợp: bài OA, tin nhắn broadcast',
+        youtube: '→ Phù hợp: tiêu đề + thumbnail text',
+        instagram: '→ Phù hợp: caption, Reel hook'
+      };
+
+      html += `
+        <div class="card">
+          <h3>${emotion.icon} ${emotion.name} Hooks</h3>
+          <p style="color:var(--text-muted);font-size:12px;margin-bottom:14px">${platformTip[platform]}</p>
+          ${hooks.map(h => `
+            <div class="suggestion" onclick="copyHook(this, '${h.replace(/'/g,"\\'")}')">
+              <div class="suggestion-icon" style="background:${emotion.color}22;cursor:pointer">📋</div>
+              <div class="suggestion-text" style="color:var(--text-primary);font-weight:500;cursor:pointer">"${h}"</div>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    document.getElementById('hookLoading').classList.remove('active');
+    document.getElementById('hookResults').innerHTML = html;
+    document.getElementById('hookResults').classList.remove('hidden');
+  }, 1800);
+}
+
+// ============ UTILITIES ============
+function animateNumber(elementId, start, end, duration) {
+  const el = document.getElementById(elementId);
+  const increment = (end - start) / (duration / 16);
+  let current = start;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= end) { current = end; clearInterval(timer); }
+    el.textContent = Math.round(current);
+  }, 16);
+}
+
+function copyText(btn) {
+  const content = btn.closest('.card').querySelector('.generated-content').textContent;
+  navigator.clipboard.writeText(content).then(() => showToast('✅ Đã copy content!'));
+}
+
+function copyHook(el, text) {
+  navigator.clipboard.writeText(text).then(() => showToast('✅ Đã copy hook!'));
+}
+
+function copyResults() {
+  let text = '=== MAKAI EMOTION ENGINE ===\n\n';
+  document.querySelectorAll('.emotion-bar').forEach(bar => {
+    const name = bar.querySelector('.emotion-name').textContent;
+    const score = bar.querySelector('.emotion-score').textContent;
+    text += `${name}: ${score}/100\n`;
+  });
+  text += `\nViral Score: ${document.getElementById('viralScoreValue').textContent}/100`;
+  text += `\n${document.getElementById('viralVerdict').textContent}`;
+  navigator.clipboard.writeText(text).then(() => showToast('✅ Đã copy kết quả!'));
+}
+
+function postToMakai(btn) {
+  const content = btn.closest('.card').querySelector('.generated-content').textContent;
+  // Open Mastodon compose with pre-filled text
+  const encoded = encodeURIComponent(content);
+  window.open(`/share?text=${encoded}`, '_blank');
+}
+
+function showToast(text) {
+  const toast = document.getElementById('toast');
+  toast.textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ============ TRUTH VERIFICATION ============
+// "Toả sáng giá trị thật" — MXH chỉ có người thật, P2P xác thực
+
+let truthVotes = { real: 0, fake: 0 };
+let hasVoted = false;
+const FAKE_NAMES = ['Minh', 'Lan', 'Hùng', 'Mai', 'Đức', 'Trang', 'Tuấn', 'Hoa', 'Nam', 'Linh', 'Phong', 'Thảo', 'Bảo', 'Ngọc', 'Khoa', 'Hạnh'];
+
+function voteTruth(type) {
+  const text = document.getElementById('truthInput').value.trim();
+  if (!text) { alert('Vui lòng dán nội dung cần xác minh'); return; }
+  
+  if (hasVoted) {
+    showToast('⚠️ Bạn đã vote rồi!');
+    return;
+  }
+  hasVoted = true;
+
+  // Show content preview
+  const preview = document.getElementById('truthContentPreview');
+  preview.textContent = text;
+  preview.style.display = 'block';
+
+  // Your vote
+  truthVotes[type]++;
+  
+  // Highlight voted button
+  document.getElementById('btnReal').classList.toggle('voted', type === 'real');
+  document.getElementById('btnFake').classList.toggle('voted', type === 'fake');
+
+  // Add your vote bubble
+  addVoteBubble('Bạn', type);
+
+  // Simulate community votes (P2P verification feel)
+  simulateCommunityVotes(text, type);
+}
+
+function simulateCommunityVotes(text, userVote) {
+  // AI-like analysis to determine bias
+  const lower = text.toLowerCase();
+  const suspiciousWords = ['chỉ', 'miễn phí', 'giảm', 'siêu', 'khủng', 'hot', 'cực', 'sốc', '100%', 'cam kết', 'đảm bảo', 'không lo', 'tin ngay'];
+  const trustWords = ['sổ hồng', 'pháp lý', 'hợp đồng', 'chứng nhận', 'xác minh', 'minh bạch', 'kiểm tra', 'thật', 'uy tín', 'công khai'];
+  
+  let suspScore = 0, trustScore = 0;
+  suspiciousWords.forEach(w => { if (lower.includes(w)) suspScore++; });
+  trustWords.forEach(w => { if (lower.includes(w)) trustScore++; });
+  
+  const fakeBias = suspScore > trustScore ? 0.65 : 0.35;
+  const totalSimVotes = 8 + Math.floor(Math.random() * 12);
+  
+  let delay = 500;
+  for (let i = 0; i < totalSimVotes; i++) {
+    delay += 300 + Math.random() * 700;
+    setTimeout(() => {
+      const isFake = Math.random() < fakeBias;
+      const voteType = isFake ? 'fake' : 'real';
+      truthVotes[voteType]++;
+      
+      const name = FAKE_NAMES[Math.floor(Math.random() * FAKE_NAMES.length)];
+      addVoteBubble(name, voteType);
+      updateTrustScore();
+    }, delay);
+  }
+  
+  // Show result area
+  setTimeout(() => {
+    document.getElementById('trustResult').style.display = 'block';
+    updateTrustScore();
+  }, 800);
+}
+
+function addVoteBubble(name, type) {
+  const container = document.getElementById('recentVotes');
+  const bubble = document.createElement('div');
+  bubble.className = `vote-bubble ${type}`;
+  bubble.innerHTML = `${type === 'real' ? '✅' : '❌'} ${name}`;
+  container.appendChild(bubble);
+  
+  // Update counts
+  document.getElementById('realCount').textContent = `${truthVotes.real} votes`;
+  document.getElementById('fakeCount').textContent = `${truthVotes.fake} votes`;
+  
+  // Keep only last 15 bubbles
+  while (container.children.length > 15) {
+    container.removeChild(container.firstChild);
+  }
+}
+
+function updateTrustScore() {
+  const total = truthVotes.real + truthVotes.fake;
+  if (total === 0) return;
+  
+  const trustPercent = Math.round((truthVotes.real / total) * 100);
+  
+  // Update meter
+  document.getElementById('trustFill').style.width = trustPercent + '%';
+  document.getElementById('trustIndicator').style.left = trustPercent + '%';
+  
+  // Update score color & value
+  const scoreEl = document.getElementById('trustScoreValue');
+  scoreEl.textContent = trustPercent + '%';
+  
+  if (trustPercent >= 70) {
+    scoreEl.style.color = '#4ade80';
+    document.getElementById('trustFill').style.background = 'linear-gradient(90deg, #4ade80, #22d3ee)';
+  } else if (trustPercent <= 30) {
+    scoreEl.style.color = '#f87171';
+    document.getElementById('trustFill').style.background = 'linear-gradient(90deg, #f87171, #fbbf24)';
+  } else {
+    scoreEl.style.color = '#fbbf24';
+    document.getElementById('trustFill').style.background = 'linear-gradient(90deg, #fbbf24, #818cf8)';
+  }
+  
+  // Verdict
+  const verdictEl = document.getElementById('trustVerdict');
+  if (trustPercent >= 70) {
+    verdictEl.className = 'trust-verdict real';
+    verdictEl.innerHTML = `✅ CỘNG ĐỒNG XÁC NHẬN: <strong>THẬT</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.real} người thật đã xác minh · Toả sáng giá trị thật 🪷</small>`;
+  } else if (trustPercent <= 30) {
+    verdictEl.className = 'trust-verdict fake';
+    verdictEl.innerHTML = `❌ CẢNH BÁO: <strong>NGHI NGỜ GIẢ</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.fake} người thật phản đối · Hãy cẩn thận ⚠️</small>`;
+  } else {
+    verdictEl.className = 'trust-verdict neutral';
+    verdictEl.innerHTML = `🤔 CHƯA RÕ — Cần thêm xác minh<br><small style="font-size:13px;font-weight:400;opacity:0.8">${total} người đã vote · Đang chờ cộng đồng</small>`;
+  }
+}
+
+// Reset truth when input changes
+document.getElementById('truthInput').addEventListener('input', () => {
+  truthVotes = { real: 0, fake: 0 };
+  hasVoted = false;
+  document.getElementById('realCount').textContent = '0 votes';
+  document.getElementById('fakeCount').textContent = '0 votes';
+  document.getElementById('recentVotes').innerHTML = '';
+  document.getElementById('trustResult').style.display = 'none';
+  document.getElementById('truthContentPreview').style.display = 'none';
+  document.getElementById('btnReal').classList.remove('voted');
+  document.getElementById('btnFake').classList.remove('voted');
+});
+</script>
+</body>
+</html>

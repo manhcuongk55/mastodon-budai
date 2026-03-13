@@ -1,0 +1,27 @@
+{
+  "name": "MAKAI — Mạng xã hội Sự thật",
+  "short_name": "MAKAI",
+  "description": "Mạng xã hội sự thật P2P. Toả sáng giá trị thật. Xác minh người thật bằng nụ cười.",
+  "start_url": "/smile-verify/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#4ade80",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/smile-verify/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/smile-verify/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "lifestyle"],
+  "lang": "vi"
+}

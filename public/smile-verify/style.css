@@ -1,0 +1,51 @@
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;width:100%;font-family:'Inter',-apple-system,sans-serif;background:#000;color:#fff;overflow:hidden}
+.page{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column}
+.cam{flex:1;position:relative;overflow:hidden;background:#111}
+.cam video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.cam canvas{display:none}
+.cam .preview{position:absolute;top:0;left:0;width:100%;height:100%;display:none}
+.cam .preview img{width:100%;height:100%;object-fit:cover}
+.guide{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(240px,60vw);height:min(240px,60vw);border-radius:50%;border:3px solid rgba(74,222,128,0.5);box-shadow:0 0 0 9999px rgba(0,0,0,0.4);z-index:5;pointer-events:none}
+.top{position:absolute;top:0;left:0;right:0;z-index:10;padding:calc(env(safe-area-inset-top,12px) + 8px) 0 16px;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);text-align:center}
+.top span{font-size:14px;font-weight:800;letter-spacing:2px;color:#4ade80}
+.fallback{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.fallback .e{font-size:80px}
+.fallback p{font-size:18px;color:rgba(255,255,255,.5)}
+.bot{position:relative;z-index:10;padding:20px 20px calc(env(safe-area-inset-bottom,8px) + 20px);background:#000;text-align:center}
+.bot h1{font-size:28px;font-weight:800;margin-bottom:12px}
+.bot .sub{font-size:15px;color:rgba(255,255,255,.4);margin-bottom:20px}
+.snap{width:76px;height:76px;border-radius:50%;border:4px solid #fff;background:transparent;cursor:pointer;margin:0 auto;display:flex;align-items:center;justify-content:center}
+.snap:active{transform:scale(.9)}
+.snap-in{width:60px;height:60px;border-radius:50%;background:#fff}
+.btns{display:flex;gap:10px;margin-top:12px}
+.b{flex:1;padding:16px;border-radius:14px;border:none;font-family:inherit;font-size:17px;font-weight:700;cursor:pointer}
+.b:active{transform:scale(.97)}
+.b-green{background:#4ade80;color:#000}
+.b-dark{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.12)}
+.b-full{width:100%;padding:16px;border-radius:14px;border:none;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;background:#4ade80;color:#000;margin-top:12px}
+.ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.ov.on{display:flex;animation:fi .4s ease}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.ov h1{font-size:32px;font-weight:800;margin-bottom:8px}
+.ov .sub{font-size:16px;color:rgba(255,255,255,.4);margin-bottom:24px}
+.vp{display:flex;align-items:center;gap:12px;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:14px;margin-bottom:8px;text-align:left;width:100%;max-width:360px;transition:.4s}
+.vp.ok{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
+.vp .em{font-size:32px}
+.vp .nm{font-weight:700;font-size:16px}
+.vp .st{font-size:13px;color:rgba(255,255,255,.3);margin-top:2px}
+.vp.ok .st{color:#4ade80}
+.vp .ck{margin-left:auto;font-size:24px;opacity:.12;transition:.4s}
+.vp.ok .ck{opacity:1}
+.sid{width:100px;height:100px;border-radius:50%;border:3px solid #4ade80;overflow:hidden;margin:0 auto 16px;box-shadow:0 0 30px rgba(74,222,128,.2)}
+.sid img{width:100%;height:100%;object-fit:cover}
+.tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0 20px}
+.tag{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700}
+.tg{background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.tb{background:rgba(129,140,248,.12);color:#818cf8;border:1px solid rgba(129,140,248,.2)}
+.sp{width:20px;height:20px;border:2px solid rgba(255,255,255,.15);border-top-color:#4ade80;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.h{display:none!important}
+.name-input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-family:inherit;font-size:18px;font-weight:600;text-align:center;margin-bottom:12px;outline:none}
+.name-input:focus{border-color:#4ade80;background:rgba(74,222,128,.06)}
+.name-input::placeholder{color:rgba(255,255,255,.3)}

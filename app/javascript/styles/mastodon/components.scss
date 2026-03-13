@@ -1759,6 +1759,31 @@ body > [data-popper-placement] {
   margin-top: 16px;
 }
 
+// MAKAI Truth Verification button styles
+.truth-real-icon {
+  transition: color 0.3s ease;
+
+  &.active {
+    color: #4ade80 !important;
+  }
+}
+
+.truth-fake-icon {
+  transition: color 0.3s ease;
+
+  &.active {
+    color: #f87171 !important;
+  }
+}
+
+.truth-safe-icon {
+  transition: color 0.3s ease;
+
+  &.active {
+    color: #818cf8 !important;
+  }
+}
+
 .detailed-status__action-bar-dropdown {
   flex: 1 1 auto;
   display: flex;

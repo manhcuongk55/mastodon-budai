@@ -1,0 +1,3 @@
+web: env PORT=3000 BIND=0.0.0.0 RAILS_ENV=production bundle exec puma -C config/puma.rb
+sidekiq: env RAILS_ENV=production bundle exec sidekiq
+stream: env PORT=4000 NODE_ENV=production yarn workspace @mastodon/streaming start

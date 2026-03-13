@@ -10,6 +10,11 @@ import { connect } from 'react-redux';
 
 import BookmarkIcon from '@/material-icons/400-24px/bookmark-fill.svg?react';
 import BookmarkBorderIcon from '@/material-icons/400-24px/bookmark.svg?react';
+import CheckIcon from '@/material-icons/400-24px/check-fill.svg?react';
+import CheckBorderIcon from '@/material-icons/400-24px/check.svg?react';
+import CloseIcon from '@/material-icons/400-24px/close.svg?react';
+import ShieldIcon from '@/material-icons/400-24px/shield_question-fill.svg?react';
+import ShieldBorderIcon from '@/material-icons/400-24px/shield_question.svg?react';
 import MoreHorizIcon from '@/material-icons/400-24px/more_horiz.svg?react';
 import ReplyIcon from '@/material-icons/400-24px/reply.svg?react';
 import ReplyAllIcon from '@/material-icons/400-24px/reply_all.svg?react';
@@ -43,6 +48,9 @@ const messages = defineMessages({
   removeFavourite: { id: 'status.remove_favourite', defaultMessage: 'Remove from favorites' },
   bookmark: { id: 'status.bookmark', defaultMessage: 'Bookmark' },
   removeBookmark: { id: 'status.remove_bookmark', defaultMessage: 'Remove bookmark' },
+  truthReal: { id: 'status.truth_real', defaultMessage: 'Trust' },
+  truthFake: { id: 'status.truth_fake', defaultMessage: 'Fake' },
+  truthSafe: { id: 'status.truth_safe', defaultMessage: 'Safe' },
   open: { id: 'status.open', defaultMessage: 'Expand this status' },
   report: { id: 'status.report', defaultMessage: 'Report @{name}' },
   muteConversation: { id: 'status.mute_conversation', defaultMessage: 'Mute conversation' },
@@ -63,6 +71,36 @@ const messages = defineMessages({
   revokeQuote: { id: 'status.revoke_quote', defaultMessage: 'Remove my post from @{name}’s post' },
   quotePolicyChange: { id: 'status.quote_policy_change', defaultMessage: 'Change who can quote' },
 });
+
+// MAKAI Truth Verification — localStorage-based P2P truth voting
+const truthStore = {
+  getVote(statusId) {
+    try {
+      const votes = JSON.parse(localStorage.getItem('makai_truth_votes') || '{}');
+      return votes[statusId] || null;
+    } catch { return null; }
+  },
+  setVote(statusId, type) {
+    try {
+      const votes = JSON.parse(localStorage.getItem('makai_truth_votes') || '{}');
+      votes[statusId] = type;
+      localStorage.setItem('makai_truth_votes', JSON.stringify(votes));
+    } catch { /* noop */ }
+  },
+  getCounts(statusId) {
+    try {
+      const counts = JSON.parse(localStorage.getItem('makai_truth_counts') || '{}');
+      return counts[statusId] || { real: 0, fake: 0, safe: 0 };
+    } catch { return { real: 0, fake: 0, safe: 0 }; }
+  },
+  setCounts(statusId, counts) {
+    try {
+      const all = JSON.parse(localStorage.getItem('makai_truth_counts') || '{}');
+      all[statusId] = counts;
+      localStorage.setItem('makai_truth_counts', JSON.stringify(all));
+    } catch { /* noop */ }
+  },
+};
 
 const mapStateToProps = (state, { status }) => {
   const quotedStatusId = status.getIn(['quote', 'quoted_status']);
@@ -153,6 +191,33 @@ class StatusActionBar extends ImmutablePureComponent {
   handleBookmarkClick = () => {
     this.props.onBookmark(this.props.status);
   };
+
+  handleTruthVote = (type) => {
+    const statusId = this.props.status.get('id');
+    const currentVote = truthStore.getVote(statusId);
+    const counts = truthStore.getCounts(statusId);
+
+    // Toggle off if same vote
+    if (currentVote === type) {
+      counts[type] = Math.max(0, counts[type] - 1);
+      truthStore.setVote(statusId, null);
+      truthStore.setCounts(statusId, counts);
+    } else {
+      // Remove previous vote if switching
+      if (currentVote) {
+        counts[currentVote] = Math.max(0, counts[currentVote] - 1);
+      }
+      counts[type]++;
+      truthStore.setVote(statusId, type);
+      truthStore.setCounts(statusId, counts);
+    }
+
+    this.forceUpdate();
+  };
+
+  handleTruthReal = () => this.handleTruthVote('real');
+  handleTruthFake = () => this.handleTruthVote('fake');
+  handleTruthSafe = () => this.handleTruthVote('safe');
 
   handleDeleteClick = () => {
     this.props.onDelete(this.props.status);
@@ -308,8 +373,6 @@ class StatusActionBar extends ImmutablePureComponent {
 
       if (writtenByMe) {
         menu.push({ text: intl.formatMessage(messages.edit), action: this.handleEditClick });
-        menu.push({ text: intl.formatMessage(messages.delete), action: this.handleDeleteClick, dangerous: true });
-        menu.push({ text: intl.formatMessage(messages.redraft), action: this.handleRedraftClick, dangerous: true });
       } else {
         menu.push({ text: intl.formatMessage(messages.mention, { name: account.get('username') }), action: this.handleMentionClick });
         menu.push({ text: intl.formatMessage(messages.direct, { name: account.get('username') }), action: this.handleDirectClick });
@@ -388,39 +451,14 @@ class StatusActionBar extends ImmutablePureComponent {
     return (
       <div className='status__action-bar'>
         <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button' title={replyTitle} icon={isReply ? 'reply' : replyIcon} iconComponent={isReply ? ReplyIcon : replyIconComponent} onClick={this.handleReplyClick} counter={status.get('replies_count')} />
+          <IconButton className='status__action-bar__button truth-real-icon' animate active={truthStore.getVote(status.get('id')) === 'real'} title={intl.formatMessage(messages.truthReal)} icon='check' iconComponent={truthStore.getVote(status.get('id')) === 'real' ? CheckIcon : CheckBorderIcon} onClick={this.handleTruthReal} counter={truthStore.getCounts(status.get('id')).real || undefined} />
         </div>
         <div className='status__action-bar__button-wrapper'>
-          <BoostButton status={status} counters={withCounters} />
+          <IconButton className='status__action-bar__button truth-fake-icon' animate active={truthStore.getVote(status.get('id')) === 'fake'} title={intl.formatMessage(messages.truthFake)} icon='close' iconComponent={CloseIcon} onClick={this.handleTruthFake} counter={truthStore.getCounts(status.get('id')).fake || undefined} />
         </div>
         <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button star-icon' animate active={status.get('favourited')} title={favouriteTitle} icon='star' iconComponent={status.get('favourited') ? StarIcon : StarBorderIcon} onClick={this.handleFavouriteClick} counter={withCounters ? status.get('favourites_count') : undefined} />
+          <IconButton className='status__action-bar__button truth-safe-icon' animate active={truthStore.getVote(status.get('id')) === 'safe'} title={intl.formatMessage(messages.truthSafe)} icon='shield' iconComponent={truthStore.getVote(status.get('id')) === 'safe' ? ShieldIcon : ShieldBorderIcon} onClick={this.handleTruthSafe} counter={truthStore.getCounts(status.get('id')).safe || undefined} />
         </div>
-        <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={bookmarkTitle} icon='bookmark' iconComponent={status.get('bookmarked') ? BookmarkIcon : BookmarkBorderIcon} onClick={this.handleBookmarkClick} />
-        </div>
-        <RemoveQuoteHint className='status__action-bar__button-wrapper' canShowHint={shouldShowQuoteRemovalHint}>
-          {(dismissQuoteHint) => (
-            <Dropdown
-              scrollKey={scrollKey}
-              status={status}
-              needsStatusRefresh={quickBoosting && status.get('quote_approval') === null}
-              items={menu}
-              direction='right'
-              onOpen={() => {
-                dismissQuoteHint();
-                return true;
-              }}
-            >
-              <IconButton
-                className='status__action-bar__button'
-                icon='ellipsis-h'
-                iconComponent={MoreHorizIcon}
-                title={intl.formatMessage(messages.more)}
-              />
-            </Dropdown>
-          )}
-        </RemoveQuoteHint>
       </div>
     );
   }

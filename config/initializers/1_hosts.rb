@@ -27,7 +27,7 @@ Rails.application.configure do
     end
   end
 
-  unless Rails.env.test?
+  unless Rails.env.test? || Rails.env.development?
     config.hosts << host if host.present?
     config.hosts << web_host if web_host.present?
     config.hosts.concat(alternate_domains) if alternate_domains.present?

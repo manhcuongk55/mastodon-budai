@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <title>MAKAI</title>
+  <meta name="theme-color" content="#000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/smile-verify/manifest.json">
+  <link rel="apple-touch-icon" href="/smile-verify/icon-192.png">
+  <link rel="stylesheet" href="/smile-verify/style.css">
+</head>
+<body>
+
+<div class="page" id="pg">
+  <div class="cam" id="cam">
+    <video id="v" autoplay playsinline muted></video>
+    <canvas id="c"></canvas>
+    <div class="preview" id="pv"><img id="pi" alt=""></div>
+    <div class="top"><span>🪷 MAKAI</span></div>
+    <div class="fallback" id="fb">
+      <span class="e">📸</span>
+      <p>Chọn ảnh khuôn mặt</p>
+      <input type="file" accept="image/*" capture="user" onchange="fp(event)">
+    </div>
+  </div>
+
+  <!-- Before capture -->
+  <div class="bot" id="b1">
+    <h1>Cười đi 😊</h1>
+    <button class="snap" onclick="snap()"><div class="snap-in"></div></button>
+  </div>
+
+  <!-- After capture: name + post -->
+  <div class="bot h" id="b2">
+    <h1>Tên bạn là gì? 😊</h1>
+    <input type="text" id="nameInput" placeholder="Nhập tên của bạn..." class="name-input">
+    <div class="btns">
+      <button class="b b-dark" onclick="redo()">Chụp lại</button>
+      <button class="b b-green" onclick="post()">📸 ĐĂNG</button>
+    </div>
+  </div>
+</div>
+
+<!-- P2P Verify -->
+<div class="ov" id="ovV">
+  <h1>Xác minh 🤝</h1>
+  <p class="sub">2 người xác nhận bạn cười thật</p>
+  <div class="vp" id="p1"><span class="em">👤</span><div><div class="nm" id="n1">Người #1</div><div class="st" id="s1">Đang chờ...</div></div><span class="ck">✅</span></div>
+  <div class="vp" id="p2"><span class="em">👤</span><div><div class="nm" id="n2">Người #2</div><div class="st" id="s2">Đang chờ...</div></div><span class="ck">✅</span></div>
+  <button class="b-full" id="vb" onclick="go()">Bắt đầu</button>
+</div>
+
+<!-- Success -->
+<div class="ov" id="ovS">
+  <div class="sid"><img id="sp" alt=""></div>
+  <h1 id="welcomeName">Chào mừng! 🪷</h1>
+  <p class="sub" id="hd">@you · MAKAI</p>
+  <div class="tags">
+    <span class="tag tg">✅ Người Thật</span>
+    <span class="tag tg">😊 Cười Thật</span>
+  </div>
+  <button class="b-full" onclick="location.href='/public/local'">🪷 Vào MAKAI</button>
+</div>
+
+<script>
+if('serviceWorker'in navigator)navigator.serviceWorker.register('/smile-verify/sw.js').catch(function(){});
+
+var str=null,photo=null;
+
+(function init(){
+  var id=localStorage.getItem('makai_id');
+  if(id){try{var u=JSON.parse(id);if(u.ok){location.href='/public/local';return}}catch(e){}}
+  var saved=localStorage.getItem('makai_photo');
+  if(saved){photo=saved;showReview();return}
+  startCam();
+})();
+
+function startCam(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){showFallback();return}
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:1280}}})
+  .then(function(s){str=s;document.getElementById('v').srcObject=s})
+  .catch(function(){showFallback()});
+}
+
+function showFallback(){
+  document.getElementById('v').style.display='none';
+  document.getElementById('fb').style.display='flex';
+  document.getElementById('b1').innerHTML='<h1>Chọn ảnh 📸</h1>';
+}
+
+function fp(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(v){photo=v.target.result;localStorage.setItem('makai_photo',photo);showReview()};r.readAsDataURL(f)}
+
+function snap(){
+  if(!str)return;
+  var v=document.getElementById('v'),c=document.getElementById('c');
+  c.width=v.videoWidth||720;c.height=v.videoHeight||1280;
+  var x=c.getContext('2d');x.translate(c.width,0);x.scale(-1,1);x.drawImage(v,0,0);
+  photo=c.toDataURL('image/jpeg',.85);
+  localStorage.setItem('makai_photo',photo);
+  str.getTracks().forEach(function(t){t.stop()});str=null;
+  showReview();
+}
+
+function showReview(){
+  document.getElementById('pi').src=photo;
+  document.getElementById('pv').style.display='block';
+  document.getElementById('v').style.display='none';
+  document.getElementById('fb').style.display='none';
+  document.getElementById('b1').style.display='none';
+  document.getElementById('b2').style.display='block';
+  document.getElementById('b2').className='bot';
+  // Focus name input
+  setTimeout(function(){document.getElementById('nameInput').focus()},300);
+}
+
+function redo(){
+  photo=null;localStorage.removeItem('makai_photo');
+  document.getElementById('pv').style.display='none';
+  document.getElementById('b1').style.display='block';
+  document.getElementById('b2').style.display='none';
+  document.getElementById('v').style.display='block';
+  startCam();
+}
+
+function post(){
+  var name=document.getElementById('nameInput').value.trim();
+  if(!name){document.getElementById('nameInput').placeholder='⚠️ Hãy nhập tên!';document.getElementById('nameInput').focus();return}
+  document.getElementById('ovV').className='ov on';
+}
+
+function go(){
+  var name=document.getElementById('nameInput').value.trim()||'smile';
+  var b=document.getElementById('vb');b.disabled=true;b.textContent='Đang xác minh...';
+  setTimeout(function(){document.getElementById('p1').className='vp ok';document.querySelector('#p1 .em').textContent='😊';document.getElementById('n1').textContent='Minh Anh';document.getElementById('s1').textContent='✅ Cười thật'},1500);
+  setTimeout(function(){document.getElementById('p2').className='vp ok';document.querySelector('#p2 .em').textContent='🤗';document.getElementById('n2').textContent='Lê Dũng';document.getElementById('s2').textContent='✅ Cười thật'},3000);
+  setTimeout(function(){
+    document.getElementById('sp').src=photo;
+    document.getElementById('welcomeName').textContent='Chào '+name+'! 🪷';
+    document.getElementById('hd').textContent='@'+name+' · MAKAI';
+    localStorage.setItem('makai_id',JSON.stringify({handle:name,ok:true}));
+    try{if(typeof Gun!=='undefined'){var g=Gun({peers:['https://gun-manhattan.herokuapp.com/gun'],localStorage:true});g.get('makai').get('users').get(name).put({handle:name,ts:Date.now(),ok:true})}}catch(e){}
+    document.getElementById('ovV').className='ov';
+    document.getElementById('ovS').className='ov on';
+  },4500);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+</body>
+</html>
