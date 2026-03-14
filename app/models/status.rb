@@ -12,6 +12,7 @@
 #  fetched_replies_at           :datetime
 #  incident_state               :string           default("reported")
 #  is_incident                  :boolean
+#  is_suspicious                :boolean          default(FALSE), not null
 #  language                     :string
 #  latitude                     :decimal(, )
 #  local                        :boolean
@@ -28,6 +29,7 @@
 #  spoiler_text                 :text             default(""), not null
 #  text                         :text             default(""), not null
 #  trendable                    :boolean
+#  truth_score                  :float            default(0.0), not null
 #  uri                          :string
 #  url                          :string
 #  visibility                   :integer          default("public"), not null

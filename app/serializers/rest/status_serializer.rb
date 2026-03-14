@@ -10,7 +10,18 @@ class REST::StatusSerializer < ActiveModel::Serializer
              :uri, :url, :replies_count, :reblogs_count,
              :favourites_count, :quotes_count, :edited_at,
              :bounty_amount, :truth_count, :safe_count, :fake_count, :is_incident,
-             :real_estate_price, :real_estate_area, :real_estate_legal_status, :real_estate_zoning
+             :real_estate_price, :real_estate_area, :real_estate_legal_status, :real_estate_zoning,
+             :truth_score, :is_suspicious
+
+  # Reality Engine / Truth Verification Protocol
+  def truth_score
+    SafetyHeuristicsService.calculate_truth_score(object)
+  end
+
+  def is_suspicious
+    SafetyHeuristicsService.evaluate_suspicion!(object)
+    object.is_suspicious
+  end
 
   attribute :favourited, if: :current_user?
   attribute :reblogged, if: :current_user?

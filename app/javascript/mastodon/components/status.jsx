@@ -20,6 +20,7 @@ import Card from '../features/status/components/card';
 // We use the component (and not the container) since we do not want
 // to use the progress bar to show download progress
 import Bundle from '../features/ui/components/bundle';
+import { RealityDashboard } from './reality_dashboard';
 import { MediaGallery, Video, Audio } from '../features/ui/util/async-components';
 import { SensitiveMediaContext } from '../features/ui/util/sensitive_media_context';
 import { displayMedia } from '../initial_state';
@@ -664,6 +665,8 @@ class Status extends ImmutablePureComponent {
                   legalStatus={status.get('real_estate_legal_status')}
                   zoning={status.get('real_estate_zoning')}
                 />
+
+                <RealityDashboard status={status} />
 
                 {children}
               </>

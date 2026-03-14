@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_080404) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1201,6 +1201,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_080404) do
     t.bigint "in_reply_to_id"
     t.string "incident_state", default: "reported"
     t.boolean "is_incident"
+    t.boolean "is_suspicious", default: false, null: false
     t.string "language"
     t.decimal "latitude"
     t.boolean "local"
@@ -1219,6 +1220,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_080404) do
     t.text "spoiler_text", default: "", null: false
     t.text "text", default: "", null: false
     t.boolean "trendable"
+    t.float "truth_score", default: 0.0, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri"
     t.string "url"
