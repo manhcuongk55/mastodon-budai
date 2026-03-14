@@ -40,6 +40,7 @@ import { suggestionsReducer } from './suggestions';
 import { followedTagsReducer } from './tags';
 import timelines from './timelines';
 import trends from './trends';
+import { trustLeaderboardsReducer } from './trust_leaderboards';
 import user_lists from './user_lists';
 
 const reducers = {
@@ -81,6 +82,7 @@ const reducers = {
   notificationPolicy: notificationPolicyReducer,
   notificationRequests: notificationRequestsReducer,
   navigation: navigationReducer,
+  trust_leaderboards: trustLeaderboardsReducer,
   ...sliceReducers,
 };
 

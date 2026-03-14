@@ -16,6 +16,8 @@ def redirect_with_vary(path)
 end
 
 Rails.application.routes.draw do
+  get "truth_map/global"
+  get "truth_map/crew"
   root to: redirect('/smile-verify/')
 
   mount LetterOpenerWeb::Engine, at: 'letter_opener' if Rails.env.development?

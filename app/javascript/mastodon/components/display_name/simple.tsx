@@ -19,6 +19,9 @@ export const DisplayNameSimple: FC<
         htmlString={account.get('display_name_html')}
         extraEmojis={account.get('emojis')}
       />
+      {account.get('is_guardian') && (
+        <span title="Guardian of the Network" style={{ marginLeft: '4px', verticalAlign: 'middle', fontSize: '0.9em' }}>🛡️</span>
+      )}
     </bdi>
   );
 };

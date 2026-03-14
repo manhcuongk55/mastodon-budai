@@ -1,5 +1,5 @@
 import type { KeyboardEventHandler } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
@@ -12,6 +12,7 @@ import { EmojiHTML } from '@/mastodon/components/emoji/html';
 import CheckIcon from '@/material-icons/400-24px/check.svg?react';
 import { openModal } from 'mastodon/actions/modal';
 import { fetchPoll, vote } from 'mastodon/actions/polls';
+import { apiGetPollVoters } from 'mastodon/api/polls';
 import { Icon } from 'mastodon/components/icon';
 import { useIdentity } from 'mastodon/identity_context';
 import type * as Model from 'mastodon/models/poll';
@@ -44,6 +45,37 @@ interface PollProps {
   lang?: string;
   disabled?: boolean;
 }
+
+const ConsensusVoterList: React.FC<{ pollId: string; options: Model.PollOption[] }> = ({ pollId, options }) => {
+  const [voters, setVoters] = useState<{ account: any, choice: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiGetPollVoters(pollId).then((res) => {
+      setVoters(res);
+      setLoading(false);
+    }).catch(() => {
+      setLoading(false);
+    });
+  }, [pollId]);
+
+  if (loading) return <div style={{ padding: '10px', fontSize: '13px', color: '#606984' }}>Loading public voters...</div>;
+  if (!voters.length) return null;
+
+  return (
+    <div className="consensus-voters" style={{ marginTop: '15px', padding: '10px', background: 'rgba(0,0,0,0.03)', borderRadius: '8px' }}>
+      <h4 style={{ fontSize: '13px', textTransform: 'uppercase', color: '#606984', marginBottom: '8px' }}>⚖️ Consensus Ledger (Public)</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {voters.map((v, idx) => (
+          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+            <span style={{ fontWeight: '500' }}>{v.account.display_name || v.account.username}</span>
+            <span style={{ color: '#3182ce' }}>Voted: {options[v.choice]?.title}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export const Poll: React.FC<PollProps> = ({ pollId, disabled, status }) => {
   // Third party hooks
@@ -202,6 +234,10 @@ export const Poll: React.FC<PollProps> = ({ pollId, disabled, status }) => {
         {votesCount}
         {poll.expires_at && <> · {timeRemaining}</>}
       </div>
+
+      {poll.is_consensus && showResults && (
+        <ConsensusVoterList pollId={pollId} options={poll.options} />
+      )}
     </div>
   );
 };

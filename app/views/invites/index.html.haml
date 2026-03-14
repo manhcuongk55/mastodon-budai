@@ -1,8 +1,11 @@
 - content_for :page_title do
-  = t('invites.title')
+  🏴‍☠️ Bounty Quests / Crew Recruitment
 
 - if policy(:invite).create?
-  %p= t('invites.prompt')
+  .bounty-quest-header{ style: "background-color: #FFFBEB; border: 1px dashed #FCD34D; padding: 16px; border-radius: 8px; margin-bottom: 24px;" }
+    %h3{ style: "color: #B45309; font-family: 'Inter Rounded', sans-serif; font-weight: bold; margin-bottom: 8px;" } Wanted: Truth Pirates
+    %p{ style: "color: #D97706; font-size: 14px; margin-top: 0;" }
+      Recruit your crew! Generate a bounty quest link below. For every user that sets sail and verifies truth, you earn Berries to your main account.
 
   = simple_form_for(@invite, url: invites_path) do |form|
     = render partial: 'form', object: form

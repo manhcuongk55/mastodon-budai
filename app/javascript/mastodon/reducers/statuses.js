@@ -13,6 +13,9 @@ import {
   BOOKMARK_FAIL,
   UNBOOKMARK_REQUEST,
   UNBOOKMARK_FAIL,
+  TRUTH_VOTE_SUCCESS,
+  ADD_BOUNTY_SUCCESS,
+  INCIDENT_STATE_UPDATE_SUCCESS,
 } from '../actions/interactions';
 import {
   reblog,
@@ -122,6 +125,26 @@ export default function statuses(state = initialState, action) {
     return state.get(action.status.get('id')) === undefined ? state : state.setIn([action.status.get('id'), 'bookmarked'], false);
   case UNBOOKMARK_FAIL:
     return state.get(action.status.get('id')) === undefined ? state : state.setIn([action.status.get('id'), 'bookmarked'], true);
+  case TRUTH_VOTE_SUCCESS:
+    return state.withMutations(map => {
+      if (map.has(action.status.get('id'))) {
+         map.setIn([action.status.get('id'), 'truth_vote'], action.response.truth_vote);
+         map.setIn([action.status.get('id'), 'truth_counts'], fromJS(action.response.truth_counts));
+         map.setIn([action.status.get('id'), 'wave_strength'], action.response.wave_strength);
+      }
+    });
+  case ADD_BOUNTY_SUCCESS:
+    return state.withMutations(map => {
+      if (map.has(action.status.get('id'))) {
+        map.setIn([action.status.get('id'), 'bounty_amount'], action.response.bounty_amount);
+      }
+    });
+  case INCIDENT_STATE_UPDATE_SUCCESS:
+    return state.withMutations(map => {
+      if (map.has(action.status.get('id'))) {
+        map.setIn([action.status.get('id'), 'incident_state'], action.response.incident_state);
+      }
+    });
   case STATUS_MUTE_SUCCESS:
     return state.setIn([action.id, 'muted'], true);
   case STATUS_UNMUTE_SUCCESS:

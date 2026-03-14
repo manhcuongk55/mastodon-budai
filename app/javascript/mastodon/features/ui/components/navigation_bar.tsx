@@ -12,6 +12,7 @@ import MenuIcon from '@/material-icons/400-24px/menu.svg?react';
 import NotificationsActiveIcon from '@/material-icons/400-24px/notifications-fill.svg?react';
 import NotificationsIcon from '@/material-icons/400-24px/notifications.svg?react';
 import SearchIcon from '@/material-icons/400-24px/search.svg?react';
+import ExploreIcon from '@/material-icons/400-24px/explore.svg?react';
 import { openModal } from 'mastodon/actions/modal';
 import { toggleNavigation } from 'mastodon/actions/navigation';
 import { fetchServer } from 'mastodon/actions/server';
@@ -25,6 +26,7 @@ import { useAppDispatch, useAppSelector } from 'mastodon/store';
 export const messages = defineMessages({
   home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
   search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
+  map: { id: 'tabs_bar.map', defaultMessage: 'Truth Map' },
   publish: { id: 'tabs_bar.publish', defaultMessage: 'New Post' },
   notifications: {
     id: 'tabs_bar.notifications',
@@ -185,6 +187,11 @@ export const NavigationBar: React.FC = () => {
               title={intl.formatMessage(messages.search)}
               to='/explore'
               icon={<Icon id='' icon={SearchIcon} />}
+            />
+            <IconLabelButton
+              title={intl.formatMessage(messages.map)}
+              to='/truth-map'
+              icon={<Icon id='' icon={ExploreIcon} />}
             />
             <IconLabelButton
               title={intl.formatMessage(messages.publish)}

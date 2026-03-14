@@ -19,12 +19,17 @@ export const DisplayNameWithoutDomain: FC<
     >
       <bdi>
         {account ? (
-          <EmojiHTML
-            className='display-name__html'
-            htmlString={account.get('display_name_html')}
-            as='strong'
-            extraEmojis={account.get('emojis')}
-          />
+          <>
+            <EmojiHTML
+              className='display-name__html'
+              htmlString={account.get('display_name_html')}
+              as='strong'
+              extraEmojis={account.get('emojis')}
+            />
+            {account.get('is_guardian') && (
+              <span title="Guardian of the Network" style={{ marginLeft: '4px', verticalAlign: 'middle', fontSize: '0.9em' }}>🛡️</span>
+            )}
+          </>
         ) : (
           <strong className='display-name__html'>
             <Skeleton width='10ch' />

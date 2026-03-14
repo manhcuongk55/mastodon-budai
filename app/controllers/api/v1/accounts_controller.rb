@@ -3,8 +3,8 @@
 class Api::V1::AccountsController < Api::BaseController
   include RegistrationHelper
 
-  before_action -> { authorize_if_got_token! :read, :'read:accounts' }, except: [:create, :follow, :unfollow, :remove_from_followers, :block, :unblock, :mute, :unmute]
-  before_action -> { doorkeeper_authorize! :follow, :write, :'write:follows' }, only: [:follow, :unfollow, :remove_from_followers]
+  before_action -> { authorize_if_got_token! :read, :'read:accounts' }, except: [:create, :follow, :unfollow, :remove_from_followers, :block, :unblock, :mute, :unmute, :vouch]
+  before_action -> { doorkeeper_authorize! :follow, :write, :'write:follows' }, only: [:follow, :unfollow, :remove_from_followers, :vouch]
   before_action -> { doorkeeper_authorize! :follow, :write, :'write:mutes' }, only: [:mute, :unmute]
   before_action -> { doorkeeper_authorize! :follow, :write, :'write:blocks' }, only: [:block, :unblock]
   before_action -> { doorkeeper_authorize! :write, :'write:accounts' }, only: [:create]
@@ -79,6 +79,18 @@ class Api::V1::AccountsController < Api::BaseController
   def unmute
     UnmuteService.new.call(current_user.account, @account)
     render json: @account, serializer: REST::RelationshipSerializer, relationships: relationships
+  end
+
+  def vouch
+    if current_user.account.is_guardian?
+      Vouch.create!(account: current_user.account, target_account: @account)
+      @account.increment!(:trust_score, 10)
+      render json: @account, serializer: REST::AccountSerializer
+    else
+      render json: { error: 'Only Guardians can vouch for other users' }, status: 403
+    end
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: 422
   end
 
   private

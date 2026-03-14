@@ -112,14 +112,19 @@ export const PollForm = () => {
   const options = poll?.get('options');
   const expiresIn = poll?.get('expires_in');
   const isMultiple = poll?.get('multiple');
+  const isConsensus = poll?.get('is_consensus');
 
   const handleDurationChange = useCallback(({ target: { value } }) => {
-    dispatch(changePollSettings(value, isMultiple));
-  }, [dispatch, isMultiple]);
+    dispatch(changePollSettings(value, isMultiple, isConsensus));
+  }, [dispatch, isMultiple, isConsensus]);
 
   const handleTypeChange = useCallback(({ target: { value } }) => {
-    dispatch(changePollSettings(expiresIn, value === 'true'));
-  }, [dispatch, expiresIn]);
+    dispatch(changePollSettings(expiresIn, value === 'true', isConsensus));
+  }, [dispatch, expiresIn, isConsensus]);
+
+  const handleConsensusChange = useCallback(({ target: { value } }) => {
+    dispatch(changePollSettings(expiresIn, isMultiple, value === 'true'));
+  }, [dispatch, expiresIn, isMultiple]);
 
   if (poll === null) {
     return null;
@@ -155,6 +160,13 @@ export const PollForm = () => {
           { value: false, label: intl.formatMessage(messages.singleChoice) },
           { value: true, label: intl.formatMessage(messages.multipleChoice) },
         ]} value={isMultiple} onChange={handleTypeChange} />
+
+        <div className='compose-form__poll__footer__sep' />
+
+        <Select label='Mode' options={[
+          { value: false, label: 'Anonymous' },
+          { value: true, label: '⚖️ Consensus (Public)' },
+        ]} value={isConsensus || false} onChange={handleConsensusChange} />
       </div>
     </div>
   );

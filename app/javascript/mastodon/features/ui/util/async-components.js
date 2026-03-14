@@ -36,6 +36,10 @@ export function DirectTimeline() {
   return import('../../direct_timeline');
 }
 
+export function P2PTimeline() {
+  return import('../../p2p_timeline');
+}
+
 export function ListTimeline () {
   return import('../../list_timeline');
 }
@@ -274,4 +278,8 @@ export function ListEdit () {
 
 export function ListMembers () {
   return import('../../lists/members');
+}
+
+export function TruthMap () {
+  return import('../../truth_map');
 }

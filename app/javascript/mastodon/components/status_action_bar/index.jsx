@@ -31,6 +31,7 @@ import { IconButton } from '../icon_button';
 import { BoostButton } from '../status/boost_button';
 import { RemoveQuoteHint } from './remove_quote_hint';
 import { quoteItemState, selectStatusState } from '../status/boost_button_utils';
+import { truthVote, addBounty } from '../../actions/interactions';
 
 const messages = defineMessages({
   delete: { id: 'status.delete', defaultMessage: 'Delete' },
@@ -70,37 +71,9 @@ const messages = defineMessages({
   openOriginalPage: { id: 'account.open_original_page', defaultMessage: 'Open original page' },
   revokeQuote: { id: 'status.revoke_quote', defaultMessage: 'Remove my post from @{name}’s post' },
   quotePolicyChange: { id: 'status.quote_policy_change', defaultMessage: 'Change who can quote' },
+  bounty: { id: 'status.bounty', defaultMessage: 'Add Bounty' },
 });
 
-// MAKAI Truth Verification — localStorage-based P2P truth voting
-const truthStore = {
-  getVote(statusId) {
-    try {
-      const votes = JSON.parse(localStorage.getItem('makai_truth_votes') || '{}');
-      return votes[statusId] || null;
-    } catch { return null; }
-  },
-  setVote(statusId, type) {
-    try {
-      const votes = JSON.parse(localStorage.getItem('makai_truth_votes') || '{}');
-      votes[statusId] = type;
-      localStorage.setItem('makai_truth_votes', JSON.stringify(votes));
-    } catch { /* noop */ }
-  },
-  getCounts(statusId) {
-    try {
-      const counts = JSON.parse(localStorage.getItem('makai_truth_counts') || '{}');
-      return counts[statusId] || { real: 0, fake: 0, safe: 0 };
-    } catch { return { real: 0, fake: 0, safe: 0 }; }
-  },
-  setCounts(statusId, counts) {
-    try {
-      const all = JSON.parse(localStorage.getItem('makai_truth_counts') || '{}');
-      all[statusId] = counts;
-      localStorage.setItem('makai_truth_counts', JSON.stringify(all));
-    } catch { /* noop */ }
-  },
-};
 
 const mapStateToProps = (state, { status }) => {
   const quotedStatusId = status.getIn(['quote', 'quoted_status']);
@@ -193,31 +166,18 @@ class StatusActionBar extends ImmutablePureComponent {
   };
 
   handleTruthVote = (type) => {
-    const statusId = this.props.status.get('id');
-    const currentVote = truthStore.getVote(statusId);
-    const counts = truthStore.getCounts(statusId);
-
-    // Toggle off if same vote
-    if (currentVote === type) {
-      counts[type] = Math.max(0, counts[type] - 1);
-      truthStore.setVote(statusId, null);
-      truthStore.setCounts(statusId, counts);
-    } else {
-      // Remove previous vote if switching
-      if (currentVote) {
-        counts[currentVote] = Math.max(0, counts[currentVote] - 1);
-      }
-      counts[type]++;
-      truthStore.setVote(statusId, type);
-      truthStore.setCounts(statusId, counts);
-    }
-
-    this.forceUpdate();
+    const { status, dispatch } = this.props;
+    dispatch(truthVote(status.get('id'), type));
   };
 
-  handleTruthReal = () => this.handleTruthVote('real');
+  handleTruthReal = () => this.handleTruthVote('truth');
   handleTruthFake = () => this.handleTruthVote('fake');
   handleTruthSafe = () => this.handleTruthVote('safe');
+
+  handleAddBounty = () => {
+    const { status, dispatch } = this.props;
+    dispatch(addBounty(status, 10)); // Default 10 berry bounty
+  };
 
   handleDeleteClick = () => {
     this.props.onDelete(this.props.status);
@@ -451,14 +411,23 @@ class StatusActionBar extends ImmutablePureComponent {
     return (
       <div className='status__action-bar'>
         <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button truth-real-icon' animate active={truthStore.getVote(status.get('id')) === 'real'} title={intl.formatMessage(messages.truthReal)} icon='check' iconComponent={truthStore.getVote(status.get('id')) === 'real' ? CheckIcon : CheckBorderIcon} onClick={this.handleTruthReal} counter={truthStore.getCounts(status.get('id')).real || undefined} />
+          <IconButton className='status__action-bar__button truth-icon-pill truth-icon-pill--real' animate active={status.get('truth_vote') === 'truth'} title={intl.formatMessage(messages.truthReal)} icon='check' iconComponent={status.get('truth_vote') === 'truth' ? CheckIcon : CheckBorderIcon} onClick={this.handleTruthReal} counter={status.get('truth_count') || undefined} />
         </div>
         <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button truth-fake-icon' animate active={truthStore.getVote(status.get('id')) === 'fake'} title={intl.formatMessage(messages.truthFake)} icon='close' iconComponent={CloseIcon} onClick={this.handleTruthFake} counter={truthStore.getCounts(status.get('id')).fake || undefined} />
+          <IconButton className='status__action-bar__button truth-icon-pill truth-icon-pill--safe' animate active={status.get('truth_vote') === 'safe'} title={intl.formatMessage(messages.truthSafe)} icon='shield' iconComponent={status.get('truth_vote') === 'safe' ? ShieldIcon : ShieldBorderIcon} onClick={this.handleTruthSafe} counter={status.get('safe_count') || undefined} />
         </div>
         <div className='status__action-bar__button-wrapper'>
-          <IconButton className='status__action-bar__button truth-safe-icon' animate active={truthStore.getVote(status.get('id')) === 'safe'} title={intl.formatMessage(messages.truthSafe)} icon='shield' iconComponent={truthStore.getVote(status.get('id')) === 'safe' ? ShieldIcon : ShieldBorderIcon} onClick={this.handleTruthSafe} counter={truthStore.getCounts(status.get('id')).safe || undefined} />
+          <IconButton className='status__action-bar__button truth-icon-pill truth-icon-pill--fake' animate active={status.get('truth_vote') === 'fake'} title={intl.formatMessage(messages.truthFake)} icon='close' iconComponent={CloseIcon} onClick={this.handleTruthFake} counter={status.get('fake_count') || undefined} />
         </div>
+
+        {/* Gamification: Add Bounty */}
+        {signedIn && (
+          <div className='status__action-bar__button-wrapper'>
+            <button className='status__action-bar__bounty-button' title={intl.formatMessage(messages.bounty)} onClick={this.handleAddBounty}>
+               🫐 <span className='bounty-counter'>{status.get('bounty_amount') || 0}</span>
+            </button>
+          </div>
+        )}
       </div>
     );
   }

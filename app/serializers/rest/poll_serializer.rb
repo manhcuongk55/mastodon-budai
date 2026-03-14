@@ -4,7 +4,7 @@ class REST::PollSerializer < ActiveModel::Serializer
   # Please update `app/javascript/mastodon/api_types/polls.ts` when making changes to the attributes
 
   attributes :id, :expires_at, :expired,
-             :multiple, :votes_count, :voters_count
+             :multiple, :votes_count, :voters_count, :is_consensus
 
   has_many :loaded_options, key: :options
   has_many :emojis, serializer: REST::CustomEmojiSerializer

@@ -34,11 +34,14 @@
 #  id_scheme                     :integer          default("numeric_ap_id")
 #  inbox_url                     :string           default(""), not null
 #  indexable                     :boolean          default(FALSE), not null
+#  is_guardian                   :boolean
+#  journey_milestone             :string
 #  last_webfingered_at           :datetime
 #  locked                        :boolean          default(FALSE), not null
 #  memorial                      :boolean          default(FALSE), not null
 #  note                          :text             default(""), not null
 #  outbox_url                    :string           default(""), not null
+#  pirate_role                   :string
 #  private_key                   :text
 #  protocol                      :integer          default("ostatus"), not null
 #  public_key                    :text             default(""), not null
@@ -53,6 +56,9 @@
 #  suspended_at                  :datetime
 #  suspension_origin             :integer
 #  trendable                     :boolean
+#  trust_score                   :integer          default(0), not null
+#  truth_berries                 :integer
+#  truth_bounty                  :integer
 #  uri                           :string           default(""), not null
 #  url                           :string
 #  username                      :string           default(""), not null
@@ -147,6 +153,39 @@ class Account < ApplicationRecord
   end
 
   validates :domain, exclusion: { in: [''] }
+
+  # --- Pirate Truth Economy Gamification ---
+  after_initialize :set_pirate_defaults, if: :new_record?
+
+  def earn_berries(amount)
+    increment!(:truth_berries, amount)
+  end
+
+  def claim_bounty(amount)
+    increment!(:truth_bounty, amount)
+    # Earning bounties can eventually upgrade role or milestone
+    promote_role_if_eligible!
+  end
+
+  def promote_role_if_eligible!
+    if truth_bounty > 500 && pirate_role == 'Truth Pirate'
+      update(pirate_role: 'Navigator', journey_milestone: 'Grand Line')
+    elsif truth_bounty > 2000 && pirate_role == 'Navigator'
+      update(pirate_role: 'Guardian', journey_milestone: 'New World')
+    end
+  end
+
+  private
+
+  def set_pirate_defaults
+    self.truth_berries ||= 100 # Starting Truth Berries (Sign up bonus)
+    self.truth_bounty ||= 0
+    self.pirate_role ||= 'Truth Pirate'
+    self.journey_milestone ||= 'East Blue'
+  end
+
+  public
+  # ------------------------------------------
 
   normalizes :username, with: ->(username) { username.squish }
 

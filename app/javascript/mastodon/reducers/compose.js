@@ -41,6 +41,7 @@ import {
   COMPOSE_SENSITIVITY_CHANGE,
   COMPOSE_SPOILERNESS_CHANGE,
   COMPOSE_SPOILER_TEXT_CHANGE,
+  COMPOSE_IS_INCIDENT_CHANGE,
   COMPOSE_LANGUAGE_CHANGE,
   COMPOSE_COMPOSING_CHANGE,
   COMPOSE_EMOJI_INSERT,
@@ -52,6 +53,9 @@ import {
   COMPOSE_CHANGE_MEDIA_ORDER,
   COMPOSE_SET_STATUS,
   COMPOSE_FOCUS,
+  COMPOSE_LOCATION_CHANGE,
+  COMPOSE_LOCATION_CLEAR,
+  COMPOSE_CHANGE_REAL_ESTATE,
 } from '../actions/compose';
 import { REDRAFT } from '../actions/statuses';
 import { STORE_HYDRATE } from '../actions/store';
@@ -64,12 +68,19 @@ const initialState = ImmutableMap({
   sensitive: false,
   spoiler: false,
   spoiler_text: '',
+  is_incident: false,
   privacy: null,
   id: null,
   text: '',
   focusDate: null,
   caretPosition: null,
   preselectDate: null,
+  latitude: null,
+  longitude: null,
+  real_estate_price: null,
+  real_estate_area: null,
+  real_estate_legal_status: null,
+  real_estate_zoning: null,
   in_reply_to: null,
   is_composing: false,
   is_submitting: false,
@@ -102,6 +113,7 @@ const initialPoll = ImmutableMap({
   options: ImmutableList(['', '']),
   expires_in: 24 * 3600,
   multiple: false,
+  is_consensus: false,
 });
 
 function statusToTextMentions(state, status) {
@@ -120,6 +132,7 @@ function clearAll(state) {
     map.set('text', '');
     map.set('spoiler', false);
     map.set('spoiler_text', '');
+    map.set('is_incident', false);
     map.set('is_submitting', false);
     map.set('is_changing_upload', false);
     map.set('in_reply_to', null);
@@ -132,6 +145,10 @@ function clearAll(state) {
     map.set('idempotencyKey', uuid());
     map.set('quoted_status_id', null);
     map.set('quote_policy', state.get('default_quote_policy'));
+    map.set('real_estate_price', null);
+    map.set('real_estate_area', null);
+    map.set('real_estate_legal_status', null);
+    map.set('real_estate_zoning', null);
   });
 }
 
@@ -404,10 +421,29 @@ export const composeReducer = (state = initialState, action) => {
     return state
       .set('spoiler_text', action.text)
       .set('idempotencyKey', uuid());
+  case COMPOSE_IS_INCIDENT_CHANGE:
+    return state.set('is_incident', action.isIncident);
+  case COMPOSE_LOCATION_CHANGE:
+    return state.withMutations(map => {
+      map.set('latitude', action.latitude);
+      map.set('longitude', action.longitude);
+    });
+  case COMPOSE_LOCATION_CLEAR:
+    return state.withMutations(map => {
+      map.set('latitude', null);
+      map.set('longitude', null);
+    });
   case COMPOSE_CHANGE:
     return state
       .set('text', action.text)
       .set('idempotencyKey', uuid());
+  case COMPOSE_CHANGE_REAL_ESTATE:
+    return state.withMutations(map => {
+      map.set('real_estate_price', action.price);
+      map.set('real_estate_area', action.area);
+      map.set('real_estate_legal_status', action.legalStatus);
+      map.set('real_estate_zoning', action.zoning);
+    });
   case COMPOSE_COMPOSING_CHANGE:
     return state.set('is_composing', action.value);
   case COMPOSE_REPLY:
@@ -601,7 +637,7 @@ export const composeReducer = (state = initialState, action) => {
   case COMPOSE_POLL_OPTION_CHANGE:
     return updatePoll(state, action.index, action.title, action.maxOptions);
   case COMPOSE_POLL_SETTINGS_CHANGE:
-    return state.update('poll', poll => poll.set('expires_in', action.expiresIn).set('multiple', action.isMultiple));
+    return state.update('poll', poll => poll.set('expires_in', action.expiresIn).set('multiple', action.isMultiple).set('is_consensus', action.isConsensus));
   case COMPOSE_LANGUAGE_CHANGE:
     return state.set('language', action.language);
   case COMPOSE_FOCUS:

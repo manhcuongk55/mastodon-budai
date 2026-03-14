@@ -57,6 +57,17 @@ class ComposeForm extends ImmutablePureComponent {
     isChangingUpload: PropTypes.bool,
     isEditing: PropTypes.bool,
     isUploading: PropTypes.bool,
+    isIncident: PropTypes.bool,
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+    realEstatePrice: PropTypes.string,
+    realEstateArea: PropTypes.string,
+    realEstateLegalStatus: PropTypes.string,
+    realEstateZoning: PropTypes.string,
+    onChangeIsIncident: PropTypes.func.isRequired,
+    onChangeLocation: PropTypes.func.isRequired,
+    onClearLocation: PropTypes.func.isRequired,
+    onChangeRealEstate: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
     onClearSuggestions: PropTypes.func.isRequired,
@@ -83,6 +94,8 @@ class ComposeForm extends ImmutablePureComponent {
 
   state = {
     highlighted: false,
+    isFetchingLocation: false,
+    isRealEstateMode: false,
   };
 
   constructor(props) {
@@ -170,6 +183,51 @@ class ComposeForm extends ImmutablePureComponent {
 
   handleChangeSpoilerText = (e) => {
     this.props.onChangeSpoilerText(e.target.value);
+  };
+
+  handleToggleIncident = () => {
+    this.props.onChangeIsIncident(!this.props.isIncident);
+  };
+
+  handleToggleLocation = () => {
+    if (this.props.latitude && this.props.longitude) {
+      this.props.onClearLocation();
+    } else {
+      this.setState({ isFetchingLocation: true });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.setState({ isFetchingLocation: false });
+          this.props.onChangeLocation(position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          this.setState({ isFetchingLocation: false });
+          alert('Failed to get location: ' + error.message);
+        }
+      );
+    }
+  };
+
+  handleToggleRealEstateMode = () => {
+    this.setState(prevState => {
+      const isRealEstateMode = !prevState.isRealEstateMode;
+      if (!isRealEstateMode) {
+        // Clear fields when turning off
+        this.props.onChangeRealEstate(null, null, null, null);
+      }
+      return { isRealEstateMode };
+    });
+  };
+
+  handleRealEstateChange = (e, field) => {
+    const { realEstatePrice, realEstateArea, realEstateLegalStatus, realEstateZoning } = this.props;
+    const values = {
+      price: realEstatePrice,
+      area: realEstateArea,
+      legalStatus: realEstateLegalStatus,
+      zoning: realEstateZoning,
+    };
+    values[field] = e.target.value;
+    this.props.onChangeRealEstate(values.price, values.area, values.legalStatus, values.zoning);
   };
 
   handleFocus = () => {
@@ -265,6 +323,34 @@ class ComposeForm extends ImmutablePureComponent {
           <div className='compose-form__dropdowns'>
             <VisibilityButton disabled={this.props.isEditing} />
             <LanguageDropdown />
+            <button 
+              type='button' 
+              className={classNames('icon-button', { active: this.props.isIncident })} 
+              title='Tag as Safety Alert' 
+              onClick={this.handleToggleIncident}
+              style={{ padding: '0 8px', fontSize: '16px' }}
+            >
+              🚨
+            </button>
+            <button 
+              type='button' 
+              className={classNames('icon-button', { active: this.props.latitude && this.props.longitude })} 
+              title='Attach GPS Location' 
+              onClick={this.handleToggleLocation}
+              disabled={this.state.isFetchingLocation}
+              style={{ padding: '0 8px', fontSize: '16px', opacity: this.state.isFetchingLocation ? 0.5 : 1 }}
+            >
+              📍
+            </button>
+            <button 
+              type='button' 
+              className={classNames('icon-button', { active: this.state.isRealEstateMode })} 
+              title='Tag as Real Estate Listing' 
+              onClick={this.handleToggleRealEstateMode}
+              style={{ padding: '0 8px', fontSize: '16px' }}
+            >
+              🏠
+            </button>
           </div>
 
           {this.props.spoiler && (
@@ -311,6 +397,19 @@ class ComposeForm extends ImmutablePureComponent {
             lang={this.props.lang}
             className='compose-form__input'
           />
+
+          {this.state.isRealEstateMode && (
+            <div className='compose-form__real-estate-fields' style={{ padding: '10px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '8px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                <input type='text' placeholder='Price (e.g. 5 Ty)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstatePrice || ''} onChange={(e) => this.handleRealEstateChange(e, 'price')} />
+                <input type='text' placeholder='Area (e.g. 50m2)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateArea || ''} onChange={(e) => this.handleRealEstateChange(e, 'area')} />
+              </div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input type='text' placeholder='Legal (e.g. Sổ Đỏ)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateLegalStatus || ''} onChange={(e) => this.handleRealEstateChange(e, 'legalStatus')} />
+                <input type='text' placeholder='Zoning (e.g. Đất Ở)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateZoning || ''} onChange={(e) => this.handleRealEstateChange(e, 'zoning')} />
+              </div>
+            </div>
+          )}
 
           <UploadForm />
           <PollForm />

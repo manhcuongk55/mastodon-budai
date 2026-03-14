@@ -26,8 +26,20 @@ class InlineAccount extends PureComponent {
     const { account } = this.props;
 
     return (
-      <span className='inline-account'>
-        <Avatar size={13} account={account} /> <strong>{account.get('username')}</strong>
+      <span className='inline-account' style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+        <Avatar size={16} account={account} /> 
+        <strong>{account.get('username')}</strong>
+        
+        {/* Pirate Truth Economy Gamification Elements */}
+        <span style={{
+          backgroundColor: '#F8FAFC', padding: '2px 6px', borderRadius: '4px',
+          fontSize: '11px', color: '#0EA5E9', border: '1px solid #BAE6FD', fontWeight: 'bold'
+        }}>
+          ⚓ Navigator
+        </span>
+        <span style={{ fontSize: '11px', color: '#D97706', fontWeight: 'bold' }}>
+          🫐 {account.get('truth_berries', 150)}
+        </span>
       </span>
     );
   }

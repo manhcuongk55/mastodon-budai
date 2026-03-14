@@ -109,6 +109,7 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
         // Forcing the protocol to be insecure helps if you are proxying your dev server with SSL,
         // because Vite still tries to connect to localhost.
         protocol: 'ws',
+        clientPort: 3036,
       },
       port: 3036,
     },
@@ -129,7 +130,7 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
             if (!facadeModuleId) {
               return '[name]-[hash].js';
             }
-            if (/mastodon\/locales\/[a-zA-Z\-]+\.json/.exec(facadeModuleId)) {
+            if (/mastodon\/locales\/[a-zA-Z-]+\.json/.exec(facadeModuleId)) {
               // put all locale files in `intl/`
               return 'intl/[name]-[hash].js';
             } else if (/node_modules\/@formatjs\//.exec(facadeModuleId)) {
@@ -231,10 +232,9 @@ async function findEntrypoints() {
   const jsEntrypoints = await readdir(jsEntrypointsDir, {
     withFileTypes: true,
   });
-  const jsExtTest = /\.[jt]sx?$/;
   for (const file of jsEntrypoints) {
-    if (file.isFile() && jsExtTest.test(file.name)) {
-      entrypoints[file.name.replace(jsExtTest, '')] = path.resolve(
+    if (file.isFile() && /\\.[jt]sx?$/.test(file.name)) {
+      entrypoints[file.name.replace(/\\.[jt]sx?$/, '')] = path.resolve(
         jsEntrypointsDir,
         file.name,
       );
@@ -246,10 +246,9 @@ async function findEntrypoints() {
   const scssEntrypoints = await readdir(scssEntrypointsDir, {
     withFileTypes: true,
   });
-  const scssExtTest = /\.s?css$/;
   for (const file of scssEntrypoints) {
-    if (file.isFile() && scssExtTest.test(file.name)) {
-      entrypoints[file.name.replace(scssExtTest, '')] = path.resolve(
+    if (file.isFile() && /\\.s?css$/.test(file.name)) {
+      entrypoints[file.name.replace(/\\.s?css$/, '')] = path.resolve(
         scssEntrypointsDir,
         file.name,
       );

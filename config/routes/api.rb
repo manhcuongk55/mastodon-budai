@@ -58,7 +58,16 @@ namespace :api, format: false do
 
       member do
         get :context
+        post :truth_vote
+        post :add_bounty
+        put :incident_state
       end
+    end
+
+    resources :trust_leaderboards, only: [:index]
+    
+    resource :truth_map, only: [] do
+      get :global
     end
 
     namespace :timelines do
@@ -231,6 +240,7 @@ namespace :api, format: false do
         post :unblock
         post :mute
         post :unmute
+        post :vouch
       end
 
       scope module: :accounts do
@@ -264,6 +274,7 @@ namespace :api, format: false do
     resources :featured_tags, only: [:index, :create, :destroy]
 
     resources :polls, only: [:show] do
+      get :voters, on: :member
       resources :votes, only: :create, module: :polls
     end
 

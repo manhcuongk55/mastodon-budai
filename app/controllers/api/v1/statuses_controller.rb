@@ -9,7 +9,7 @@ class Api::V1::StatusesController < Api::BaseController
   before_action -> { doorkeeper_authorize! :write, :'write:statuses' }, only:   [:create, :update, :destroy]
   before_action :require_user!, except:      [:index, :show, :context]
   before_action :set_statuses, only:         [:index]
-  before_action :set_status, only:           [:show, :context]
+  before_action :set_status, only:           [:show, :context, :truth_vote, :add_bounty, :incident_state]
   before_action :set_thread, only:           [:create]
   before_action :set_quoted_status, only:    [:create]
   before_action :check_statuses_limit, only: [:index]
@@ -94,7 +94,14 @@ class Api::V1::StatusesController < Api::BaseController
       poll: status_params[:poll],
       allowed_mentions: status_params[:allowed_mentions],
       idempotency: request.headers['Idempotency-Key'],
-      with_rate_limit: true
+      with_rate_limit: true,
+      is_incident: status_params[:is_incident],
+      latitude: status_params[:latitude],
+      longitude: status_params[:longitude],
+      real_estate_price: status_params[:real_estate_price],
+      real_estate_area: status_params[:real_estate_area],
+      real_estate_legal_status: status_params[:real_estate_legal_status],
+      real_estate_zoning: status_params[:real_estate_zoning]
     )
 
     render json: @status, serializer: serializer_for_status
@@ -121,6 +128,76 @@ class Api::V1::StatusesController < Api::BaseController
     UpdateStatusService.new.call(@status, current_account.id, update_options)
 
     render json: @status, serializer: REST::StatusSerializer
+  end
+
+  def add_bounty
+    bounty_cost = 10
+    
+    if current_account.truth_berries.to_i < bounty_cost
+      return render json: { error: "Not enough Truth Berries. You need #{bounty_cost}." }, status: 422
+    end
+
+    current_account.decrement!(:truth_berries, bounty_cost)
+    @status.increment!(:bounty_amount, bounty_cost)
+
+    render json: @status, serializer: REST::StatusSerializer
+  end
+
+  def incident_state
+    unless current_account.id == @status.account_id || current_account.is_guardian?
+      return render json: { error: 'Not authorized to manage this incident' }, status: 403
+    end
+
+    state = params[:state].to_s.strip.downcase
+    unless %w[reported in_progress resolved dismissed].include?(state)
+      return render json: { error: 'Invalid incident state' }, status: 400
+    end
+
+    @status.update!(incident_state: state)
+
+    render json: @status, serializer: REST::StatusSerializer
+  end
+
+  def truth_vote
+    vote_type = params[:type].to_s.strip.downcase
+    unless %w[truth safe fake].include?(vote_type)
+      return render json: { error: 'Invalid vote type' }, status: 400
+    end
+
+    # Create or update TruthNote for this status and this user
+    note = TruthNote.find_or_initialize_by(status: @status, account: current_account)
+    
+    # Reset scores
+    note.truth_score = 0
+    note.safe_score = 0
+    note.fake_score = 0
+
+    case vote_type
+    when 'truth'
+      note.truth_score = 1
+    when 'safe'
+      note.safe_score = 1
+    when 'fake'
+      note.fake_score = 1
+    end
+
+    note.save!
+    note.calculate_wave_strength
+
+    # Re-calculate aggregates across all notes for this status
+    notes = @status.truth_notes
+    counts = {
+      real: notes.sum(:truth_score),
+      safe: notes.sum(:safe_score),
+      fake: notes.sum(:fake_score)
+    }
+
+    render json: {
+      id: @status.id.to_s,
+      truth_vote: vote_type,
+      truth_counts: counts,
+      wave_strength: note.wave_strength
+    }
   end
 
   def destroy
@@ -191,6 +268,13 @@ class Api::V1::StatusesController < Api::BaseController
       :visibility,
       :language,
       :scheduled_at,
+      :is_incident,
+      :latitude,
+      :longitude,
+      :real_estate_price,
+      :real_estate_area,
+      :real_estate_legal_status,
+      :real_estate_zoning,
       allowed_mentions: [],
       media_ids: [],
       media_attributes: [
@@ -203,6 +287,7 @@ class Api::V1::StatusesController < Api::BaseController
         :multiple,
         :hide_totals,
         :expires_in,
+        :is_consensus,
         options: [],
       ]
     )

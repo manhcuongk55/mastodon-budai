@@ -30,6 +30,7 @@ import { getHashtagBarForStatus } from './hashtag_bar';
 import StatusActionBar from './status_action_bar';
 import StatusContent from './status_content';
 import { StatusThreadLabel } from './status_thread_label';
+import BasaoPropertyCard from './basao_property_card';
 
 const domParser = new DOMParser();
 
@@ -55,7 +56,7 @@ export const textForScreenReader = ({intl, status, rebloggedByText = false, isQu
     isQuote ? intl.formatMessage(messages.quote_noun) : undefined,
     displayName.length === 0 ? status.getIn(['account', 'acct']).split('@')[0] : displayName,
     spoilerText && status.get('hidden') ? spoilerText : contentText,
-    !!status.get('quote') ? intl.formatMessage(messages.contains_quote) : undefined,
+    status.get('quote') ? intl.formatMessage(messages.contains_quote) : undefined,
     intl.formatDate(status.get('created_at'), { hour: '2-digit', minute: '2-digit', month: 'short', day: 'numeric' }),
     status.getIn(['account', 'acct']),
     rebloggedByText,
@@ -99,6 +100,11 @@ class Status extends ImmutablePureComponent {
     onOpenMedia: PropTypes.func,
     onOpenVideo: PropTypes.func,
     onBlock: PropTypes.func,
+    onUnblock: PropTypes.func,
+    onReport: PropTypes.func,
+    onMute: PropTypes.func,
+    onUnmute: PropTypes.func,
+    onMuteConversation: PropTypes.func,
     onAddFilter: PropTypes.func,
     onEmbed: PropTypes.func,
     onHeightChange: PropTypes.func,
@@ -106,6 +112,7 @@ class Status extends ImmutablePureComponent {
     onToggleCollapsed: PropTypes.func,
     onTranslate: PropTypes.func,
     onInteractionModal: PropTypes.func,
+    onUpdateIncidentState: PropTypes.func,
     muted: PropTypes.bool,
     hidden: PropTypes.bool,
     unread: PropTypes.bool,
@@ -147,6 +154,7 @@ class Status extends ImmutablePureComponent {
   state = {
     showMedia: defaultMediaVisibility(this.props.status) && !(this.context?.hideMediaByDefault),
     showDespiteFilter: undefined,
+    scamShieldDismissed: false,
   };
 
   componentDidUpdate (prevProps) {
@@ -162,6 +170,12 @@ class Status extends ImmutablePureComponent {
       });
     }
   }
+
+  handleDismissScamShield = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState({ scamShieldDismissed: true });
+  };
 
   handleToggleMediaVisibility = () => {
     this.setState({ showMedia: !this.state.showMedia });
@@ -583,11 +597,46 @@ class Status extends ImmutablePureComponent {
                 'status--is-quote': isQuotedPost,
                 'status--has-quote': !!status.get('quote'),
                 'status--highlighted-entry': this.props.shouldHighlightOnMount,
+                'status--is-incident': status.get('is_incident'),
               })
             }
             data-id={status.get('id')}
           >
             {(connectReply || connectUp || connectToRoot) && <div className={classNames('status__line', { 'status__line--full': connectReply, 'status__line--first': !status.get('in_reply_to_id') && !connectToRoot })} />}
+
+            {status.get('is_incident') && (
+              <div className="status__incident-badge" style={{ padding: '8px 15px', background: 'rgba(255,100,100,0.1)', borderBottom: '1px solid rgba(255,100,100,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: '4px', marginBottom: '8px' }}>
+                <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {(status.get('incident_state') === 'reported' || !status.get('incident_state')) && <span>🔴 Đã Báo Cáo (Reported)</span>}
+                  {status.get('incident_state') === 'in_progress' && <span>🟡 Đang Xử Lý (In Progress)</span>}
+                  {status.get('incident_state') === 'resolved' && <span>🟢 Đã Giải Quyết (Resolved)</span>}
+                  {status.get('incident_state') === 'dismissed' && <span>⚫ Đã Hủy (Dismissed)</span>}
+                </div>
+                {(this.props.onUpdateIncidentState && (status.getIn(['account', 'id']) === this.props.account?.id || this.props.account?.is_guardian)) && (
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button style={{ padding: '4px 8px', fontSize: '12px', background: '#3182ce', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer' }} onClick={() => this.props.onUpdateIncidentState(status, 'in_progress')}>Xử Lý</button>
+                    <button style={{ padding: '4px 8px', fontSize: '12px', background: '#48bb78', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer' }} onClick={() => this.props.onUpdateIncidentState(status, 'resolved')}>Xong</button>
+                    <button style={{ padding: '4px 8px', fontSize: '12px', background: '#e53e3e', color: 'white', borderRadius: '4px', border: 'none', cursor: 'pointer' }} onClick={() => this.props.onUpdateIncidentState(status, 'dismissed')}>Hủy</button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {((status.get('fake_count') || 0) > (status.get('safe_count') || 0) + 5) && !this.state.scamShieldDismissed && (
+              <div className="status__scam-shield">
+                <div className="status__scam-shield__icon">🛡️</div>
+                <div className="status__scam-shield__text"><strong>Cảnh báo lừa đảo (Scam Alert):</strong> The community has marked this content as potentially harmful or fake.</div>
+                <button className="status__scam-shield__dismiss" onClick={this.handleDismissScamShield}>I understand the risk</button>
+              </div>
+            )}
+
+            {(status.get('latitude') && status.get('longitude')) && (
+              <div className="status__location" style={{ fontSize: '13px', color: '#606984', padding: '0 15px', marginTop: '10px' }}>
+                📍 <a href={`https://www.google.com/maps?q=${status.get('latitude')},${status.get('longitude')}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <strong>Verified Location</strong>: {Number(status.get('latitude')).toFixed(4)}, {Number(status.get('longitude')).toFixed(4)}
+                </a>
+              </div>
+            )}
 
             {header}
 
@@ -608,6 +657,13 @@ class Status extends ImmutablePureComponent {
 
                 {media}
                 {hashtagBar}
+
+                <BasaoPropertyCard
+                  price={status.get('real_estate_price')}
+                  area={status.get('real_estate_area')}
+                  legalStatus={status.get('real_estate_legal_status')}
+                  zoning={status.get('real_estate_zoning')}
+                />
 
                 {children}
               </>

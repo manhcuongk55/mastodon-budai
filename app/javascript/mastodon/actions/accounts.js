@@ -709,3 +709,20 @@ export const navigateToProfile = (accountId) => {
     }
   };
 };
+
+export const ACCOUNT_VOUCH_REQUEST = 'ACCOUNT_VOUCH_REQUEST';
+export const ACCOUNT_VOUCH_SUCCESS = 'ACCOUNT_VOUCH_SUCCESS';
+export const ACCOUNT_VOUCH_FAIL    = 'ACCOUNT_VOUCH_FAIL';
+
+export function vouchAccount(id) {
+  return (dispatch) => {
+    dispatch({ type: ACCOUNT_VOUCH_REQUEST, id });
+
+    api().post(`/api/v1/accounts/${id}/vouch`).then(response => {
+      dispatch(importFetchedAccount(response.data));
+      dispatch({ type: ACCOUNT_VOUCH_SUCCESS, account: response.data });
+    }).catch(error => {
+      dispatch({ type: ACCOUNT_VOUCH_FAIL, id, error });
+    });
+  };
+}

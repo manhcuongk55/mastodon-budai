@@ -82,6 +82,8 @@ class PostStatusService < BaseService
     safeguard_private_mention_quote!(@status)
     attach_quote!(@status)
 
+    mock_safety_ai_defense!(@status)
+
     antispam = Antispam.new(@status)
     antispam.local_preflight_check!
 
@@ -109,6 +111,20 @@ class PostStatusService < BaseService
     status.quote.ensure_quoted_access
 
     status.quote.accept! if @quoted_status.local? && StatusPolicy.new(@status.account, @quoted_status).quote?
+  end
+
+  def mock_safety_ai_defense!(status)
+    return if status.text.blank?
+
+    # Option B & Option D (GPS/P2P Concept): AI-to-deal-with-AI Heuristic Defense
+    # Flags posts containing common fraud or location-spoofing keywords.
+    trigger_words = ['scam', 'lừa đảo', 'crypto bait', 'bpt fake', 'fake location', 'đầu tư siêu tốc']
+    
+    text_downcased = status.text.downcase
+    if trigger_words.any? { |word| text_downcased.include?(word) }
+      status.is_incident = true
+      status.fake_count = (status.fake_count || 0) + 100 # Instantly trigger the Safety UI Shield
+    end
   end
 
   def safeguard_mentions!(status)
@@ -243,6 +259,13 @@ class PostStatusService < BaseService
       application: @options[:application],
       rate_limit: @options[:with_rate_limit],
       quote_approval_policy: @options[:quote_approval_policy],
+      is_incident: @options[:is_incident],
+      latitude: @options[:latitude],
+      longitude: @options[:longitude],
+      real_estate_price: @options[:real_estate_price],
+      real_estate_area: @options[:real_estate_area],
+      real_estate_legal_status: @options[:real_estate_legal_status],
+      real_estate_zoning: @options[:real_estate_zoning]
     }.compact
   end
 

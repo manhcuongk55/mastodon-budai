@@ -9,25 +9,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0a0a1a;
-      --bg-secondary: #12122a;
-      --bg-card: #1a1a3e;
-      --bg-card-hover: #222255;
-      --text-primary: #f0f0ff;
-      --text-secondary: #a0a0cc;
-      --text-muted: #6060a0;
-      --accent-hope: #4ade80;
-      --accent-fear: #f87171;
-      --accent-curiosity: #fbbf24;
-      --accent-empathy: #f472b6;
-      --accent-pride: #818cf8;
-      --accent-surprise: #22d3ee;
-      --accent-gradient: linear-gradient(135deg, #818cf8, #f472b6, #fbbf24);
-      --border: rgba(255,255,255,0.06);
-      --glass: rgba(255,255,255,0.03);
-      --radius: 16px;
-      --radius-sm: 10px;
-      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+      /* Bát Nhã / An Lạc (Zen/Peaceful) Palette */
+      --bg-primary: #f8fafc; /* Rất sáng, nhẹ nhàng */
+      --bg-secondary: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.85); /* Trắng đục mờ */
+      --bg-card-hover: rgba(255, 255, 255, 0.95);
+      --text-primary: #334155; /* Xám đậm, dễ đọc, không gắt như đen tuyền */
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      
+      /* Cảm xúc - chuyển sang tone pastel, soft */
+      --accent-hope: #34d399; /* Xanh lá dịu */
+      --accent-fear: #fb7185;  /* Đỏ hồng nhẹ */
+      --accent-curiosity: #fcd34d; /* Vàng nắng */
+      --accent-empathy: #f472b6; /* Hồng nhạt */
+      --accent-pride: #818cf8; /* Xanh lơ dịu */
+      --accent-surprise: #38bdf8; /* Xanh da trời mây */
+      --accent-gradient: linear-gradient(135deg, #818cf8, #34d399, #fcd34d);
+      
+      --border: rgba(100, 116, 139, 0.15); /* Viền mỏng, nhạt */
+      --glass: rgba(255, 255, 255, 0.6);
+      --radius: 24px; /* Bo cong nhiều hơn để tạo sự mềm mại */
+      --radius-sm: 16px;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.04); /* Bóng dập cực mềm */
+      --shadow-hover: 0 15px 50px rgba(0, 0, 0, 0.08);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,7 +45,7 @@
       overflow-x: hidden;
     }
 
-    /* Animated background */
+    /* Animated background - Vân mây nhạt */
     body::before {
       content: '';
       position: fixed;
@@ -48,16 +53,16 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle at 30% 50%, rgba(129,140,248,0.08) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 50%, rgba(244,114,182,0.06) 0%, transparent 50%),
-                  radial-gradient(circle at 50% 80%, rgba(34,211,238,0.05) 0%, transparent 50%);
-      animation: bgFloat 20s ease-in-out infinite;
+      background: radial-gradient(circle at 30% 50%, rgba(129,140,248,0.04) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 50%, rgba(52,211,153,0.03) 0%, transparent 50%),
+                  radial-gradient(circle at 50% 80%, rgba(252,211,77,0.04) 0%, transparent 50%);
+      animation: bgFloat 30s ease-in-out infinite; /* Chậm lại cho bình yên */
       z-index: 0;
     }
     @keyframes bgFloat {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(2%, -2%) rotate(1deg); }
-      66% { transform: translate(-1%, 1%) rotate(-0.5deg); }
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      33% { transform: translate(1%, -1%) rotate(0.5deg) scale(1.02); }
+      66% { transform: translate(-1%, 1%) rotate(-0.2deg) scale(0.98); }
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
@@ -75,25 +80,29 @@
       text-transform: uppercase;
       background: var(--accent-gradient);
       -webkit-background-clip: text;
+      background-clip: text; /* Fix lint */
       -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
     }
 
     .header h1 {
-      font-size: clamp(28px, 5vw, 48px);
-      font-weight: 900;
-      line-height: 1.1;
-      margin-bottom: 12px;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800; /* Nhẹ nhàng hơn 900 */
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
     }
     .header h1 span {
       background: var(--accent-gradient);
       -webkit-background-clip: text;
+      background-clip: text; /* fix lint */
       -webkit-text-fill-color: transparent;
     }
 
     .header p {
       color: var(--text-secondary);
       font-size: 16px;
+      line-height: 1.6;
       max-width: 600px;
       margin: 0 auto;
     }
@@ -108,23 +117,25 @@
     }
 
     .tab {
-      padding: 10px 24px;
+      padding: 12px 28px;
       border: 1px solid var(--border);
       border-radius: 50px;
-      background: var(--glass);
+      background: rgba(255, 255, 255, 0.4);
       color: var(--text-secondary);
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s ease;
       backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
     }
 
-    .tab:hover { border-color: rgba(129,140,248,0.3); color: var(--text-primary); }
+    .tab:hover { border-color: rgba(129,140,248,0.3); color: var(--text-primary); background: rgba(255, 255, 255, 0.8); }
     .tab.active {
-      background: linear-gradient(135deg, rgba(129,140,248,0.2), rgba(244,114,182,0.2));
-      border-color: rgba(129,140,248,0.5);
+      background: var(--accent-gradient);
+      border-color: transparent;
       color: #fff;
+      box-shadow: 0 4px 15px rgba(129,140,248,0.2);
     }
 
     /* Panels */
@@ -137,10 +148,16 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 28px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(20px);
+      padding: 32px; /* Tăng padding thở */
+      margin-bottom: 24px;
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       box-shadow: var(--shadow);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
     }
 
     .card h3 {
@@ -155,28 +172,34 @@
     /* Textarea */
     textarea, input, select {
       width: 100%;
-      background: rgba(0,0,0,0.3);
+      background: rgba(255, 255, 255, 0.7);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 14px 18px;
+      padding: 16px 20px;
       color: var(--text-primary);
       font-family: inherit;
       font-size: 15px;
       resize: vertical;
-      transition: border-color 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.01);
+    }
+    textarea::placeholder, input::placeholder {
+      color: var(--text-muted);
     }
     textarea:focus, input:focus, select:focus {
       outline: none;
-      border-color: rgba(129,140,248,0.5);
+      border-color: var(--accent-pride);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
     }
-    textarea { min-height: 120px; }
+    textarea { min-height: 120px; line-height: 1.6; }
 
     select {
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0cc' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 14px center;
+      background-position: right 18px center;
     }
     select option { background: var(--bg-card); color: var(--text-primary); }
 
@@ -196,38 +219,39 @@
     .btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 14px 32px;
+      gap: 10px;
+      padding: 16px 36px;
       border: none;
       border-radius: 50px;
       font-family: inherit;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      letter-spacing: 0.5px;
     }
 
     .btn-primary {
       background: var(--accent-gradient);
       color: #fff;
-      box-shadow: 0 4px 20px rgba(129,140,248,0.3);
+      box-shadow: 0 10px 25px rgba(129,140,248,0.25);
     }
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(129,140,248,0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(129,140,248,0.35);
     }
-    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:active { transform: translateY(0); box-shadow: 0 5px 15px rgba(129,140,248,0.2); }
 
     .btn-secondary {
-      background: rgba(255,255,255,0.05);
-      color: var(--text-secondary);
+      background: rgba(255,255,255,0.8);
+      color: var(--text-primary);
       border: 1px solid var(--border);
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-secondary:hover { background: #fff; border-color: rgba(129,140,248,0.3); box-shadow: 0 5px fifteen rgba(0,0,0,0.05); }
 
     .btn-post {
-      background: linear-gradient(135deg, #4ade80, #22d3ee);
-      color: #000;
+      background: linear-gradient(135deg, #34d399, #38bdf8);
+      color: #fff;
       font-weight: 700;
     }
 
@@ -257,9 +281,9 @@
     }
 
     .emotion-track {
-      height: 8px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
+      height: 10px;
+      background: rgba(100, 116, 139, 0.1);
+      border-radius: 12px;
       overflow: hidden;
     }
 
@@ -294,13 +318,13 @@
       stroke-width: 8;
     }
 
-    .viral-score-ring .track { stroke: rgba(255,255,255,0.05); }
+    .viral-score-ring .track { stroke: rgba(100, 116, 139, 0.1); }
     .viral-score-ring .fill {
       stroke: url(#scoreGradient);
       stroke-linecap: round;
       stroke-dasharray: 502;
       stroke-dashoffset: 502;
-      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: stroke-dashoffset 2s cubic-bezier(0.2, 1, 0.3, 1);
     }
 
     .viral-score-value {
@@ -309,9 +333,10 @@
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 48px;
-      font-weight: 900;
+      font-weight: 800;
       background: var(--accent-gradient);
       -webkit-background-clip: text;
+      background-clip: text; /* fix lint */
       -webkit-text-fill-color: transparent;
     }
 
@@ -331,17 +356,17 @@
 
     /* Suggestions */
     .suggestion {
-      background: rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.5);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 16px 20px;
-      margin-bottom: 10px;
+      padding: 18px 22px;
+      margin-bottom: 12px;
       display: flex;
-      gap: 12px;
+      gap: 16px;
       align-items: flex-start;
       transition: all 0.3s;
     }
-    .suggestion:hover { border-color: rgba(129,140,248,0.3); background: rgba(129,140,248,0.05); }
+    .suggestion:hover { border-color: rgba(129,140,248,0.4); background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
 
     .suggestion-icon {
       font-size: 20px;
@@ -360,24 +385,27 @@
 
     /* Generated Content */
     .generated-content {
-      background: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(244,114,182,0.05));
-      border: 1px solid rgba(129,140,248,0.2);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5));
+      border: 1px solid rgba(129,140,248,0.1);
       border-radius: var(--radius);
-      padding: 24px;
-      margin-top: 16px;
+      padding: 28px;
+      margin-top: 20px;
       white-space: pre-wrap;
       line-height: 1.8;
       font-size: 15px;
       position: relative;
+      color: var(--text-primary);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.01);
     }
 
     .generated-content::before {
-      content: '✨ AI Generated';
+      content: '🪷 Bát Nhã Generated';
       position: absolute;
-      top: -10px;
+      top: -12px;
       left: 20px;
-      background: var(--bg-card);
-      padding: 2px 12px;
+      background: var(--bg-primary);
+      padding: 4px 16px;
+      border: 1px solid var(--border);
       border-radius: 20px;
       font-size: 11px;
       font-weight: 600;
@@ -502,34 +530,38 @@
     }
     .truth-hero h2 {
       font-size: 28px;
-      font-weight: 900;
-      margin-bottom: 8px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-primary);
     }
-    .truth-hero p { color: var(--text-secondary); font-size: 15px; }
+    .truth-hero p { color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
 
     .truth-content-preview {
-      background: rgba(0,0,0,0.3);
+      background: rgba(255, 255, 255, 0.6);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px 24px;
-      margin: 20px 0;
+      padding: 24px 28px;
+      margin: 24px 0;
       font-size: 15px;
       line-height: 1.8;
       color: var(--text-primary);
       min-height: 80px;
       position: relative;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
     }
     .truth-content-preview::before {
-      content: '📄 Nội dung cần xác minh';
+      content: '🪷 Nội dung soi chiếu';
       position: absolute;
-      top: -10px;
-      left: 16px;
-      background: var(--bg-card);
-      padding: 0 10px;
+      top: -12px;
+      left: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px 12px;
       font-size: 11px;
       font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 1px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
@@ -594,14 +626,15 @@
     }
 
     .truth-btn-icon {
-      font-size: 48px;
+      font-size: 56px;
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.05); /* Soft drop shadow for icon */
     }
     .truth-btn-label {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 3px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
     .truth-btn-real .truth-btn-label { color: var(--accent-hope); }
@@ -672,27 +705,28 @@
 
     .trust-verdict {
       text-align: center;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      margin-top: 16px;
-      padding: 16px;
+      margin-top: 20px;
+      padding: 20px;
       border-radius: var(--radius-sm);
       animation: fadeIn 0.5s ease;
+      background: #fff;
     }
     .trust-verdict.real {
-      background: rgba(74,222,128,0.1);
       color: var(--accent-hope);
-      border: 1px solid rgba(74,222,128,0.2);
+      border: 1px solid rgba(52,211,153,0.3);
+      box-shadow: 0 4px 15px rgba(52,211,153,0.1);
     }
     .trust-verdict.fake {
-      background: rgba(248,113,113,0.1);
       color: var(--accent-fear);
-      border: 1px solid rgba(248,113,113,0.2);
+      border: 1px solid rgba(251,113,133,0.3);
+      box-shadow: 0 4px 15px rgba(251,113,133,0.1);
     }
     .trust-verdict.neutral {
-      background: rgba(251,191,36,0.1);
       color: var(--accent-curiosity);
-      border: 1px solid rgba(251,191,36,0.2);
+      border: 1px solid rgba(252,211,77,0.3);
+      box-shadow: 0 4px 15px rgba(252,211,77,0.1);
     }
 
     /* Recent votes animation */
@@ -762,27 +796,27 @@
   <div class="panel active" id="panel-truth">
     <div class="card">
       <div class="truth-hero">
-        <h2>🛡️ Xác minh Sự thật</h2>
-        <p>Mạng xã hội của sự thật — cộng đồng cùng xác minh. Chỉ 2 nút. Đơn giản. Minh bạch.</p>
+        <h2>🪷 Lan toả sự An Tâm</h2>
+        <p>Mạng xã hội của nụ cười — cộng đồng cùng soi chiếu. Đơn giản. Minh bạch. Thiện lành.</p>
       </div>
 
       <div class="form-group">
-        <label>📋 Dán nội dung cần xác minh</label>
-        <textarea id="truthInput" placeholder="Dán bài viết, tin tức, quảng cáo vào đây để cộng đồng xác minh thật/giả...&#10;&#10;Ví dụ: Căn hộ 2PN quận 7 giá chỉ 1.2 tỷ, pháp lý sổ hồng riêng, bàn giao quý 4/2026."></textarea>
+        <label>📋 Lời nói cần được soi chiếu</label>
+        <textarea id="truthInput" placeholder="Ví dụ: Căn hộ 2PN quận 7 giá chỉ 1.2 tỷ, pháp lý sổ hồng riêng, bàn giao quý 4/2026."></textarea>
       </div>
 
       <div id="truthContentPreview" class="truth-content-preview" style="display:none"></div>
 
       <div class="truth-buttons">
         <button class="truth-btn truth-btn-real" id="btnReal" onclick="voteTruth('real')">
-          <span class="truth-btn-icon">✅</span>
-          <span class="truth-btn-label">THẬT</span>
-          <div class="truth-btn-count" id="realCount">0 votes</div>
+          <span class="truth-btn-icon">🪷</span>
+          <span class="truth-btn-label">AN TÂM</span>
+          <div class="truth-btn-count" id="realCount">0 views</div>
         </button>
         <button class="truth-btn truth-btn-fake" id="btnFake" onclick="voteTruth('fake')">
-          <span class="truth-btn-icon">❌</span>
-          <span class="truth-btn-label">GIẢ</span>
-          <div class="truth-btn-count" id="fakeCount">0 votes</div>
+          <span class="truth-btn-icon">🍃</span>
+          <span class="truth-btn-label">CẨN TRỌNG</span>
+          <div class="truth-btn-count" id="fakeCount">0 views</div>
         </button>
       </div>
 
@@ -791,7 +825,7 @@
       <div id="trustResult" style="display:none">
         <div class="trust-meter">
           <div class="trust-meter-header">
-            <span class="trust-meter-label">🛡️ Trust Score</span>
+            <span class="trust-meter-label">🪷 Sự Thật Khách Quan</span>
             <span class="trust-meter-value" id="trustScoreValue" style="color:var(--text-primary)">—</span>
           </div>
           <div class="trust-meter-track">
@@ -799,9 +833,9 @@
             <div class="trust-meter-indicator" id="trustIndicator" style="left:50%"></div>
           </div>
           <div class="trust-labels">
-            <span class="trust-label-fake">❌ GIẢ</span>
+            <span class="trust-label-fake">🍃 CẨN TRỌNG</span>
             <span style="color:var(--text-muted)">CHƯA RÕ</span>
-            <span class="trust-label-real">✅ THẬT</span>
+            <span class="trust-label-real">🪷 AN TÂM</span>
           </div>
         </div>
         <div class="trust-verdict" id="trustVerdict"></div>
@@ -847,7 +881,7 @@
               </svg>
               <div class="viral-score-value" id="viralScoreValue">0</div>
             </div>
-            <div class="viral-score-label">Viral Score</div>
+            <div class="viral-score-label">Chỉ số Chạm</div>
             <div class="viral-verdict" id="viralVerdict"></div>
           </div>
         </div>
@@ -912,8 +946,8 @@
   <!-- TAB 3: Hook Generator -->
   <div class="panel" id="panel-hooks">
     <div class="card">
-      <h3>🎯 Hook Generator – Câu mở đầu viral</h3>
-      <p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Tạo 10+ câu hook cho bài viết / video, phân theo 6 loại cảm xúc</p>
+      <h3>🪷 Mở đầu chạm trái tim</h3>
+      <p style="color:var(--text-secondary);margin-bottom:20px;font-size:14px;">Tạo 10+ câu chuyện mở đầu lan toả, phân theo 6 cung bậc cảm xúc</p>
 
       <div class="form-group">
         <label>📌 Chủ đề</label>
@@ -1130,10 +1164,10 @@ function displayAnalysis(scores, text) {
 
   // Verdict
   let verdict = '';
-  if (viralScore >= 80) verdict = '🔥 VIRAL POTENTIAL CỰC CAO!';
-  else if (viralScore >= 60) verdict = '✨ Tiềm năng tốt!';
-  else if (viralScore >= 40) verdict = '⚠️ Cần thêm cảm xúc';
-  else verdict = '💤 Chưa đủ chạm cảm xúc';
+  if (viralScore >= 80) verdict = '🪷 SẼ CHẠM ĐẾN NHIỀU TRÁI TIM!';
+  else if (viralScore >= 60) verdict = '✨ Lan toả năng lượng tốt lành!';
+  else if (viralScore >= 40) verdict = '🌱 Rất chân thành nhưng cần thêm điểm nhấn';
+  else verdict = '💤 Chưa đủ đánh thức cảm xúc';
   document.getElementById('viralVerdict').innerHTML = verdict;
 
   // Suggestions
@@ -1348,7 +1382,7 @@ function showToast(text) {
 
 let truthVotes = { real: 0, fake: 0 };
 let hasVoted = false;
-const FAKE_NAMES = ['Minh', 'Lan', 'Hùng', 'Mai', 'Đức', 'Trang', 'Tuấn', 'Hoa', 'Nam', 'Linh', 'Phong', 'Thảo', 'Bảo', 'Ngọc', 'Khoa', 'Hạnh'];
+const FAKE_NAMES = ['Tâm', 'Thiện', 'An', 'Bình', 'Hoà', 'Ngọc', 'Nhẫn', 'Minh', 'Thanh', 'Tịnh', 'Thuận', 'Hỉ', 'Từ', 'Bi', 'Tuệ', 'Giác'];
 
 function voteTruth(type) {
   const text = document.getElementById('truthInput').value.trim();
@@ -1417,7 +1451,7 @@ function addVoteBubble(name, type) {
   const container = document.getElementById('recentVotes');
   const bubble = document.createElement('div');
   bubble.className = `vote-bubble ${type}`;
-  bubble.innerHTML = `${type === 'real' ? '✅' : '❌'} ${name}`;
+  bubble.innerHTML = `${type === 'real' ? '🪷' : '🍃'} ${name}`;
   container.appendChild(bubble);
   
   // Update counts
@@ -1459,13 +1493,13 @@ function updateTrustScore() {
   const verdictEl = document.getElementById('trustVerdict');
   if (trustPercent >= 70) {
     verdictEl.className = 'trust-verdict real';
-    verdictEl.innerHTML = `✅ CỘNG ĐỒNG XÁC NHẬN: <strong>THẬT</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.real} người thật đã xác minh · Toả sáng giá trị thật 🪷</small>`;
+    verdictEl.innerHTML = `🪷 CỘNG ĐỒNG CẢM THẤY: <strong>AN TÂM</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.real} người đã lan toả năng lượng an lành này 🪷</small>`;
   } else if (trustPercent <= 30) {
     verdictEl.className = 'trust-verdict fake';
-    verdictEl.innerHTML = `❌ CẢNH BÁO: <strong>NGHI NGỜ GIẢ</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.fake} người thật phản đối · Hãy cẩn thận ⚠️</small>`;
+    verdictEl.innerHTML = `🍃 BÁT NHÃ SOI CHIẾU: <strong>CẦN CẨN TRỌNG</strong><br><small style="font-size:13px;font-weight:400;opacity:0.8">${truthVotes.fake} người nhắc nhở hãy quan sát kỹ hơn 🍃</small>`;
   } else {
     verdictEl.className = 'trust-verdict neutral';
-    verdictEl.innerHTML = `🤔 CHƯA RÕ — Cần thêm xác minh<br><small style="font-size:13px;font-weight:400;opacity:0.8">${total} người đã vote · Đang chờ cộng đồng</small>`;
+    verdictEl.innerHTML = `🤔 CHƯA RÕ — Cần thêm ánh sáng<br><small style="font-size:13px;font-weight:400;opacity:0.8">${total} người đã quan tâm · Đang chờ cộng đồng</small>`;
   }
 }
 
@@ -1473,8 +1507,8 @@ function updateTrustScore() {
 document.getElementById('truthInput').addEventListener('input', () => {
   truthVotes = { real: 0, fake: 0 };
   hasVoted = false;
-  document.getElementById('realCount').textContent = '0 votes';
-  document.getElementById('fakeCount').textContent = '0 votes';
+  document.getElementById('realCount').textContent = '0 views';
+  document.getElementById('fakeCount').textContent = '0 views';
   document.getElementById('recentVotes').innerHTML = '';
   document.getElementById('trustResult').style.display = 'none';
   document.getElementById('truthContentPreview').style.display = 'none';

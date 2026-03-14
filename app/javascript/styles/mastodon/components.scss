@@ -5,6 +5,44 @@
 .app-body {
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: -ms-autohiding-scrollbar;
+  /* MAKAI Truth Feed – Neo-Minimalist Focus Mode (Default) */
+  --makai-bg: #E6F0FA;
+  --makai-text: #0A2540;
+  --makai-accent-safe: #4ADE80;
+  --makai-accent-trust: #F4C542;
+  --makai-accent-fake: #FF6B6B;
+  background: var(--color-bg-primary) !important;
+  background-attachment: fixed !important;
+
+  /* Emotionally Aware Modes configuration classes */
+  &.theme-safe-harbor {
+    --makai-bg: #EAF4F4; /* Light teal warmth */
+    --makai-accent-safe: #3FCCA6;
+    background: linear-gradient(180deg, #EAF4F4 0%, #FAF0E6 100%) !important; /* Adding soft gold at bottom */
+  }
+
+  &.theme-evening {
+    --makai-bg: #1A2836;
+    --makai-text: #D0DCEA;
+    background: linear-gradient(180deg, #0A1520 0%, #1A2836 100%) !important;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0) translate(-50%, -50%); }
+  50% { transform: translateY(-10px) translate(-50%, -50%); }
+  100% { transform: translateY(0) translate(-50%, -50%); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Base structural assignments (Elderly-Friendly High Contrast & Large Text) */
+body {
+  background: var(--makai-bg);
+  color: var(--makai-text);
+  font-size: 18px !important; /* Force global base scale up text for the elderly */
 }
 
 .animated-number {
@@ -94,12 +132,12 @@
   justify-content: center;
   gap: 6px;
   font-family: inherit;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 18px; /* Scaled up for Accessibility */
+  font-weight: 600; /* Bolder text */
   letter-spacing: 0;
-  line-height: 22px;
+  line-height: 24px;
   overflow: hidden;
-  padding: 7px 18px;
+  padding: 12px 24px; /* Scaled up touch target padding */
   position: relative;
   text-align: center;
   text-decoration: none;
@@ -470,6 +508,74 @@ body > [data-popper-placement] {
   text-overflow: ellipsis;
 }
 
+/* MAKAI Truth Feed – Pills & Animations (Elderly-Friendly Oversized UX) */
+.truth-icon-pill {
+  width: 140px !important; /* Increased from 108px for massive touch targets */
+  height: 60px !important; /* Increased from 48px */
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 16px !important;
+  background: transparent;
+  transition: all 0.3s ease;
+  flex: none !important;
+
+  .icon {
+    width: 28px !important; /* Visual scaling */
+    height: 28px !important;
+    margin-right: 8px;
+  }
+
+  &__counter {
+    font-size: 20px !important; /* Increased from 16px for readability */
+    font-family: "Inter Rounded", var(--font-sans-serif), sans-serif;
+  }
+}
+
+.truth-icon-pill--real {
+  &.active {
+    background: #F4C542 !important;
+    color: #FFFFFF !important;
+    animation: truthVoteGlowReal 0.4s ease-out;
+    box-shadow: 0 0 8px rgba(244, 197, 66, 0.6);
+  }
+}
+
+.truth-icon-pill--safe {
+  &.active {
+    background: #4ADE80 !important;
+    color: #FFFFFF !important;
+    animation: truthVoteGlowSafe 0.4s ease-out;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+  }
+}
+
+.truth-icon-pill--fake {
+  opacity: 0.4;
+  &.active {
+    opacity: 1;
+    background: #FF6B6B !important;
+    color: #FFFFFF !important;
+  }
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+@keyframes truthVoteGlowReal {
+  0% { box-shadow: 0 0 0 0 rgba(244, 197, 66, 0.7); transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { box-shadow: 0 0 0 10px rgba(244, 197, 66, 0); transform: scale(1); }
+}
+
+@keyframes truthVoteGlowSafe {
+  0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); transform: scale(1); }
+}
+
+
 .autosuggest-account {
   .display-name {
     font-weight: 400;
@@ -606,8 +712,8 @@ body > [data-popper-placement] {
     color: var(--color-text-primary);
     background: transparent;
     font-family: inherit;
-    font-size: 14px;
-    padding: 12px;
+    font-size: 18px; /* Increased from 14px for accessibility */
+    padding: 16px; /* Increased from 12px */
     line-height: normal;
     border: 0;
     outline: 0;
@@ -1049,9 +1155,12 @@ body > [data-popper-placement] {
   overflow: hidden;
   text-overflow: ellipsis;
   text-autospace: normal;
-  font-size: 15px;
-  line-height: 22px;
+  /* MAKAI Truth Feed – Neo-Minimalist Typography */
+  font-size: 20px;
+  line-height: 1.8;
+  letter-spacing: 0.3px;
   padding-top: 2px;
+  font-family: "Inter Rounded", var(--font-sans-serif), sans-serif;
   color: var(--color-text-primary);
 
   &:focus {
@@ -1468,9 +1577,14 @@ body > [data-popper-placement] {
 }
 
 .status {
-  padding: 16px;
+  padding: 20px;
   min-height: 54px;
-  border-bottom: 1px solid var(--color-border-primary);
+/* MAKAI Truth Feed – Minimal Post Card */
+  background: var(--color-bg-primary);
+  border-radius: 24px;
+  border: 1px solid #F0F0F0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  margin-bottom: 32px;
   cursor: auto;
   opacity: 1;
   animation: fade 150ms linear;
@@ -1593,9 +1707,9 @@ body > [data-popper-placement] {
 
 .status__relative-time {
   display: block;
-  font-size: 15px;
-  line-height: 22px;
-  height: 40px;
+  font-size: 18px; /* Increased from 15px for Elderly Accessibility */
+  line-height: 24px;
+  height: 48px; /* Increased from 40px for larger tap target */
   order: 2;
   flex: 0 0 auto;
   color: var(--color-text-secondary);
@@ -1625,10 +1739,10 @@ body > [data-popper-placement] {
 .status__info .status__display-name {
   max-width: 100%;
   display: flex;
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 18px; /* Increased from 15px */
+  line-height: 26px; /* Increased from 22px */
   align-items: center;
-  gap: 10px;
+  gap: 12px; /* Spread items out */
   overflow: hidden;
   margin-inline-end: auto;
 
@@ -1855,10 +1969,10 @@ body > [data-popper-placement] {
 }
 
 .detailed-status__meta {
-  margin-top: 24px;
+  margin-top: 32px; /* Increased from 24px */
   color: var(--color-text-tertiary);
-  font-size: 14px;
-  line-height: 18px;
+  font-size: 18px; /* Increased from 14px */
+  line-height: 24px;
 
   &__line {
     border-bottom: 1px solid var(--color-border-primary);
@@ -2033,7 +2147,7 @@ body > [data-popper-placement] {
 }
 
 .account {
-  padding: 16px;
+  padding: 24px 16px; /* Increased top/bottom padding for hit area */
 
   &:not(&--without-border) {
     border-bottom: 1px solid var(--color-border-primary);
@@ -2043,11 +2157,11 @@ body > [data-popper-placement] {
     flex: 1 1 auto;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--color-text-secondary);
     overflow: hidden;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 18px; /* Increased from 14px */
 
     .display-name {
       margin-bottom: 4px;
@@ -2879,8 +2993,8 @@ a.account__display-name {
 }
 
 .dropdown-menu__item {
-  font-size: 13px;
-  line-height: 18px;
+  font-size: 16px; /* Increased from 13px */
+  line-height: 24px; /* Increased from 18px */
   font-weight: 500;
   display: block;
 
@@ -2907,10 +3021,10 @@ a.account__display-name {
     font: inherit;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     white-space: inherit;
     width: 100%;
-    padding: 10px 14px;
+    padding: 16px 20px; /* Scaled up touch target padding */
     border: 0;
     margin: 0;
     background: transparent;
@@ -4071,13 +4185,13 @@ a.account__display-name {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px; /* Increased from 8px */
   width: 100%;
-  padding: 10px;
-  padding-inline-start: 14px;
+  padding: 16px; /* Increased from 10px */
+  padding-inline-start: 20px; /* Increased from 14px */
   overflow: hidden;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 18px; /* Increased from 16px */
+  font-weight: 500; /* Increased from 400 for better visibility */
   text-decoration: none;
   white-space: nowrap;
   color: color-mix(
@@ -5770,6 +5884,37 @@ a.status-card {
   }
 }
 
+.status__action-bar__bounty-button {
+  background: transparent;
+  border: 2px dashed rgba(var(--color-text-warning), 0.4);
+  border-radius: 8px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 4px 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+
+  .bounty-counter {
+    margin-left: 6px;
+    font-weight: 600;
+    color: var(--color-text-warning);
+    text-shadow: 0 0 5px rgba(var(--color-text-warning), 0.4);
+  }
+
+  &:hover, &:focus {
+    border-color: var(--color-text-warning);
+    background: rgba(var(--color-text-warning), 0.1);
+    transform: scale(1.05);
+    outline: none;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .visibility-modal {
   &__quote-warning {
     color: var(--color-text-primary);
@@ -7232,6 +7377,17 @@ a.status-card {
     align-items: center;
     justify-content: center;
     font-size: 26px;
+    
+    /* MAKAI Truth Feed - Bottom Nav Styling */
+    border-inline-end: none;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+  }
+
+  &.active &__icon {
+    color: #0A2540;
+    transform: scale(1.1);
   }
 
   &__list {
@@ -7251,6 +7407,7 @@ a.status-card {
       text-decoration: none;
       color: var(--color-text-tertiary);
       font-weight: 500;
+      font-family: "Inter Rounded", var(--font-sans-serif), sans-serif;
 
       &:hover {
         text-decoration: underline;
@@ -8889,9 +9046,18 @@ noscript {
   border-bottom: 1px solid var(--color-border-primary);
   padding: 5px;
   padding-bottom: 0;
+  
+  /* MAKAI Truth Feed - Crew Island (Chat Cabin) */
+  background: linear-gradient(135deg, rgba(230, 240, 250, 0.4) 0%, rgba(255, 255, 255, 0.8) 100%);
+  border: 1px solid #E6D2B5; /* Subtle wooden border */
+  border-radius: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  transition: all 0.2s ease-in-out;
 
-  &:focus {
+  &:focus, &:hover {
     background: var(--color-bg-secondary);
+    border-color: #D4B895; /* Deepen wood tone on hover */
     outline: 0;
   }
 
@@ -11594,5 +11760,63 @@ noscript {
     display: flex;
     align-items: center;
     gap: 4px;
+  }
+}
+
+// Safety and Incident Features
+.status--is-incident {
+  border: 2px solid var(--color-error);
+  border-radius: 4px;
+  background: rgba(255, 0, 0, 0.05);
+
+  .status__content {
+    font-weight: 500;
+  }
+}
+
+.status__scam-shield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(30,30,40, 0.95);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 24px;
+  border-radius: 4px;
+
+  &__icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  &__text {
+    color: var(--color-text-primary);
+    font-size: 16px;
+    margin-bottom: 24px;
+    max-width: 400px;
+  }
+
+  &__dismiss {
+    background-color: transparent;
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: var(--color-error);
+      color: #fff;
+    }
   }
 }

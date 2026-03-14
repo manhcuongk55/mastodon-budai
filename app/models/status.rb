@@ -5,14 +5,25 @@
 # Table name: statuses
 #
 #  id                           :bigint(8)        not null, primary key
+#  bounty_amount                :integer
 #  deleted_at                   :datetime
 #  edited_at                    :datetime
+#  fake_count                   :integer
 #  fetched_replies_at           :datetime
+#  incident_state               :string           default("reported")
+#  is_incident                  :boolean
 #  language                     :string
+#  latitude                     :decimal(, )
 #  local                        :boolean
+#  longitude                    :decimal(, )
 #  ordered_media_attachment_ids :bigint(8)        is an Array
 #  quote_approval_policy        :integer          default(0), not null
+#  real_estate_area             :decimal(, )
+#  real_estate_legal_status     :string
+#  real_estate_price            :decimal(, )
+#  real_estate_zoning           :string
 #  reply                        :boolean          default(FALSE), not null
+#  safe_count                   :integer
 #  sensitive                    :boolean          default(FALSE), not null
 #  spoiler_text                 :text             default(""), not null
 #  text                         :text             default(""), not null
@@ -101,6 +112,8 @@ class Status < ApplicationRecord
   has_one :poll, inverse_of: :status, dependent: :destroy
   has_one :trend, class_name: 'StatusTrend', inverse_of: :status, dependent: nil
   has_one :quote, inverse_of: :status, dependent: :destroy
+  
+  has_many :truth_notes, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? || with_quote? }

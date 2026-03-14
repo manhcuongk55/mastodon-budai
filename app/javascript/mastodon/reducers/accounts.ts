@@ -68,7 +68,7 @@ export const accountsReducer: Reducer<typeof initialState> = (
       .update(getCurrentUser(), (account) =>
         account?.update('following_count', (n) => n + 1),
       );
-  } else if (unfollowAccountSuccess.match(action))
+  } else if (unfollowAccountSuccess.match(action)) {
     return state
       .update(action.payload.relationship.id, (account) =>
         account?.update('followers_count', (n) => Math.max(0, n - 1)),
@@ -76,5 +76,19 @@ export const accountsReducer: Reducer<typeof initialState> = (
       .update(getCurrentUser(), (account) =>
         account?.update('following_count', (n) => Math.max(0, n - 1)),
       );
-  else return state;
+  } else if ((action as any).type === 'ACCOUNT_TRUTH_BERRIES_INCREMENT') {
+    const act = action as any;
+    // @ts-ignore
+    return state.update(act.accountId as string, (account) =>
+      account?.update('truth_berries' as keyof AccountShape, (n) => ((n as number) || 0) + (act.amount as number)),
+    );
+  } else if ((action as any).type === 'ACCOUNT_TRUTH_BERRIES_DECREMENT') {
+    const act = action as any;
+    // @ts-ignore
+    return state.update(act.accountId as string, (account) =>
+      account?.update('truth_berries' as keyof AccountShape, (n) => Math.max(0, ((n as number) || 0) - (act.amount as number))),
+    );
+  } else {
+    return state;
+  }
 };

@@ -20,4 +20,5 @@ export interface ApiPollJSON {
 
   voted?: boolean;
   own_votes?: number[];
+  is_consensus?: boolean;
 }

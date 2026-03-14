@@ -69,6 +69,11 @@ export const AccountNumberFields: FC<{ accountId: string }> = ({
         />
       </NavLink>
 
+      <span title="Community Trust Score" style={{ color: 'var(--color-success)', fontWeight: 'bold' }}>
+        <span style={{ fontSize: '1.2em' }}>{account.trust_score}</span> <span className="invisible">Trust Score</span>
+        🛡️
+      </span>
+
       {isRedesignEnabled() && (
         <FormattedMessage
           id='account.joined_long'

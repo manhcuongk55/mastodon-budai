@@ -168,12 +168,12 @@ class StatusContent extends PureComponent {
       const mention = this.props.status.get('mentions').find(item => compareUrls(element.href, item.get('url')));
       return (
         <HandledLink
+          key={key}
           {...props}
           href={element.href}
           text={element.innerText}
           hashtagAccountId={this.props.status.getIn(['account', 'id'])}
           mention={mention?.toJSON()}
-          key={key}
         >
           {children}
         </HandledLink>
@@ -213,6 +213,41 @@ class StatusContent extends PureComponent {
       <Poll pollId={status.get('poll')} status={status} lang={language} />
     );
 
+    const navigatorHint = (
+      <div className='status__ai-navigator-hint' style={{
+        backgroundColor: '#F8FAFC', padding: '10px 14px', borderRadius: '12px',
+        marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px'
+      }}>
+        <div style={{ flex: '0 0 auto', color: '#475569' }}>🪷</div>
+        <div style={{
+          fontFamily: '"Inter Rounded", var(--font-sans-serif), sans-serif',
+          fontStyle: 'italic', fontSize: '14px', color: '#475569', lineHeight: '1.4'
+        }}>
+          MAKAI Navigator: Source reliability medium • Community leaning Safe • Tap to verify together
+        </div>
+      </div>
+    );
+
+    // Simulated Gamification logic: Only some unverified posts have a bounty.
+    const hasBounty = status.get('replies_count') % 3 === 1; // Example distribution logic
+    
+    const bountyTicket = hasBounty && (
+      <div className='status__bounty-ticket' style={{
+        backgroundColor: '#FFFBEB', border: '1px dashed #FCD34D', padding: '8px 12px', borderRadius: '8px',
+        marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px' }}>🏴‍☠️</span>
+          <span style={{ fontFamily: '"Inter Rounded", sans-serif', fontSize: '14px', fontWeight: 'bold', color: '#B45309' }}>
+            WANTED: Truth Verify
+          </span>
+        </div>
+        <div style={{ fontWeight: 'bold', color: '#D97706', fontSize: '14px' }}>
+          +50 Berries
+        </div>
+      </div>
+    );
+
     if (this.props.onClick) {
       return (
         <>
@@ -231,7 +266,9 @@ class StatusContent extends PureComponent {
               onElement={this.handleElement}
             />
 
+            {bountyTicket}
             {poll}
+            {navigatorHint}
             {translateButton}
           </div>
 
@@ -249,7 +286,9 @@ class StatusContent extends PureComponent {
             onElement={this.handleElement}
           />
 
+          {bountyTicket}
           {poll}
+          {navigatorHint}
           {translateButton}
         </div>
       );

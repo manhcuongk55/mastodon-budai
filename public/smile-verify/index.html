@@ -140,7 +140,7 @@ function go(){
     document.getElementById('welcomeName').textContent='Chào '+name+'! 🏴‍☠️';
     document.getElementById('hd').textContent='@'+name+' · MAKAI Crew';
     localStorage.setItem('makai_id',JSON.stringify({handle:name,ok:true}));
-    try{if(typeof Gun!=='undefined'){var g=Gun({peers:['https://gun-manhattan.herokuapp.com/gun'],localStorage:true});g.get('makai').get('users').get(name).put({handle:name,ts:Date.now(),ok:true})}}catch(e){}
+    try{if(typeof Gun!=='undefined'){var g=Gun({peers:['http://localhost:8765/gun'],localStorage:true});g.get('makai').get('users').get(name).put({handle:name,ts:Date.now(),ok:true})}}catch(e){}
     document.getElementById('ovV').className='ov';
     document.getElementById('ovS').className='ov on';
   },4500);

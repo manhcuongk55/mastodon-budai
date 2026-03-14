@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_080404) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -182,12 +182,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
     t.integer "id_scheme", default: 1
     t.string "inbox_url", default: "", null: false
     t.boolean "indexable", default: false, null: false
+    t.boolean "is_guardian"
+    t.string "journey_milestone"
     t.datetime "last_webfingered_at", precision: nil
     t.boolean "locked", default: false, null: false
     t.boolean "memorial", default: false, null: false
     t.bigint "moved_to_account_id"
     t.text "note", default: "", null: false
     t.string "outbox_url", default: "", null: false
+    t.string "pirate_role"
     t.text "private_key"
     t.integer "protocol", default: 0, null: false
     t.text "public_key", default: "", null: false
@@ -202,6 +205,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
     t.datetime "suspended_at", precision: nil
     t.integer "suspension_origin"
     t.boolean "trendable"
+    t.integer "trust_score", default: 0, null: false
+    t.integer "truth_berries"
+    t.integer "truth_bounty"
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri", default: "", null: false
     t.string "url"
@@ -901,6 +907,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "expires_at", precision: nil
     t.boolean "hide_totals", default: false, null: false
+    t.boolean "is_consensus", default: false, null: false
     t.datetime "last_fetched_at", precision: nil
     t.integer "lock_version", default: 0, null: false
     t.boolean "multiple", default: false, null: false
@@ -1183,20 +1190,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
   create_table "statuses", id: :bigint, default: -> { "timestamp_id('statuses'::text)" }, force: :cascade do |t|
     t.bigint "account_id", null: false
     t.bigint "application_id"
+    t.integer "bounty_amount"
     t.bigint "conversation_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "deleted_at", precision: nil
     t.datetime "edited_at", precision: nil
+    t.integer "fake_count"
     t.datetime "fetched_replies_at"
     t.bigint "in_reply_to_account_id"
     t.bigint "in_reply_to_id"
+    t.string "incident_state", default: "reported"
+    t.boolean "is_incident"
     t.string "language"
+    t.decimal "latitude"
     t.boolean "local"
+    t.decimal "longitude"
     t.bigint "ordered_media_attachment_ids", array: true
     t.bigint "poll_id"
     t.integer "quote_approval_policy", default: 0, null: false
+    t.decimal "real_estate_area"
+    t.string "real_estate_legal_status"
+    t.decimal "real_estate_price"
+    t.string "real_estate_zoning"
     t.bigint "reblog_of_id"
     t.boolean "reply", default: false, null: false
+    t.integer "safe_count"
     t.boolean "sensitive", default: false, null: false
     t.text "spoiler_text", default: "", null: false
     t.text "text", default: "", null: false
@@ -1276,6 +1294,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
     t.string "uri", null: false
     t.index ["account_id"], name: "index_tombstones_on_account_id"
     t.index ["uri"], name: "index_tombstones_on_uri"
+  end
+
+  create_table "truth_notes", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.integer "fake_score"
+    t.boolean "is_public"
+    t.integer "safe_score"
+    t.bigint "status_id", null: false
+    t.integer "truth_score"
+    t.datetime "updated_at", null: false
+    t.float "wave_strength"
+    t.index ["account_id"], name: "index_truth_notes_on_account_id"
+    t.index ["status_id"], name: "index_truth_notes_on_status_id"
   end
 
   create_table "unavailable_domains", force: :cascade do |t|
@@ -1358,6 +1391,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, opclass: :text_pattern_ops, where: "(reset_password_token IS NOT NULL)"
     t.index ["role_id"], name: "index_users_on_role_id", where: "(role_id IS NOT NULL)"
     t.index ["unconfirmed_email"], name: "index_users_on_unconfirmed_email", where: "(unconfirmed_email IS NOT NULL)"
+  end
+
+  create_table "vouches", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "target_account_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "target_account_id"], name: "index_vouches_on_account_id_and_target_account_id", unique: true
+    t.index ["account_id"], name: "index_vouches_on_account_id"
+    t.index ["target_account_id"], name: "index_vouches_on_target_account_id"
   end
 
   create_table "web_push_subscriptions", force: :cascade do |t|
@@ -1547,11 +1590,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_10_095021) do
   add_foreign_key "tag_follows", "tags", on_delete: :cascade
   add_foreign_key "tag_trends", "tags", on_delete: :cascade
   add_foreign_key "tombstones", "accounts", on_delete: :cascade
+  add_foreign_key "truth_notes", "accounts"
+  add_foreign_key "truth_notes", "statuses"
   add_foreign_key "user_invite_requests", "users", on_delete: :cascade
   add_foreign_key "users", "accounts", name: "fk_50500f500d", on_delete: :cascade
   add_foreign_key "users", "invites", on_delete: :nullify
   add_foreign_key "users", "oauth_applications", column: "created_by_application_id", on_delete: :nullify
   add_foreign_key "users", "user_roles", column: "role_id", on_delete: :nullify
+  add_foreign_key "vouches", "accounts", column: "target_account_id", on_delete: :cascade
+  add_foreign_key "vouches", "accounts", on_delete: :cascade
   add_foreign_key "web_push_subscriptions", "oauth_access_tokens", column: "access_token_id", on_delete: :cascade
   add_foreign_key "web_push_subscriptions", "users", on_delete: :cascade
   add_foreign_key "web_settings", "users", name: "fk_11910667b2", on_delete: :cascade

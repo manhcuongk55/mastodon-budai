@@ -81,9 +81,11 @@ import {
   PrivacyPolicy,
   TermsOfService,
   AccountFeatured,
-  AccountEdit,
   AccountEditFeaturedTags,
   Quotes,
+  TruthMap,
+  TrustDashboard,
+  P2PTimeline,
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
 import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem } from './util/focusUtils';
@@ -235,6 +237,9 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/directory' component={Directory} content={children} />
             <WrappedRoute path='/explore' component={Explore} content={children} />
             <WrappedRoute path='/search' component={Search} content={children} />
+            <WrappedRoute path='/truth-map' component={TruthMap} content={children} />
+            <WrappedRoute path='/trust' component={TrustDashboard} content={children} />
+            <WrappedRoute path='/p2p' component={P2PTimeline} content={children} />
             <WrappedRoute path={['/publish', '/statuses/new']} component={Compose} content={children} />
 
             {...profileRedesignRoutes}

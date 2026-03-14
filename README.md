@@ -19,10 +19,10 @@ MAKAI solves this with:
 | Step | How |
 |------|-----|
 | 😊 **Smile Identity** | Your genuine smile becomes your identity |
-| 🤝 **P2P Verification** | Two real people confirm you are real |
-| ✅ **Trust Score** | Verified by real humans, not algorithms |
+| 🤝 **P2P Verification** | Two real people confirm you are real via Web of Trust |
+| ✅ **Trust Score** | Verified by real humans, not hidden algorithms |
 
-**MAKAI = Human-first Network.**
+**MAKAI = Human-first Dual-Engine Network (SQL + P2P Mesh).**
 
 ---
 
@@ -52,6 +52,25 @@ Fake   → what needs correction
 > The internet doesn't need more noise. It needs real humans.
 
 **MAKAI is the Moral Compass of the Internet.**
+
+---
+
+## 🌍 The Dual-Engine Architecture
+
+Unlike legacy networks that rely entirely on centralized servers, MAKAI operates on a resilient **Dual-Engine Architecture**:
+
+1. **Ruby on Rails SQL Engine**: Handles structural data, federated ActivityPub broadcasting, and complex aggregations (like the Truth Map).
+2. **P2P Mesh Engine (GunJS)**: A fully decentralized, off-grid overlay.
+   - **P2P Encrypted Messaging**: Absolute privacy. Messages encrypt locally on-device and sync directly peer-to-peer.
+   - **Web of Trust (Decentralized Vouching)**: Community members vouch for each other via cryptographic signatures on the mesh network, dynamically upgrading Trust Scores without admin intervention.
+   - **P2P Off-Grid Timeline**: A parallel feed that lives entirely in device memory, syncing over WebSockets natively.
+
+## 🛡️ SafeBlock: Community Governance & Truth
+
+MAKAI extends into the physical world through **SafeBlock**, protecting communities and high-value transactions:
+- **Incident Management**: Turn posts into trackable incidents (Reported 🔴 → In Progress 🟡 → Resolved 🟢) managed by verified Guardians.
+- **Transparent Consensus Voting**: Say goodbye to phantom votes and minoritarian control. Consensus polls publicly tie identities to their votes, driving absolute accountability.
+- **Basao 7 Layers of Truth**: Every Real Estate listing is filtered through 7 verification layers (Asset, Owner, Legal, Broker, Flow, Location, Safety), rendering directly onto the feed as a "Property Card" and dropping as golden nodes on the **Truth Map**.
 
 ---
 
@@ -121,15 +140,16 @@ mastodon-budai/
 ## 🗺️ Roadmap
 
 - [x] Smile verification (camera-first)
-- [x] P2P verification flow
-- [x] Trust / Fake / Safe voting
+- [x] Web of Trust / P2P Verification Flow
+- [x] Trust / Fake / Safe signaling
 - [x] Permanent posts (truth never deleted)
-- [x] One Piece theme 🏴‍☠️
-- [ ] Real P2P with Gun.js / WebRTC
-- [ ] Smile AI detection (real smile vs fake)
-- [ ] Decentralized identity (DID)
+- [x] **SafeBlock**: Transparent Consensus Voting & Incident Management
+- [x] **Basao**: 7 Layers of Truth Property Cards & Truth Map
+- [x] **P2P Mesh**: Encrypted Off-Grid Messaging (GunJS)
+- [x] **P2P Mesh**: Decentralized Feed Timeline
+- [ ] Smile AI liveness detection (real smile vs deepfake)
+- [ ] Decentralized Identity (DID) standard rollout
 - [ ] Mobile app (React Native)
-- [ ] Proof of Humanity standard
 
 ---
 

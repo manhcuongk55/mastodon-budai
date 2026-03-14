@@ -279,24 +279,55 @@ export const ColumnHeader: React.FC<Props> = ({
               className='column-header__title'
               type='button'
               id={getColumnSkipLinkId(columnIndex)}
+              style={{
+                fontFamily: '"Inter Rounded", var(--font-sans-serif), sans-serif',
+                fontWeight: 700, fontSize: '24px', color: '#0A2540',
+                display: 'flex', alignItems: 'center', gap: '8px'
+              }}
             >
               {!backButton && hasIcon && (
                 <Icon
                   id={icon}
                   icon={iconComponent}
                   className='column-header__icon'
+                  style={{ display: 'none' }} /* Hide default icon to focus on Text/Logo */
                 />
               )}
-              {title}
+              🪷 MAKAI
             </button>
           </>
         )}
 
         {!hasTitle && backButton}
 
-        <div className='column-header__buttons'>
-          {extraButton}
-          {collapseButton}
+        <div className='column-header__actions' style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
+          
+          {/* Community Signal Bar */}
+          <div className="community-signal-bar" style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '220px' }}>
+            <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              Community Signal
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 500 }}>
+              <span style={{ color: '#F4C542' }}>Trust <span style={{ display: 'inline-block', width: '60px', height: '6px', background: '#F4C542', borderRadius: '4px' }} /></span>
+              <span style={{ color: '#4ADE80' }}>Safe <span style={{ display: 'inline-block', width: '68px', height: '6px', background: '#4ADE80', borderRadius: '4px' }} /></span>
+              <span style={{ color: '#FF6B6B', opacity: 0.7 }}>Fake <span style={{ display: 'inline-block', width: '12px', height: '6px', background: '#FF6B6B', borderRadius: '4px' }} /></span>
+            </div>
+          </div>
+
+          {/* Safe Zone Toggle Pill */}
+          <button type='button' className="safe-zone-toggle" style={{
+            background: '#4ADE80', color: '#FFFFFF', border: 'none',
+            padding: '4px 12px', borderRadius: '999px', fontSize: '12px',
+            fontWeight: 600, cursor: 'pointer', height: '28px', minWidth: '80px',
+            boxShadow: '0 2px 8px rgba(74, 222, 128, 0.3)'
+          }}>
+            Safe Mode
+          </button>
+          
+          <div className='column-header__buttons'>
+            {extraButton}
+            {collapseButton}
+          </div>
         </div>
       </h1>
 

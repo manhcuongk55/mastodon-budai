@@ -9,6 +9,10 @@ import {
   changeComposeSpoilerText,
   insertEmojiCompose,
   uploadCompose,
+  changeComposeIsIncident,
+  changeComposeLocation,
+  clearComposeLocation,
+  changeComposeRealEstate,
 } from 'mastodon/actions/compose';
 import { pasteLinkCompose } from 'mastodon/actions/compose_typed';
 import { openModal } from 'mastodon/actions/modal';
@@ -41,6 +45,13 @@ const mapStateToProps = state => ({
   suggestions: state.getIn(['compose', 'suggestions']),
   spoiler: state.getIn(['compose', 'spoiler']),
   spoilerText: state.getIn(['compose', 'spoiler_text']),
+  isIncident: state.getIn(['compose', 'is_incident']),
+  latitude: state.getIn(['compose', 'latitude']),
+  longitude: state.getIn(['compose', 'longitude']),
+  realEstatePrice: state.getIn(['compose', 'real_estate_price']),
+  realEstateArea: state.getIn(['compose', 'real_estate_area']),
+  realEstateLegalStatus: state.getIn(['compose', 'real_estate_legal_status']),
+  realEstateZoning: state.getIn(['compose', 'real_estate_zoning']),
   privacy: state.getIn(['compose', 'privacy']),
   focusDate: state.getIn(['compose', 'focusDate']),
   caretPosition: state.getIn(['compose', 'caretPosition']),
@@ -101,6 +112,22 @@ const mapDispatchToProps = (dispatch, props) => ({
 
   onChangeSpoilerText (checked) {
     dispatch(changeComposeSpoilerText(checked));
+  },
+
+  onChangeIsIncident (checked) {
+    dispatch(changeComposeIsIncident(checked));
+  },
+
+  onChangeLocation (latitude, longitude) {
+    dispatch(changeComposeLocation(latitude, longitude));
+  },
+
+  onClearLocation () {
+    dispatch(clearComposeLocation());
+  },
+
+  onChangeRealEstate (price, area, legalStatus, zoning) {
+    dispatch(changeComposeRealEstate(price, area, legalStatus, zoning));
   },
 
   onPaste (e) {

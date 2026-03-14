@@ -1,6 +1,9 @@
+import Gun from 'gun/gun';
 import { boostModal } from 'mastodon/initial_state';
 
 import api, { getLinks } from '../api';
+
+const gun = Gun(['http://localhost:8765/gun']);
 
 import { fetchRelationships } from './accounts';
 import { importFetchedAccounts, importFetchedStatus } from './importer';
@@ -50,6 +53,18 @@ export const BOOKMARK_FAIL    = 'BOOKMARKED_FAIL';
 export const UNBOOKMARK_REQUEST = 'UNBOOKMARKED_REQUEST';
 export const UNBOOKMARK_SUCCESS = 'UNBOOKMARKED_SUCCESS';
 export const UNBOOKMARK_FAIL    = 'UNBOOKMARKED_FAIL';
+
+export const TRUTH_VOTE_REQUEST = 'TRUTH_VOTE_REQUEST';
+export const TRUTH_VOTE_SUCCESS = 'TRUTH_VOTE_SUCCESS';
+export const TRUTH_VOTE_FAIL    = 'TRUTH_VOTE_FAIL';
+
+export const ADD_BOUNTY_REQUEST = 'ADD_BOUNTY_REQUEST';
+export const ADD_BOUNTY_SUCCESS = 'ADD_BOUNTY_SUCCESS';
+export const ADD_BOUNTY_FAIL    = 'ADD_BOUNTY_FAIL';
+
+export const INCIDENT_STATE_UPDATE_REQUEST = 'INCIDENT_STATE_UPDATE_REQUEST';
+export const INCIDENT_STATE_UPDATE_SUCCESS = 'INCIDENT_STATE_UPDATE_SUCCESS';
+export const INCIDENT_STATE_UPDATE_FAIL    = 'INCIDENT_STATE_UPDATE_FAIL';
 
 export * from "./interactions_typed";
 
@@ -486,5 +501,67 @@ export function toggleFavourite(statusId) {
     } else {
       dispatch(favourite(status));
     }
+  };
+}
+
+export function truthVote(status, type) {
+  return (dispatch, getState) => {
+    dispatch({ type: TRUTH_VOTE_REQUEST, status, voteType: type });
+
+    const accountId = getState().getIn(['me']);
+    
+    // Broadcast vote to the P2P Graph
+    gun.get('smile_trust').get(`status_${status.get('id')}`).get(`user_${accountId}`).put({
+      vote: type,
+      timestamp: Date.now()
+    });
+
+    api(getState).post(`/api/v1/statuses/${status.get('id')}/truth_vote`, { type })
+      .then(response => {
+        dispatch({
+          type: TRUTH_VOTE_SUCCESS,
+          status: status,
+          response: response.data,
+        });
+
+        // HACK: the backend increments truth_berries. Dispatch a local increment to the account to skip reloading the profile.
+        dispatch({
+          type: 'ACCOUNT_TRUTH_BERRIES_INCREMENT',
+          accountId: getState().getIn(['me']),
+          amount: 1
+        });
+      })
+      .catch(error => {
+        dispatch({ type: TRUTH_VOTE_FAIL, status, error });
+      });
+  };
+}
+
+export function addBounty(status, amount = 10) {
+  return (dispatch, getState) => {
+    dispatch({ type: ADD_BOUNTY_REQUEST, status, amount });
+
+    api(getState).post(`/api/v1/statuses/${status.get('id')}/add_bounty`, { amount })
+      .then(response => {
+        dispatch({
+          type: ADD_BOUNTY_SUCCESS,
+          status: status,
+          response: response.data,
+        });
+
+        // HACK: update the user's truth berry balance negatively since they spent them
+        dispatch({
+          type: 'ACCOUNT_TRUTH_BERRIES_DECREMENT',
+          accountId: getState().getIn(['me']),
+          amount: amount
+        });
+      })
+      .catch(error => {
+        dispatch({ type: ADD_BOUNTY_FAIL, status, error });
+        // Optionally show an error modal if they don't have enough berries
+        if (error.response && error.response.status === 422) {
+          alert('Not enough Truth Berries!');
+        }
+      });
   };
 }

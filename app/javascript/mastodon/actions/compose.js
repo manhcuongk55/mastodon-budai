@@ -14,6 +14,7 @@ import { useEmoji } from './emojis';
 import { importFetchedAccounts, importFetchedStatus } from './importer';
 import { openModal } from './modal';
 import { updateTimeline } from './timelines';
+import { p2pFeed } from 'mastodon/services/p2p_feed_service';
 
 /** @type {AbortController | undefined} */
 let fetchComposeSuggestionsAccountsController;
@@ -56,8 +57,11 @@ export const COMPOSE_UNMOUNT = 'COMPOSE_UNMOUNT';
 export const COMPOSE_SENSITIVITY_CHANGE  = 'COMPOSE_SENSITIVITY_CHANGE';
 export const COMPOSE_SPOILERNESS_CHANGE  = 'COMPOSE_SPOILERNESS_CHANGE';
 export const COMPOSE_SPOILER_TEXT_CHANGE = 'COMPOSE_SPOILER_TEXT_CHANGE';
+export const COMPOSE_IS_INCIDENT_CHANGE  = 'COMPOSE_IS_INCIDENT_CHANGE';
 export const COMPOSE_COMPOSING_CHANGE    = 'COMPOSE_COMPOSING_CHANGE';
 export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
+export const COMPOSE_LOCATION_CHANGE     = 'COMPOSE_LOCATION_CHANGE';
+export const COMPOSE_LOCATION_CLEAR      = 'COMPOSE_LOCATION_CLEAR';
 
 export const COMPOSE_EMOJI_INSERT = 'COMPOSE_EMOJI_INSERT';
 
@@ -77,6 +81,7 @@ export const INIT_MEDIA_EDIT_MODAL = 'INIT_MEDIA_EDIT_MODAL';
 export const COMPOSE_CHANGE_MEDIA_DESCRIPTION = 'COMPOSE_CHANGE_MEDIA_DESCRIPTION';
 export const COMPOSE_CHANGE_MEDIA_FOCUS       = 'COMPOSE_CHANGE_MEDIA_FOCUS';
 export const COMPOSE_CHANGE_MEDIA_ORDER       = 'COMPOSE_CHANGE_MEDIA_ORDER';
+export const COMPOSE_CHANGE_REAL_ESTATE       = 'COMPOSE_CHANGE_REAL_ESTATE';
 
 export const COMPOSE_SET_STATUS = 'COMPOSE_SET_STATUS';
 export const COMPOSE_FOCUS = 'COMPOSE_FOCUS';
@@ -115,6 +120,16 @@ export function changeCompose(text) {
   return {
     type: COMPOSE_CHANGE,
     text: text,
+  };
+}
+
+export function changeComposeRealEstate(price, area, legalStatus, zoning) {
+  return {
+    type: COMPOSE_CHANGE_REAL_ESTATE,
+    price,
+    area,
+    legalStatus,
+    zoning,
   };
 }
 
@@ -246,6 +261,13 @@ export function submitCompose(successCallback) {
         visibility: visibility,
         poll: getState().getIn(['compose', 'poll'], null),
         language: getState().getIn(['compose', 'language']),
+        is_incident: getState().getIn(['compose', 'is_incident']),
+        latitude: getState().getIn(['compose', 'latitude']),
+        longitude: getState().getIn(['compose', 'longitude']),
+        real_estate_price: getState().getIn(['compose', 'real_estate_price']),
+        real_estate_area: getState().getIn(['compose', 'real_estate_area']),
+        real_estate_legal_status: getState().getIn(['compose', 'real_estate_legal_status']),
+        real_estate_zoning: getState().getIn(['compose', 'real_estate_zoning']),
         quoted_status_id: getState().getIn(['compose', 'quoted_status_id']),
         quote_approval_policy: visibility === 'private' || visibility === 'direct' ? 'nobody' : getState().getIn(['compose', 'quote_policy']),
       },
@@ -275,6 +297,23 @@ export function submitCompose(successCallback) {
 
       if (statusId) {
         dispatch(importFetchedStatus({ ...response.data }));
+      }
+
+      // Dual-publish to Decentralized Feed
+      if (statusId === null && response.data.visibility === 'public') {
+        try {
+          p2pFeed.broadcastPost({
+            content: response.data.content,
+            account_id: response.data.account.id,
+            account_username: response.data.account.username,
+            account_display_name: response.data.account.display_name,
+            account_avatar: response.data.account.avatar,
+            spoiler_text: response.data.spoiler_text,
+            created_at: response.data.created_at,
+          });
+        } catch (e) {
+          console.error("P2P Broadcast Failed:", e);
+        }
       }
 
       if (statusId === null && response.data.visibility !== 'direct') {
@@ -329,7 +368,7 @@ export function uploadCompose(files) {
     const uploadLimit = getState().getIn(['server', 'server', 'configuration', 'statuses', 'max_media_attachments']);
     const media = getState().getIn(['compose', 'media_attachments']);
     const pending = getState().getIn(['compose', 'pending_media_attachments']);
-    const progress = new Array(files.length).fill(0);
+    const progress = Array.from({ length: files.length }).fill(0);
 
     let total = Array.from(files).reduce((a, v) => a + v.size, 0);
 
@@ -798,7 +837,14 @@ export function changeComposeSpoilerness() {
 export function changeComposeSpoilerText(text) {
   return {
     type: COMPOSE_SPOILER_TEXT_CHANGE,
-    text,
+    text: text,
+  };
+}
+
+export function changeComposeIsIncident(isIncident) {
+  return {
+    type: COMPOSE_IS_INCIDENT_CHANGE,
+    isIncident: isIncident,
   };
 }
 
@@ -853,11 +899,12 @@ export function removePollOption(index) {
   };
 }
 
-export function changePollSettings(expiresIn, isMultiple) {
+export function changePollSettings(expiresIn, isMultiple, isConsensus) {
   return {
     type: COMPOSE_POLL_SETTINGS_CHANGE,
     expiresIn,
     isMultiple,
+    isConsensus,
   };
 }
 

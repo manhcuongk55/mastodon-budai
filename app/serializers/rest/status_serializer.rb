@@ -8,7 +8,9 @@ class REST::StatusSerializer < ActiveModel::Serializer
   attributes :id, :created_at, :in_reply_to_id, :in_reply_to_account_id,
              :sensitive, :spoiler_text, :visibility, :language,
              :uri, :url, :replies_count, :reblogs_count,
-             :favourites_count, :quotes_count, :edited_at
+             :favourites_count, :quotes_count, :edited_at,
+             :bounty_amount, :truth_count, :safe_count, :fake_count, :is_incident,
+             :real_estate_price, :real_estate_area, :real_estate_legal_status, :real_estate_zoning
 
   attribute :favourited, if: :current_user?
   attribute :reblogged, if: :current_user?
@@ -38,6 +40,22 @@ class REST::StatusSerializer < ActiveModel::Serializer
 
   def quote
     object.quote if object.quote&.acceptable?
+  end
+
+  def bounty_amount
+    object.bounty_amount || 0
+  end
+
+  def truth_count
+    object.truth_notes.where(truth_score: 1).count
+  end
+
+  def safe_count
+    object.truth_notes.where(safe_score: 1).count
+  end
+
+  def fake_count
+    object.truth_notes.where(fake_score: 1).count
   end
 
   def id

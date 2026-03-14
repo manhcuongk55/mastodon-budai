@@ -8,6 +8,7 @@
 #  cached_tallies  :bigint(8)        default([]), not null, is an Array
 #  expires_at      :datetime
 #  hide_totals     :boolean          default(FALSE), not null
+#  is_consensus    :boolean          default(FALSE), not null
 #  last_fetched_at :datetime
 #  lock_version    :integer          default(0), not null
 #  multiple        :boolean          default(FALSE), not null

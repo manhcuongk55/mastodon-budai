@@ -1,25 +1,20 @@
 import classNames from 'classnames';
 
-import logo from '@/images/logo.svg';
-
 export const WordmarkLogo: React.FC = () => (
-  <svg viewBox='0 0 261 66' className='logo logo--wordmark' role='img'>
-    <title>Smile Budai</title>
-    <use xlinkHref='#logo-symbol-wordmark' />
-  </svg>
+  <div className='logo logo--wordmark' style={{ fontSize: '24px', fontWeight: 'bold', fontFamily: 'Inter, sans-serif', letterSpacing: '-1px', color: 'currentcolor', display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <span style={{ fontSize: '28px' }}>🏴‍☠️</span>
+    MAKAI
+  </div>
 );
 
 export const IconLogo: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    viewBox='0 0 79 79'
-    className={classNames('logo logo--icon', className)}
-    role='img'
-  >
-    <title>Smile Budai</title>
-    <use xlinkHref='#logo-symbol-icon' />
-  </svg>
+  <div className={classNames('logo logo--icon', className)} style={{ fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    🏴‍☠️
+  </div>
 );
 
 export const SymbolLogo: React.FC = () => (
-  <img src={logo} alt='Smile Budai' className='logo logo--icon' />
+  <div className='logo logo--icon' style={{ fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    🏴‍☠️
+  </div>
 );

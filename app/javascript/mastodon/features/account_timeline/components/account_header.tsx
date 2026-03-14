@@ -32,6 +32,7 @@ import { MemorialNote } from './memorial_note';
 import { MovedNote } from './moved_note';
 import { AccountNote as AccountNoteRedesign } from './note';
 import { AccountNumberFields } from './number_fields';
+import { P2PTrustBadge } from './p2p_trust_badge';
 import redesignClasses from './redesign.module.scss';
 import { AccountTabs } from './tabs';
 
@@ -174,7 +175,21 @@ export const AccountHeader: React.FC<{
               isRedesign && redesignClasses.nameWrapper,
             )}
           >
-            <AccountName accountId={accountId} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AccountName accountId={accountId} />
+                {typeof account.truth_berries !== 'undefined' && (
+                  <div 
+                    className="truth-berries-badge" 
+                    title={`${account.truth_berries} Truth Berries`}
+                    style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 10px', background: 'rgba(74, 222, 128, 0.15)', border: '1px solid rgba(74, 222, 128, 0.3)', borderRadius: '20px', color: '#4ADE80', fontWeight: 'bold', fontSize: '14px', whiteSpace: 'nowrap', boxShadow: '0 0 10px rgba(74, 222, 128, 0.2)' }}
+                  >
+                    🫐 {account.truth_berries}
+                  </div>
+                )}
+              </div>
+              <P2PTrustBadge targetAccountId={accountId} targetUsername={account.acct} />
+            </div>
             {isRedesign && (
               <AccountButtons
                 accountId={accountId}

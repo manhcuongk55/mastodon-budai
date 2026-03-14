@@ -25,8 +25,8 @@ import {
   toggleFavourite,
   bookmark,
   unbookmark,
-  pin,
   unpin,
+  updateIncidentState,
 } from '../actions/interactions';
 import { openModal } from '../actions/modal';
 import { initMuteModal } from '../actions/mutes';
@@ -240,6 +240,12 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
         url: status.get('uri'),
       },
     }));
+  },
+
+  onUpdateIncidentState (status, incidentState) {
+    if (window.confirm(`Are you sure you want to mark this incident as ${incidentState.toUpperCase()}?`)) {
+      dispatch(updateIncidentState(status, incidentState));
+    }
   },
 
 });

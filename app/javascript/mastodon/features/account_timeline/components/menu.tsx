@@ -10,6 +10,7 @@ import {
   unblockAccount,
   unmuteAccount,
   unpinAccount,
+  vouchAccount,
 } from '@/mastodon/actions/accounts';
 import { removeAccountFromFollowers } from '@/mastodon/actions/accounts_typed';
 import { showAlert } from '@/mastodon/actions/alerts';
@@ -134,6 +135,10 @@ const messages = defineMessages({
     id: 'account.edit_note',
     defaultMessage: 'Edit personal note',
   },
+  vouch: {
+    id: 'account.vouch',
+    defaultMessage: 'Vouch for user 🛡️',
+  },
   endorse: { id: 'account.endorse', defaultMessage: 'Feature on profile' },
   unendorse: {
     id: 'account.unendorse',
@@ -188,6 +193,7 @@ function currentMenuItems({
 }: MenuItemsParams): MenuItem[] {
   const items: MenuItem[] = [];
   const isRemote = account.acct !== account.username;
+  const currentAccount = useAppSelector((state) => state.accounts.get(state.meta.get('me') as string));
 
   if (signedIn && !account.suspended) {
     items.push(
@@ -209,6 +215,15 @@ function currentMenuItems({
       },
       null,
     );
+
+    if (currentAccount?.is_guardian && currentAccount.id !== account.id) {
+      items.push({
+        text: intl.formatMessage(messages.vouch),
+        action: () => {
+          dispatch(vouchAccount(account.id));
+        },
+      });
+    }
   }
 
   if (isRemote) {
@@ -496,6 +511,10 @@ const redesignMessages = defineMessages({
     id: 'account.menu.remove_follower',
     defaultMessage: 'Remove follower',
   },
+  vouch: {
+    id: 'account.menu.vouch',
+    defaultMessage: 'Vouch for user 🛡️',
+  },
 });
 
 function redesignMenuItems({
@@ -509,6 +528,7 @@ function redesignMenuItems({
   const items: MenuItem[] = [];
   const isRemote = account.acct !== account.username;
   const remoteDomain = isRemote ? account.acct.split('@')[1] : null;
+  const currentAccount = useAppSelector((state) => state.accounts.get(state.meta.get('me') as string));
 
   // Share and copy link options
   if (account.url) {
@@ -562,6 +582,15 @@ function redesignMenuItems({
       },
       null,
     );
+
+    if (currentAccount?.is_guardian && currentAccount.id !== account.id) {
+      items.push({
+        text: intl.formatMessage(redesignMessages.vouch),
+        action: () => {
+          dispatch(vouchAccount(account.id));
+        },
+      });
+    }
   }
 
   if (!signedIn) {

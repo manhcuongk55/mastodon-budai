@@ -41,6 +41,7 @@ const pollDefaultValues = {
   votes_count: 0,
   voted: false,
   own_votes: [],
+  is_consensus: false,
 };
 
 export function createPollFromServerJSON(
