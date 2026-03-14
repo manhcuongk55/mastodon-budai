@@ -28,6 +28,69 @@ class P2PTrustService {
   }
 
   /**
+   * Generate a 6-digit OTP PIN for Vouching (Valid for 5 mins)
+   * @param {string} voucherId - The Mastodon Account ID of the person generating the code
+   * @param {string} targetId - The Mastodon Account ID of the person they want to vouch for
+   * @returns {string} The 6-digit PIN
+   */
+  generateVouchPin(voucherId, targetId) {
+    if (!voucherId || !targetId) return null;
+
+    const pin = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 mins
+
+    // Store in the global mesh network securely under a hash
+    this.gun.get(`makai_otp_${pin}`).put({
+      voucherId,
+      targetId,
+      expiresAt,
+      claimed: false
+    });
+
+    return pin;
+  }
+
+  /**
+   * Redeem a Vouch PIN 
+   * @param {string} pin - The 6-digit PIN string
+   * @param {string} claimerId - The Mastodon Account ID of the person entering the PIN
+   * @returns {Promise<boolean>} Resolves true if successful
+   */
+  async verifyVouchPin(pin, claimerId) {
+    if (!pin || pin.length !== 6 || !claimerId) return false;
+
+    return new Promise((resolve) => {
+      const pinNode = this.gun.get(`makai_otp_${pin}`);
+      
+      pinNode.once((data) => {
+        if (!data || data.claimed) {
+          resolve(false); // Invalid or already used
+          return;
+        }
+
+        if (Date.now() > data.expiresAt) {
+          resolve(false); // Expired
+          return;
+        }
+
+        if (data.targetId !== claimerId) {
+          // This code isn't meant for you
+          resolve(false);
+          return;
+        }
+
+        // 1. Mark as claimed so it can't be reused
+        pinNode.get('claimed').put(true);
+
+        // 2. Execute the actual decentralized cryptographic Vouch
+        this.vouchForUser(data.voucherId, claimerId);
+
+        resolve(true);  
+      });
+    });
+  }
+
+  /**
    * Subscribe to the vouch count for a specific user
    * @param {string} targetId 
    * @param {function} callback - Receives the array of voucher IDs
