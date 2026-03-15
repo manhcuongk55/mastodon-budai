@@ -726,3 +726,14 @@ export function vouchAccount(id) {
     });
   };
 }
+
+export const submitIdentityVerification = () => (dispatch) => {
+  const data = new FormData();
+  data.append('is_seeking_verification', 'true');
+
+  return api().patch('/api/v1/accounts/update_credentials', data).then(response => {
+    dispatch(importFetchedAccount(response.data));
+  }).catch(err => {
+    console.error('Failed to submit identity verification flag', err);
+  });
+};

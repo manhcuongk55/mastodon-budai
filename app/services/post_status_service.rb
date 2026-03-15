@@ -81,6 +81,7 @@ class PostStatusService < BaseService
     safeguard_mentions!(@status)
     safeguard_private_mention_quote!(@status)
     attach_quote!(@status)
+    calculate_trust_propagation!(@status)
 
     mock_safety_ai_defense!(@status)
 
@@ -111,6 +112,28 @@ class PostStatusService < BaseService
     status.quote.ensure_quoted_access
 
     status.quote.accept! if @quoted_status.local? && StatusPolicy.new(@status.account, @quoted_status).quote?
+  end
+
+  def calculate_trust_propagation!(status)
+    # Epic Q: Human Trust Graph logic
+    parent_status = @quoted_status || @in_reply_to
+    
+    if parent_status
+      # Calculate distance from origin
+      status.transmission_path_length = (parent_status.transmission_path_length || 0) + 1
+      
+      # Trace provenance exactly to the very first event source
+      status.source_status_id = parent_status.source_status_id || parent_status.id
+    else
+      # Ground zero truth source
+      status.transmission_path_length = 0
+      status.source_status_id = nil
+    end
+    
+    # Store cryptographic signature of text payload for data integrity
+    if status.text.present?
+      status.claim_signature = Digest::SHA256.hexdigest(status.text)
+    end
   end
 
   def mock_safety_ai_defense!(status)
@@ -265,7 +288,8 @@ class PostStatusService < BaseService
       real_estate_price: @options[:real_estate_price],
       real_estate_area: @options[:real_estate_area],
       real_estate_legal_status: @options[:real_estate_legal_status],
-      real_estate_zoning: @options[:real_estate_zoning]
+      real_estate_zoning: @options[:real_estate_zoning],
+      claim_type: @options[:claim_type] || 'FACT'
     }.compact
   end
 

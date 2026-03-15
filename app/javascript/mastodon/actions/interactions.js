@@ -3,7 +3,8 @@ import { boostModal } from 'mastodon/initial_state';
 
 import api, { getLinks } from '../api';
 
-const gun = Gun(['http://localhost:8765/gun']);
+const peerUrl = window.GUNJS_PEER_URL || (process.env.NODE_ENV === 'production' ? `wss://${window.location.host}/gun` : 'http://localhost:8765/gun');
+const gun = Gun([peerUrl]);
 
 import { fetchRelationships } from './accounts';
 import { importFetchedAccounts, importFetchedStatus } from './importer';

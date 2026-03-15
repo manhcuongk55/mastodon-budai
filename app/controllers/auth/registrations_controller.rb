@@ -58,6 +58,11 @@ class Auth::RegistrationsController < Devise::RegistrationsController
     resource.sign_up_ip             = request.remote_ip
 
     resource.build_account if resource.account.nil?
+
+    if params[:ref].present?
+      referrer = Account.find_by(referral_code: params[:ref].upcase)
+      resource.account.referred_by = referrer if referrer
+    end
   end
 
   def configure_sign_up_params

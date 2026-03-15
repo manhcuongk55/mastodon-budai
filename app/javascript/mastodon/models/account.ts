@@ -57,6 +57,7 @@ export interface AccountShape extends Required<
   truth_berries?: number;
   truth_bounty?: number;
   is_guardian?: boolean;
+  campaign_pioneer: boolean;
   trust_score: number;
 }
 
@@ -108,6 +109,7 @@ export const accountDefaultValues: AccountShape = {
   truth_berries: 0,
   truth_bounty: 0,
   is_guardian: false,
+  campaign_pioneer: false,
   trust_score: 0,
 };
 

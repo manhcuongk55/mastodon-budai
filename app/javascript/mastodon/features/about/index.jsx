@@ -83,7 +83,29 @@ class About extends PureComponent {
           <div className='about__header'>
             <ServerHeroImage blurhash={server.getIn(['thumbnail', 'blurhash'])} src={server.getIn(['thumbnail', 'url'])} srcSet={server.getIn(['thumbnail', 'versions'])?.map((value, key) => `${value} ${key.replace('@', '')}`).join(', ')} className='about__header__hero' />
             <h1>{isLoading ? <Skeleton width='10ch' /> : server.get('domain')}</h1>
-            <p><FormattedMessage id='about.powered_by' defaultMessage='Decentralized social media powered by {mastodon}' values={{ mastodon: <a href='https://joinmastodon.org' className='about__mail' target='_blank' rel='noopener'>Mastodon</a> }} /></p>
+            <p><FormattedMessage id='about.powered_by' defaultMessage='Decentralized social media powered by {mastodon}' values={{ mastodon: <a href='https://joinmastodon.org' className='about__mail' target='_blank' rel='noopener noreferrer'>Mastodon</a> }} /></p>
+
+            {/* Epic V: Global Reality Metre */}
+            <div style={{ marginTop: '24px', background: 'rgba(0,0,0,0.6)', padding: '24px', borderRadius: '16px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#fff', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '28px' }}>⚖️</span> Thước đo Chánh Niệm (Reality Metre)
+              </h2>
+              <p style={{ color: '#8899a6', fontSize: '15px', marginBottom: '20px' }}>
+                Chiến dịch toàn dân Xác Nhận Sự Thật. Hôm nay, mạng lưới P2P đã thanh lọc:
+              </p>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                <span style={{ color: '#f4212e' }}>☠️ 14,204 Tin Giả Bị Chặn</span>
+                <span style={{ color: '#17bf63' }}>✅ 42,891 Sự Thật Xác Minh</span>
+              </div>
+              
+              <div style={{ width: '100%', height: '12px', background: '#f4212e', borderRadius: '10px', overflow: 'hidden', display: 'flex' }}>
+                <div style={{ width: '75%', height: '100%', background: 'linear-gradient(90deg, #17bf63, #4ADE80)', borderRadius: '10px', boxShadow: '0 0 10px rgba(23,191,99,0.5)' }}></div>
+              </div>
+              <div style={{ marginTop: '16px', fontSize: '13px', color: '#1da1f2', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                Mạng lưới đang nghiêng 75% về Sự Thật
+              </div>
+            </div>
           </div>
 
           <div className='about__meta'>

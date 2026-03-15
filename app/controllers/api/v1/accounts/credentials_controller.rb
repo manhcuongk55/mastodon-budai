@@ -33,6 +33,7 @@ class Api::V1::Accounts::CredentialsController < Api::BaseController
       :discoverable,
       :hide_collections,
       :indexable,
+      :is_seeking_verification,
       attribution_domains: [],
       fields_attributes: [:name, :value]
     )

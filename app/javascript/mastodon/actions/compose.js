@@ -15,6 +15,7 @@ import { importFetchedAccounts, importFetchedStatus } from './importer';
 import { openModal } from './modal';
 import { updateTimeline } from './timelines';
 import { p2pFeed } from 'mastodon/services/p2p_feed_service';
+import { truskingIdentityService } from 'mastodon/services/trusking_identity_service';
 
 /** @type {AbortController | undefined} */
 let fetchComposeSuggestionsAccountsController;
@@ -62,6 +63,7 @@ export const COMPOSE_COMPOSING_CHANGE    = 'COMPOSE_COMPOSING_CHANGE';
 export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
 export const COMPOSE_LOCATION_CHANGE     = 'COMPOSE_LOCATION_CHANGE';
 export const COMPOSE_LOCATION_CLEAR      = 'COMPOSE_LOCATION_CLEAR';
+export const COMPOSE_CLAIM_TYPE_CHANGE   = 'COMPOSE_CLAIM_TYPE_CHANGE';
 
 export const COMPOSE_EMOJI_INSERT = 'COMPOSE_EMOJI_INSERT';
 
@@ -130,6 +132,27 @@ export function changeComposeRealEstate(price, area, legalStatus, zoning) {
     area,
     legalStatus,
     zoning,
+  };
+}
+
+export function changeComposeLocation(latitude, longitude) {
+  return {
+    type: COMPOSE_LOCATION_CHANGE,
+    latitude,
+    longitude,
+  };
+}
+
+export function clearComposeLocation() {
+  return {
+    type: COMPOSE_LOCATION_CLEAR,
+  };
+}
+
+export function changeComposeClaimType(claimType) {
+  return {
+    type: COMPOSE_CLAIM_TYPE_CHANGE,
+    claimType,
   };
 }
 
@@ -268,6 +291,7 @@ export function submitCompose(successCallback) {
         real_estate_area: getState().getIn(['compose', 'real_estate_area']),
         real_estate_legal_status: getState().getIn(['compose', 'real_estate_legal_status']),
         real_estate_zoning: getState().getIn(['compose', 'real_estate_zoning']),
+        claim_type: getState().getIn(['compose', 'claim_type']),
         quoted_status_id: getState().getIn(['compose', 'quoted_status_id']),
         quote_approval_policy: visibility === 'private' || visibility === 'direct' ? 'nobody' : getState().getIn(['compose', 'quote_policy']),
       },
@@ -387,40 +411,63 @@ export function uploadCompose(files) {
     for (const [i, file] of Array.from(files).entries()) {
       if (media.size + i > (uploadLimit - 1)) break;
 
-      const data = new FormData();
-      data.append('file', file);
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          // Privacy Pillar: Zero-Knowledge Encrypted Evidence
+          // AES-encrypt the media locally before it ever touches the network
+          const dataUrl = e.target.result;
+          const { encrypted, hash } = await truskingIdentityService.encryptEvidence({
+            name: file.name,
+            type: file.type,
+            data: dataUrl
+          });
 
-      api().post('/api/v2/media', data, {
-        onUploadProgress: function({ loaded }){
-          progress[i] = loaded;
-          dispatch(uploadComposeProgress(progress.reduce((a, v) => a + v, 0), total));
-        },
-      }).then(({ status, data }) => {
-        // If server-side processing of the media attachment has not completed yet,
-        // poll the server until it is, before showing the media attachment as uploaded
+          // Upload the JSON ciphertext instead of the raw media file
+          const encryptedBlob = new Blob([JSON.stringify(encrypted)], { type: 'application/json' });
+          const encryptedFile = new File([encryptedBlob], `trusking_proof_${hash}.json`, { type: 'application/json' });
 
-        if (status === 200) {
-          dispatch(uploadComposeSuccess(data, file));
-        } else if (status === 202) {
-          dispatch(uploadComposeProcessing());
+          const data = new FormData();
+          data.append('file', encryptedFile);
 
-          let tryCount = 1;
+          api().post('/api/v2/media', data, {
+            onUploadProgress: function({ loaded }){
+              progress[i] = loaded;
+              dispatch(uploadComposeProgress(progress.reduce((a, v) => a + v, 0), total));
+            },
+          }).then(({ status, data }) => {
+            // If server-side processing of the media attachment has not completed yet,
+            // poll the server until it is, before showing the media attachment as uploaded
 
-          const poll = () => {
-            api().get(`/api/v1/media/${data.id}`).then(response => {
-              if (response.status === 200) {
-                dispatch(uploadComposeSuccess(response.data, file));
-              } else if (response.status === 206) {
-                const retryAfter = (Math.log2(tryCount) || 1) * 1000;
-                tryCount += 1;
-                setTimeout(() => poll(), retryAfter);
-              }
-            }).catch(error => dispatch(uploadComposeFail(error)));
-          };
+            if (status === 200) {
+              dispatch(uploadComposeSuccess(data, file));
+            } else if (status === 202) {
+              dispatch(uploadComposeProcessing());
 
-          poll();
+              let tryCount = 1;
+
+              const poll = () => {
+                api().get(`/api/v1/media/${data.id}`).then(response => {
+                  if (response.status === 200) {
+                    dispatch(uploadComposeSuccess(response.data, file));
+                  } else if (response.status === 206) {
+                    const retryAfter = (Math.log2(tryCount) || 1) * 1000;
+                    tryCount += 1;
+                    setTimeout(() => poll(), retryAfter);
+                  }
+                }).catch(error => dispatch(uploadComposeFail(error)));
+              };
+
+              poll();
+            }
+          }).catch(error => dispatch(uploadComposeFail(error)));
+        } catch (err) {
+          console.error("Trusking Encryption Error:", err);
+          dispatch(uploadComposeFail(err));
         }
-      }).catch(error => dispatch(uploadComposeFail(error)));
+      };
+      
+      reader.readAsDataURL(file);
     }
   };
 }

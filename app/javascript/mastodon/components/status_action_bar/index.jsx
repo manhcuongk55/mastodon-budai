@@ -151,6 +151,19 @@ class StatusActionBar extends ImmutablePureComponent {
     });
   };
 
+  handleSosShareClick = () => {
+    const { status } = this.props;
+    const url = status.get('url');
+    // Epic V: Viral Summoning (Triệu hồi chuyên gia)
+    navigator.share({
+      title: '🚨 Trusking SOS: We need your verification!',
+      text: 'Mạng lưới P2P đang tranh luận về Sự thật/Giả mạo của thông tin này. Hãy tham gia hội thẩm đoàn Trusking để xác minh ngay:',
+      url: url,
+    }).catch((e) => {
+      if (e.name !== 'AbortError') console.error(e);
+    });
+  };
+
   handleFavouriteClick = () => {
     const { signedIn } = this.props.identity;
 
@@ -425,6 +438,19 @@ class StatusActionBar extends ImmutablePureComponent {
           <div className='status__action-bar__button-wrapper'>
             <button className='status__action-bar__bounty-button' title={intl.formatMessage(messages.bounty)} onClick={this.handleAddBounty}>
                🫐 <span className='bounty-counter'>{status.get('bounty_amount') || 0}</span>
+            </button>
+          </div>
+        )}
+
+        {/* Epic V: Viral Summoning */}
+        {signedIn && 'share' in navigator && (
+          <div className='status__action-bar__button-wrapper'>
+            <button 
+              onClick={this.handleSosShareClick}
+              style={{ background: 'transparent', border: '1px solid #ffad1f', color: '#ffad1f', borderRadius: '4px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap' }}
+              title="Share an SOS challenge link to Zalo/Facebook to recruit expert fact-checkers."
+            >
+              🚨 Gọi Hội Thẩm
             </button>
           </div>
         )}

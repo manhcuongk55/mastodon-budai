@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class REST::CredentialAccountSerializer < REST::AccountSerializer
-  attributes :source
+  attributes :source, :referral_code
 
   has_one :role, serializer: REST::RoleSerializer
 

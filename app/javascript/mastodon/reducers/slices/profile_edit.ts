@@ -209,6 +209,7 @@ const transformProfile = (result: ApiProfileJSON): ProfileData => ({
   showFeatured: result.show_featured,
   attributionDomains: result.attribution_domains,
   featuredTags: result.featured_tags.map(transformTag),
+  isSeekingVerification: result.is_seeking_verification,
 });
 
 export const fetchProfile = createDataLoadingThunk(

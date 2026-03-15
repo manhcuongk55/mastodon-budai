@@ -1,7 +1,8 @@
 import Gun from 'gun';
 
-// Local dev fallback, in production this would be multiple peer nodes
-const peers = ['http://localhost:8765/gun'];
+// Local dev fallback or dynamic production relay
+const peerUrl = window.GUNJS_PEER_URL || (process.env.NODE_ENV === 'production' ? `wss://${window.location.host}/gun` : 'http://localhost:8765/gun');
+const peers = [peerUrl];
 
 class P2PFeedService {
   constructor() {

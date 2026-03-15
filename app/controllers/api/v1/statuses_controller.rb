@@ -101,7 +101,8 @@ class Api::V1::StatusesController < Api::BaseController
       real_estate_price: status_params[:real_estate_price],
       real_estate_area: status_params[:real_estate_area],
       real_estate_legal_status: status_params[:real_estate_legal_status],
-      real_estate_zoning: status_params[:real_estate_zoning]
+      real_estate_zoning: status_params[:real_estate_zoning],
+      claim_type: status_params[:claim_type]
     )
 
     render json: @status, serializer: serializer_for_status
@@ -275,6 +276,7 @@ class Api::V1::StatusesController < Api::BaseController
       :real_estate_area,
       :real_estate_legal_status,
       :real_estate_zoning,
+      :claim_type,
       allowed_mentions: [],
       media_ids: [],
       media_attributes: [

@@ -65,6 +65,7 @@ namespace :api, format: false do
     end
 
     resources :trust_leaderboards, only: [:index]
+    resources :truth_firehose, controller: 'truth_firehose', only: [:index]
     
     resource :truth_map, only: [] do
       get :global
@@ -142,6 +143,25 @@ namespace :api, format: false do
       resources :tags, only: [:index]
       resources :links, only: [:index]
       resources :statuses, only: [:index]
+    end
+
+    resources :marketing_claims, only: [:index, :create, :show] do
+      member do
+        post :authenticate # The A in HCRAB
+      end
+    end
+
+    resources :guilds, only: [:index, :create, :show] do
+      member do
+        post :join
+        delete :leave
+      end
+    end
+
+    # Human-Only Verification Zone
+    namespace :human_zone do
+      get :feed, to: 'human_zone#feed'
+      post :post, to: 'human_zone#post'
     end
 
     namespace :emails do

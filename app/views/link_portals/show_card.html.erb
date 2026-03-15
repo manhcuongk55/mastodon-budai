@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title><%= @title || "Trusking - Mạng Lưới P2P Xác Minh Sự Thật" %></title>
+    
+    <!-- OpenGraph Required Tags (Facebook, Zalo) -->
+    <meta property="og:title" content="<%= @title %>" />
+    <meta property="og:description" content="<%= @description %>" />
+    <meta property="og:image" content="<%= @image_url %>" />
+    <meta property="og:url" content="<%= request.original_url %>" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Trusking Protocol" />
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= @title %>">
+    <meta name="twitter:description" content="<%= @description %>">
+    <meta name="twitter:image" content="<%= @image_url %>">
+  </head>
+  <body>
+    <!-- Fallback if a bot or strange browser renders the body -->
+    <h1><%= @title %></h1>
+    <p><%= @description %></p>
+    <%= image_tag @image_url if @image_url.present? %>
+    
+    <p>Loading Trusking Reality Engine...</p>
+    <script>
+      // Force redirect to the actual react app if somehow a human hits this HTML directly
+      window.location.replace("/portal/<%= @hash %>");
+    </script>
+  </body>
+</html>

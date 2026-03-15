@@ -283,3 +283,28 @@ export function ListMembers () {
 export function TruthMap () {
   return import('../../truth_map');
 }
+
+export function TrustDashboard () {
+  return import('../../trust_dashboard');
+}
+
+export function GuardianDashboard () {
+  return import('../../guardian_dashboard');
+}
+
+export function LinkVerificationDashboard () {
+  return import('../../link_verification');
+}
+
+export function GuildsDashboard () {
+  return import('../../truth_hunter_guilds');
+}
+
+export function EmbedWidget () {
+  return import('../../link_verification/embed_widget')
+    .then((module) => ({ default: module.default }));
+}
+
+export function DiscoveryFeed () {
+  return import('../../discovery_feed/index.jsx');
+}

@@ -6,6 +6,8 @@
 #
 #  id                           :bigint(8)        not null, primary key
 #  bounty_amount                :integer
+#  claim_signature              :string
+#  claim_type                   :string           default("FACT"), not null
 #  deleted_at                   :datetime
 #  edited_at                    :datetime
 #  fake_count                   :integer
@@ -28,6 +30,7 @@
 #  sensitive                    :boolean          default(FALSE), not null
 #  spoiler_text                 :text             default(""), not null
 #  text                         :text             default(""), not null
+#  transmission_path_length     :integer          default(0), not null
 #  trendable                    :boolean
 #  truth_score                  :float            default(0.0), not null
 #  uri                          :string
@@ -42,6 +45,7 @@
 #  in_reply_to_id               :bigint(8)
 #  poll_id                      :bigint(8)
 #  reblog_of_id                 :bigint(8)
+#  source_status_id             :bigint(8)
 #
 
 class Status < ApplicationRecord

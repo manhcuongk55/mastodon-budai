@@ -56,6 +56,7 @@ import {
   COMPOSE_LOCATION_CHANGE,
   COMPOSE_LOCATION_CLEAR,
   COMPOSE_CHANGE_REAL_ESTATE,
+  COMPOSE_CLAIM_TYPE_CHANGE,
 } from '../actions/compose';
 import { REDRAFT } from '../actions/statuses';
 import { STORE_HYDRATE } from '../actions/store';
@@ -81,6 +82,7 @@ const initialState = ImmutableMap({
   real_estate_area: null,
   real_estate_legal_status: null,
   real_estate_zoning: null,
+  claim_type: 'FACT',
   in_reply_to: null,
   is_composing: false,
   is_submitting: false,
@@ -149,6 +151,7 @@ function clearAll(state) {
     map.set('real_estate_area', null);
     map.set('real_estate_legal_status', null);
     map.set('real_estate_zoning', null);
+    map.set('claim_type', 'FACT');
   });
 }
 
@@ -444,6 +447,8 @@ export const composeReducer = (state = initialState, action) => {
       map.set('real_estate_legal_status', action.legalStatus);
       map.set('real_estate_zoning', action.zoning);
     });
+  case COMPOSE_CLAIM_TYPE_CHANGE:
+    return state.set('claim_type', action.claimType);
   case COMPOSE_COMPOSING_CHANGE:
     return state.set('is_composing', action.value);
   case COMPOSE_REPLY:

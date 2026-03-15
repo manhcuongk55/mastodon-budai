@@ -85,7 +85,13 @@ import {
   Quotes,
   TruthMap,
   TrustDashboard,
+  GuardianDashboard,
+  LinkVerificationDashboard,
+  GuildsDashboard,
   P2PTimeline,
+  EmbedWidget,
+  ReferralDashboard,
+  DiscoveryFeed,
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
 import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem } from './util/focusUtils';
@@ -239,6 +245,12 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/search' component={Search} content={children} />
             <WrappedRoute path='/truth-map' component={TruthMap} content={children} />
             <WrappedRoute path='/trust' component={TrustDashboard} content={children} />
+            <WrappedRoute path='/guardians' component={GuardianDashboard} content={children} />
+            <WrappedRoute path='/portal/:hash' component={LinkVerificationDashboard} content={children} />
+            <WrappedRoute path='/embed/:hash' component={EmbedWidget} content={children} />
+            <WrappedRoute path='/guilds' component={GuildsDashboard} content={children} />
+            <WrappedRoute path='/referrals' component={ReferralDashboard} content={children} />
+            <WrappedRoute path='/discover' component={DiscoveryFeed} content={children} />
             <WrappedRoute path='/p2p' component={P2PTimeline} content={children} />
             <WrappedRoute path={['/publish', '/statuses/new']} component={Compose} content={children} />
 

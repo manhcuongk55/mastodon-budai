@@ -28,7 +28,7 @@ export const P2PTrustBadge: React.FC<{ targetAccountId: string; targetUsername: 
       alert("You must be logged in to vouch.");
       return;
     }
-    const pin = String(p2pTrust.generateVouchPin(identity.accountId, targetAccountId));
+    const pin = String((p2pTrust as any).generateVouchPin(identity.accountId, targetAccountId));
     setGeneratedPin(pin);
   }, [identity, targetAccountId]);
 
@@ -37,7 +37,7 @@ export const P2PTrustBadge: React.FC<{ targetAccountId: string; targetUsername: 
     if (!identity.accountId || !inputPin) return;
     setIsVerifying(true);
     
-    const success = await p2pTrust.verifyVouchPin(inputPin, identity.accountId);
+    const success = await (p2pTrust as any).verifyVouchPin(inputPin, identity.accountId);
     setIsVerifying(false);
     
     if (success) {

@@ -15,6 +15,7 @@
 #  avatar_remote_url             :string
 #  avatar_storage_schema_version :integer
 #  avatar_updated_at             :datetime
+#  campaign_pioneer              :boolean          default(FALSE), not null
 #  discoverable                  :boolean
 #  display_name                  :string           default(""), not null
 #  domain                        :string
@@ -35,6 +36,7 @@
 #  inbox_url                     :string           default(""), not null
 #  indexable                     :boolean          default(FALSE), not null
 #  is_guardian                   :boolean
+#  is_seeking_verification       :boolean          default(FALSE), not null
 #  journey_milestone             :string
 #  last_webfingered_at           :datetime
 #  locked                        :boolean          default(FALSE), not null
@@ -45,6 +47,7 @@
 #  private_key                   :text
 #  protocol                      :integer          default("ostatus"), not null
 #  public_key                    :text             default(""), not null
+#  referral_code                 :string
 #  requested_review_at           :datetime
 #  reviewed_at                   :datetime
 #  sensitized_at                 :datetime
@@ -65,6 +68,7 @@
 #  created_at                    :datetime         not null
 #  updated_at                    :datetime         not null
 #  moved_to_account_id           :bigint(8)
+#  referred_by_id                :bigint(8)
 #
 
 class Account < ApplicationRecord
@@ -137,6 +141,11 @@ class Account < ApplicationRecord
   # Remote user validations
   validates :uri, presence: true, unless: :local?, on: :create
 
+  # Referral System
+  belongs_to :referred_by, class_name: 'Account', optional: true
+  validates :referral_code, uniqueness: true, allow_nil: true
+  before_validation :generate_referral_code, on: :create, if: :local?
+
   # Local user validations
   validates :username, format: { with: /\A[a-z0-9_]+\z/i }, length: { maximum: USERNAME_LENGTH_LIMIT }, if: -> { local? && will_save_change_to_username? && !actor_type_application? }
   validates_with UnreservedUsernameValidator, if: -> { local? && will_save_change_to_username? && !actor_type_application? && !user&.bypass_registration_checks }
@@ -156,6 +165,7 @@ class Account < ApplicationRecord
 
   # --- Pirate Truth Economy Gamification ---
   after_initialize :set_pirate_defaults, if: :new_record?
+  after_create_commit :reward_referrer!
 
   def earn_berries(amount)
     increment!(:truth_berries, amount)
@@ -176,6 +186,15 @@ class Account < ApplicationRecord
   end
 
   private
+
+  def reward_referrer!
+    if referred_by_id.present?
+      # Give the person who referred 10 Truth Berries
+      referred_by.earn_berries(10)
+      # Give the new user an extra 10 Truth Berries bonus
+      self.earn_berries(10)
+    end
+  end
 
   def set_pirate_defaults
     self.truth_berries ||= 100 # Starting Truth Berries (Sign up bonus)
@@ -528,6 +547,15 @@ class Account < ApplicationRecord
     keypair = OpenSSL::PKey::RSA.new(2048)
     self.private_key = keypair.to_pem
     self.public_key  = keypair.public_key.to_pem
+  end
+
+  def generate_referral_code
+    return if referral_code.present?
+
+    loop do
+      self.referral_code = SecureRandom.alphanumeric(6).upcase
+      break unless Account.exists?(referral_code: referral_code)
+    end
   end
 
   def normalize_domain

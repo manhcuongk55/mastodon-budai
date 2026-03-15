@@ -13,6 +13,9 @@ import NotificationsActiveIcon from '@/material-icons/400-24px/notifications-fil
 import NotificationsIcon from '@/material-icons/400-24px/notifications.svg?react';
 import SearchIcon from '@/material-icons/400-24px/search.svg?react';
 import ExploreIcon from '@/material-icons/400-24px/explore.svg?react';
+import GroupIcon from '@/material-icons/400-24px/group.svg?react';
+import VideocamIcon from '@/material-icons/400-24px/videocam.svg?react';
+import GroupsIcon from '@/material-icons/400-24px/groups.svg?react';
 import { openModal } from 'mastodon/actions/modal';
 import { toggleNavigation } from 'mastodon/actions/navigation';
 import { fetchServer } from 'mastodon/actions/server';
@@ -192,6 +195,21 @@ export const NavigationBar: React.FC = () => {
               title={intl.formatMessage(messages.map)}
               to='/truth-map'
               icon={<Icon id='' icon={ExploreIcon} />}
+            />
+            <IconLabelButton
+              title="Khám Phá"
+              to='/discover'
+              icon={<Icon id='' icon={VideocamIcon} />}
+            />
+            <IconLabelButton
+              title="Bang Hội"
+              to='/guilds'
+              icon={<Icon id='' icon={GroupsIcon} />}
+            />
+            <IconLabelButton
+              title="Mời Bạn Bè"
+              to='/referrals'
+              icon={<Icon id='' icon={GroupIcon} />} 
             />
             <IconLabelButton
               title={intl.formatMessage(messages.publish)}

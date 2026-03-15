@@ -16,8 +16,11 @@ def redirect_with_vary(path)
 end
 
 Rails.application.routes.draw do
+  get "link_portals/show"
+  get "/portal/:hash", to: "link_portals#show", as: :link_portal
   get "truth_map/global"
   get "truth_map/crew"
+  get "invite/:code", to: "referrals#show"
   root to: redirect('/smile-verify/')
 
   mount LetterOpenerWeb::Engine, at: 'letter_opener' if Rails.env.development?
@@ -230,6 +233,12 @@ Rails.application.routes.draw do
   draw(:fasp)
 
   draw(:web_app)
+
+  # P2P Link Verification Portal (Intercept Route for OpenGraph Bots)
+  get '/portal/:hash', to: 'link_portals#show', as: :link_portal
+  
+  # Responsive P2P Reality Widget (Allows cross-domain iframes)
+  get '/embed/:hash', to: 'embeds#show', as: :embed
 
   get '/web/(*any)', to: redirect('/%{any}', status: 302), as: :web, defaults: { any: '' }, format: false
   get '/about',      to: 'about#show'

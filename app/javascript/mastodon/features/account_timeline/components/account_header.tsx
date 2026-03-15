@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 
 import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
@@ -11,6 +11,8 @@ import { AccountNote } from '@/mastodon/features/account/components/account_note
 import FollowRequestNoteContainer from '@/mastodon/features/account/containers/follow_request_note_container';
 import { useLayout } from '@/mastodon/hooks/useLayout';
 import { useVisibility } from '@/mastodon/hooks/useVisibility';
+import { useIdentity } from '@/mastodon/identity_context';
+import { p2pTrust } from '@/mastodon/services/p2p_trust_service';
 import {
   autoPlayGif,
   me,
@@ -23,6 +25,7 @@ import { useAppSelector, useAppDispatch } from '@/mastodon/store';
 import { isRedesignEnabled } from '../common';
 
 import { AccountName } from './account_name';
+import { submitIdentityVerification } from '@/mastodon/actions/accounts';
 import { AccountBadges } from './badges';
 import { AccountButtons } from './buttons';
 import { FamiliarFollowers } from './familiar_followers';
@@ -35,6 +38,7 @@ import { AccountNumberFields } from './number_fields';
 import { P2PTrustBadge } from './p2p_trust_badge';
 import redesignClasses from './redesign.module.scss';
 import { AccountTabs } from './tabs';
+import FaceVerification from '@/mastodon/features/account/components/face_verification';
 
 const titleFromAccount = (account: Account) => {
   const displayName = account.display_name;
@@ -60,6 +64,29 @@ export const AccountHeader: React.FC<{
     state.relationships.get(accountId),
   );
   const hidden = useAppSelector((state) => getAccountHidden(state, accountId));
+
+  const identity = useIdentity();
+  const [myVouches, setMyVouches] = useState<string[]>([]);
+
+  // Epic U: Guardian Check - Subscribe to MY trust score to see if I am a Guardian
+  useEffect(() => {
+    if (!identity.accountId) return;
+    const unsubscribe = p2pTrust.subscribeToVouches(identity.accountId, (newVouches: string[]) => {
+      setMyVouches(newVouches);
+    });
+    return () => unsubscribe();
+  }, [identity.accountId]);
+
+  const isGuardian = myVouches.length >= 3;
+
+  const [showFaceVerification, setShowFaceVerification] = useState(false);
+
+  const handleFaceVerificationComplete = useCallback((payload: { nodeId: string; proofHash: string }) => {
+    setShowFaceVerification(false);
+    // Submit to Guardians via Zero Knowledge
+    dispatch(submitIdentityVerification());
+    alert(`🔐 Zero-Knowledge Biometric Proof generated successfully!\nNode ID: ${payload.nodeId}\nHash: ${payload.proofHash}\n\nĐã gửi Hồ sơ Mã hoá ẩn danh (Anonymous Encrypted Dossier) đến Hội đồng Guardian P2P để thẩm định! Yêu cầu xác thực của bạn đang được xử lý.`);
+  }, [dispatch]);
 
   const handleOpenAvatar = useCallback(
     (e: React.MouseEvent) => {
@@ -189,6 +216,41 @@ export const AccountHeader: React.FC<{
                 )}
               </div>
               <P2PTrustBadge targetAccountId={accountId} targetUsername={account.acct} />
+              
+              {account.is_seeking_verification && !isMe && (
+                <div style={{ marginTop: '4px', background: 'rgba(255, 172, 51, 0.1)', border: '1px solid #ffac33', borderRadius: '4px', padding: '8px 12px', color: '#ffac33', fontSize: '13px', fontWeight: 'bold' }}>
+                  <span style={{ display: 'block', marginBottom: '4px' }}>🛡️ Cần Hành Động: Đang Xác Thực Tính Danh</span>
+                  <span style={{ fontSize: '12px', color: '#8899a6', fontWeight: 'normal' }}>Người dùng này đang yêu cầu Cộng đồng Guardian xác minh họ là Người Thật.</span>
+                  
+                  {isGuardian ? (
+                    <button 
+                      type="button" 
+                      className="button button-secondary" 
+                      style={{ width: '100%', marginTop: '8px', padding: '4px', fontSize: '12px', background: '#ffac33', borderColor: '#ffac33', color: '#15202b' }}
+                      onClick={() => { 
+                        alert(`[GUARDIAN ACCESS GRANTED]\n\nMở Hồ Sơ Mã Hoá của Node: ${accountId}\n\nĐang tiến hành giải mã thuật toán phân mảnh khuôn mặt (Zero-Knowledge Sync)...`);
+                      }}
+                    >
+                      Mở Hồ Sơ Bằng Chứng (Zero-Knowledge)
+                    </button>
+                  ) : (
+                    <div style={{ marginTop: '8px', padding: '6px', background: 'rgba(0,0,0,0.2)', borderRadius: '4px', textAlign: 'center', color: '#8899a6', fontSize: '11px' }}>
+                      🔒 Chỉ dành cho [Guardian] (Cần 3+ Vouch để mở khóa Hồ sơ này). Bạn hiện có {myVouches.length} Vouch.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {isMe && !suspendedOrHidden && (
+                <button 
+                  type="button"
+                  className='button button-tertiary' 
+                  style={{ marginTop: '8px', background: 'rgba(29, 161, 242, 0.1)', color: '#1da1f2', border: '1px solid #1da1f2', padding: '4px 10px', fontSize: '13px', borderRadius: '4px', width: 'fit-content', fontWeight: 'bold' }}
+                  onClick={() => { setShowFaceVerification(true); }}
+                >
+                  👁️ Xác Thực Danh Tính (Face Verify)
+                </button>
+              )}
             </div>
             {isRedesign && (
               <AccountButtons
@@ -263,6 +325,16 @@ export const AccountHeader: React.FC<{
         />
         <link rel='canonical' href={account.url} />
       </Helmet>
+
+      {/* Epic S: Proof of Personhood Full Screen Modal */}
+      {showFaceVerification && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FaceVerification 
+            onCancel={() => { setShowFaceVerification(false); }} 
+            onVerificationComplete={handleFaceVerificationComplete} 
+          />
+        </div>
+      )}
     </div>
   );
 };

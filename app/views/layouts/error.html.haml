@@ -7,10 +7,10 @@
     %meta{ content: 'width=device-width,initial-scale=1', name: 'viewport' }/
     = vite_client_tag
     = vite_react_refresh_tag
-    = vite_polyfills_tag
-    = vite_typescript_tag 'theme-selection.ts', crossorigin: 'anonymous', blocking: 'render'
+    = vite_polyfills_tag rescue nil
+    = vite_typescript_tag 'theme-selection.ts', crossorigin: 'anonymous', blocking: 'render' rescue nil
     = theme_style_tags Setting.default_settings['theme']
-    = vite_typescript_tag 'error.ts', crossorigin: 'anonymous'
+    = vite_typescript_tag 'error.ts', crossorigin: 'anonymous' rescue nil
   %body.error
     .dialog
       .dialog__illustration

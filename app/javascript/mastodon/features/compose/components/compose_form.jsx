@@ -96,6 +96,7 @@ class ComposeForm extends ImmutablePureComponent {
     highlighted: false,
     isFetchingLocation: false,
     isRealEstateMode: false,
+    detectedUrl: null, // Holds the URL being analyzed for truth
   };
 
   constructor(props) {
@@ -149,6 +150,20 @@ class ComposeForm extends ImmutablePureComponent {
       // Something changed the text inside the textarea (e.g. browser extensions like Grammarly)
       // Update the state to match the current text
       this.props.onChange(this.textareaRef.current.value);
+      
+      // Feature: Cross-Platform News Verification (Epic T)
+      // Automatically detect pasted URLs to trigger Link Verification Mode
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const urls = this.textareaRef.current.value.match(urlRegex);
+      if (urls && urls.length > 0) {
+        if (!this.state.detectedUrl) {
+          this.setState({ detectedUrl: urls[0] });
+        }
+      } else {
+        if (this.state.detectedUrl) {
+          this.setState({ detectedUrl: null });
+        }
+      }
     }
 
     if (!this.canSubmit()) {
@@ -197,7 +212,11 @@ class ComposeForm extends ImmutablePureComponent {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           this.setState({ isFetchingLocation: false });
-          this.props.onChangeLocation(position.coords.latitude, position.coords.longitude);
+          // Privacy Pillar: Location Privacy (Geohash Rounding)
+          // Round to 2 decimal places to prove proximity (~1km radius) without exposing exact address
+          const roundedLat = Math.round(position.coords.latitude * 100) / 100;
+          const roundedLng = Math.round(position.coords.longitude * 100) / 100;
+          this.props.onChangeLocation(roundedLat, roundedLng);
         },
         (error) => {
           this.setState({ isFetchingLocation: false });
@@ -205,6 +224,10 @@ class ComposeForm extends ImmutablePureComponent {
         }
       );
     }
+  };
+
+  handleChangeClaimType = (e) => {
+    this.props.onChangeClaimType(e.target.value);
   };
 
   handleToggleRealEstateMode = () => {
@@ -351,6 +374,28 @@ class ComposeForm extends ImmutablePureComponent {
             >
               🏠
             </button>
+
+            <select
+              title='Classify Information Type'
+              aria-label='Classify Information Type'
+              className='compose-form__action-button'
+              style={{ 
+                marginLeft: 'auto', 
+                background: 'rgba(0,0,0,0.2)', 
+                color: 'inherit', 
+                border: '1px solid rgba(255,255,255,0.2)', 
+                borderRadius: '4px',
+                padding: '2px 8px',
+                fontSize: '13px'
+              }}
+              value={this.props.claimType || 'FACT'}
+              onChange={this.handleChangeClaimType}
+            >
+              <option value="FACT">✅ Fact (Sự Thật)</option>
+              <option value="ADVICE">💡 Advice (Lời Khuyên)</option>
+              <option value="OPINION">💭 Opinion (Quan Điểm)</option>
+              <option value="RUMOR">🗣️ Rumor (Tin Đồn)</option>
+            </select>
           </div>
 
           {this.props.spoiler && (
@@ -405,9 +450,40 @@ class ComposeForm extends ImmutablePureComponent {
                 <input type='text' placeholder='Area (e.g. 50m2)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateArea || ''} onChange={(e) => this.handleRealEstateChange(e, 'area')} />
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <input type='text' placeholder='Legal (e.g. Sổ Đỏ)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateLegalStatus || ''} onChange={(e) => this.handleRealEstateChange(e, 'legalStatus')} />
-                <input type='text' placeholder='Zoning (e.g. Đất Ở)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateZoning || ''} onChange={(e) => this.handleRealEstateChange(e, 'zoning')} />
+                <input type='text' placeholder='Legal Status (e.g. So Do)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateLegalStatus || ''} onChange={(e) => this.handleRealEstateChange(e, 'legalStatus')} />
+                <input type='text' placeholder='Zoning (e.g. Quy Hoach Dat O)' className='underline-input' style={{ flex: 1, color: 'inherit', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', padding: '5px' }} value={this.props.realEstateZoning || ''} onChange={(e) => this.handleRealEstateChange(e, 'zoning')} />
               </div>
+            </div>
+          )}
+
+          {/* Epic T: Cross-Platform News Verification Banner */}
+          {this.state.detectedUrl && (
+            <div className='compose-form__truth-analysis-banner' style={{ 
+              padding: '12px', background: 'linear-gradient(90deg, rgba(88,101,242,0.15) 0%, rgba(200,90,250,0.15) 100%)', 
+              borderRadius: '8px', marginBottom: '10px', border: '1px solid rgba(88,101,242,0.3)',
+              display: 'flex', flexDirection: 'column', gap: '8px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 'bold', color: '#aab8c2' }}>
+                <span>🔍</span> Truth Analysis Mode Detected
+              </div>
+              <div style={{ fontSize: '13px', color: '#8899a6', wordBreak: 'break-all' }}>
+                <strong>Target:</strong> {this.state.detectedUrl}
+              </div>
+                <Button 
+                  text="Xác minh tin tức này (Verify Link)"
+                  onClick={async () => {
+                    const { p2pTrust } = await import('mastodon/services/p2p_trust_service');
+                    const hashHex = await p2pTrust.registerCanonicalLink(this.state.detectedUrl);
+                    // Use standard window.location to navigate to the new React Route since compose form might not have router context at this level smoothly
+                    window.location.href = `/portal/${hashHex}`;
+                  }}
+                  title="Submit this link to the Trusking P2P mesh for decentralized fact-checking"
+                  style={{
+                    background: 'rgba(88,101,242,0.8)', color: 'white', border: 'none', 
+                    borderRadius: '4px', padding: '6px 12px', fontSize: '13px', 
+                    cursor: 'pointer', fontWeight: 'bold', marginTop: '4px', width: 'fit-content'
+                  }}
+                />
             </div>
           )}
 

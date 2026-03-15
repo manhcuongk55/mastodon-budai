@@ -1,0 +1,27 @@
+!!!
+%html{ lang: I18n.locale }
+  %head
+    %meta{ charset: 'utf-8' }/
+    %title= @title
+    
+    / OpenGraph Meta Tags for Facebook, Zalo, LinkedIn
+    %meta{ property: 'og:site_name', content: 'MAKAI Truth Network' }/
+    %meta{ property: 'og:title', content: @title }/
+    %meta{ property: 'og:description', content: @description }/
+    %meta{ property: 'og:image', content: @image_url }/
+    %meta{ property: 'og:image:width', content: '1200' }/
+    %meta{ property: 'og:image:height', content: '630' }/
+    %meta{ property: 'og:url', content: request.original_url }/
+    %meta{ property: 'og:type', content: 'article' }/
+    
+    / Twitter Card Meta Tags
+    %meta{ name: 'twitter:card', content: 'summary_large_image' }/
+    %meta{ name: 'twitter:title', content: @title }/
+    %meta{ name: 'twitter:description', content: @description }/
+    %meta{ name: 'twitter:image', content: @image_url }/
+
+  %body
+    / Fallback content in case someone opens this directly without JS
+    %h1= @title
+    %p= @description
+    %a{ href: @url } Mở Ứng Dụng MAKAI

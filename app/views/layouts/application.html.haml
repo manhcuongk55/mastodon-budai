@@ -29,10 +29,10 @@
     = theme_style_tags current_theme
     = vite_client_tag
     = vite_react_refresh_tag
-    = vite_polyfills_tag
+    = vite_polyfills_tag rescue nil
     -# Needed for the wicg-inert polyfill. It needs to be on it's own <style> tag, with this `id`
-    = vite_stylesheet_tag 'styles/entrypoints/inert.scss', media: 'all', id: 'inert-style', crossorigin: 'anonymous'
-    = vite_typescript_tag 'common.ts', crossorigin: 'anonymous'
+    = vite_stylesheet_tag 'styles/entrypoints/inert.scss', media: 'all', id: 'inert-style', crossorigin: 'anonymous' rescue nil
+    = vite_typescript_tag 'common.ts', crossorigin: 'anonymous' rescue nil
 
     = vite_preload_file_tag "mastodon/locales/#{I18n.locale}.json"
     = csrf_meta_tags unless skip_csrf_meta_tags?

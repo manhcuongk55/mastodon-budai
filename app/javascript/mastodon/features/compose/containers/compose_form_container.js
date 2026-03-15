@@ -13,6 +13,7 @@ import {
   changeComposeLocation,
   clearComposeLocation,
   changeComposeRealEstate,
+  changeComposeClaimType,
 } from 'mastodon/actions/compose';
 import { pasteLinkCompose } from 'mastodon/actions/compose_typed';
 import { openModal } from 'mastodon/actions/modal';
@@ -52,6 +53,7 @@ const mapStateToProps = state => ({
   realEstateArea: state.getIn(['compose', 'real_estate_area']),
   realEstateLegalStatus: state.getIn(['compose', 'real_estate_legal_status']),
   realEstateZoning: state.getIn(['compose', 'real_estate_zoning']),
+  claimType: state.getIn(['compose', 'claim_type']),
   privacy: state.getIn(['compose', 'privacy']),
   focusDate: state.getIn(['compose', 'focusDate']),
   caretPosition: state.getIn(['compose', 'caretPosition']),
@@ -128,6 +130,10 @@ const mapDispatchToProps = (dispatch, props) => ({
 
   onChangeRealEstate (price, area, legalStatus, zoning) {
     dispatch(changeComposeRealEstate(price, area, legalStatus, zoning));
+  },
+
+  onChangeClaimType (claimType) {
+    dispatch(changeComposeClaimType(claimType));
   },
 
   onPaste (e) {

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="utf-8">
+  <title><%= @title || "Trusking Reality Widget" %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= stylesheet_pack_tag "common", media: "all" %>
+  <%= stylesheet_pack_tag "application", media: "all" %>
+  <style>
+    /* Strip all Mastodon padding/background overhead for a clean iframe fit */
+    html, body, #mastodon {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      height: 100% !important;
+      overflow: hidden !important;
+    }
+  </style>
+</head>
+<body class="embed">
+  <div id="mastodon" class="theme-default">
+    <%= yield %>
+  </div>
+  
+  <%= javascript_pack_tag "common" %>
+  <%= javascript_pack_tag "features/embed", integrity: true, crossorigin: "anonymous" %>
+</body>
+</html>

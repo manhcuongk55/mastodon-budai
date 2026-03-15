@@ -242,10 +242,24 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = () => {
         />
         <ColumnLink
           transparent
+          to='/guilds'
+          icon='shield'
+          iconComponent={StarIcon}
+          text='🛡️ Bang Hội'
+        />
+        <ColumnLink
+          transparent
           to='/p2p'
           icon='globe'
           iconComponent={PublicIcon}
           text='🌐 P2P Mode'
+        />
+        <ColumnLink
+          transparent
+          to='/guardians'
+          icon='users'
+          iconComponent={StarIcon}
+          text='👁️ Guardian Jury'
         />
         <ColumnLink
           transparent

@@ -18,6 +18,7 @@ import Links from './links';
 import Statuses from './statuses';
 import Suggestions from './suggestions';
 import Tags from './tags';
+import Controversies from './controversies';
 
 const messages = defineMessages({
   title: { id: 'explore.title', defaultMessage: 'Trending' },
@@ -53,6 +54,10 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
 
       <div className='account__section-headline'>
         <NavLink exact to='/explore'>
+          <div style={{ color: '#ffac33', fontWeight: 'bold' }}>Tranh Cãi 🔥</div>
+        </NavLink>
+
+        <NavLink exact to='/explore/posts'>
           <FormattedMessage
             tagName='div'
             id='explore.trending_statuses'
@@ -91,8 +96,9 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
         <Route path='/explore/tags' component={Tags} />
         <Route path='/explore/links' component={Links} />
         <Route path='/explore/suggestions' component={Suggestions} />
-        <Route exact path={['/explore', '/explore/posts']}>
-          <Statuses multiColumn={multiColumn} />
+        <Route path='/explore/posts' component={Statuses} />
+        <Route exact path={['/explore', '/explore/controversies']}>
+          <Controversies />
         </Route>
       </Switch>
 

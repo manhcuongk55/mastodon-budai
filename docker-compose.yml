@@ -57,9 +57,9 @@ services:
   #     - '127.0.0.1:9200:9200'
 
   web:
-    # You can uncomment the following line if you want to not use the prebuilt image, for example if you have local code changes
-    # build: .
-    image: ghcr.io/mastodon/mastodon:v4.5.7
+    # Use local build context instead of prebuilt image to include MAKAI customizations
+    build: .
+    image: makai-mastodon-web:latest
     restart: always
     env_file: .env.production
     command: bundle exec puma -C config/puma.rb
@@ -80,10 +80,10 @@ services:
 
   streaming:
     # You can uncomment the following lines if you want to not use the prebuilt image, for example if you have local code changes
-    # build:
-    #   dockerfile: ./streaming/Dockerfile
-    #   context: .
-    image: ghcr.io/mastodon/mastodon-streaming:v4.5.7
+    build:
+      dockerfile: ./streaming/Dockerfile
+      context: .
+    image: makai-mastodon-streaming:latest
     restart: always
     env_file: .env.production
     command: node ./streaming/index.js
@@ -100,9 +100,9 @@ services:
       - redis
 
   sidekiq:
-    # You can uncomment the following line if you want to not use the prebuilt image, for example if you have local code changes
-    # build: .
-    image: ghcr.io/mastodon/mastodon:v4.5.7
+    # Use local build context instead of prebuilt image to include MAKAI customizations
+    build: .
+    image: makai-mastodon-web:latest
     restart: always
     env_file: .env.production
     command: bundle exec sidekiq
@@ -133,6 +133,20 @@ services:
   #   networks:
   #     - external_network
   #     - internal_network
+
+  p2p_node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makai-p2p-node:latest
+    restart: always
+    env_file: .env.production
+    command: node smile_trust_node.js
+    networks:
+      - external_network
+      - internal_network
+    ports:
+      - '127.0.0.1:8765:8765'
 
 networks:
   external_network:

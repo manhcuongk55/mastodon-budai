@@ -16,6 +16,6 @@ const gun = Gun({
   dir: 'radata',
 });
 
-server.listen(port, () => {
-  console.log(`🏴‍☠️ MAKAI Small Machine Trust is running at http://localhost:${port}/gun`);
+server.listen(port, '0.0.0.0', () => {
+  console.log(`🏴‍☠️ MAKAI Smile Machine Trust is running at 0.0.0.0:${port}/gun`);
 });

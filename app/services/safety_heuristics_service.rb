@@ -23,7 +23,23 @@ class SafetyHeuristicsService
     # The React frontend will dynamically modify this via Haversine distance.
     location_weight = status.latitude.present? && status.longitude.present? ? 1.5 : 1.0
 
-    raw_score = node_trust * evidence_strength * location_weight
+    # 4. Epic Q: Human Trust Graph (Path Degradation)
+    # Trust_new = Trust_source × TransmissionFactor^path_length
+    transmission_factor = 0.6
+    path_length = status.try(:transmission_path_length) || 0
+    propagation_weight = (transmission_factor ** path_length)
+
+    # 5. Information Classification Weight
+    claim_type = status.try(:claim_type) || 'FACT'
+    type_multiplier = case claim_type
+                      when 'FACT' then 1.0
+                      when 'ADVICE' then 0.5
+                      when 'OPINION' then 0.3
+                      when 'RUMOR' then 0.1
+                      else 1.0
+                      end
+
+    raw_score = node_trust * evidence_strength * location_weight * propagation_weight * type_multiplier
 
     # Ensure score doesn't drop below 0
     final_score = [raw_score, 0.0].max.round(2)

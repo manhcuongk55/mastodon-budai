@@ -29,6 +29,9 @@ export const DisplayNameWithoutDomain: FC<
             {account.get('is_guardian') && (
               <span title="Guardian of the Network" style={{ marginLeft: '4px', verticalAlign: 'middle', fontSize: '0.9em' }}>🛡️</span>
             )}
+            {account.get('campaign_pioneer') && (
+              <span title="Pioneer of Truth (Chiến dịch Toàn dân)" style={{ marginLeft: '4px', background: 'linear-gradient(45deg, #1da1f2, #17bf63)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 'bold', fontSize: '0.8em', border: '1px solid #1da1f2', padding: '1px 4px', borderRadius: '4px', verticalAlign: 'middle' }}>Tiên Phong 🇻🇳</span>
+            )}
           </>
         ) : (
           <strong className='display-name__html'>

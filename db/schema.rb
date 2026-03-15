@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_15_132642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -162,6 +162,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.string "avatar_remote_url"
     t.integer "avatar_storage_schema_version"
     t.datetime "avatar_updated_at", precision: nil
+    t.boolean "campaign_pioneer", default: false, null: false
     t.datetime "created_at", precision: nil, null: false
     t.boolean "discoverable"
     t.string "display_name", default: "", null: false
@@ -183,6 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.string "inbox_url", default: "", null: false
     t.boolean "indexable", default: false, null: false
     t.boolean "is_guardian"
+    t.boolean "is_seeking_verification", default: false, null: false
     t.string "journey_milestone"
     t.datetime "last_webfingered_at", precision: nil
     t.boolean "locked", default: false, null: false
@@ -194,6 +196,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.text "private_key"
     t.integer "protocol", default: 0, null: false
     t.text "public_key", default: "", null: false
+    t.string "referral_code"
+    t.bigint "referred_by_id"
     t.datetime "requested_review_at", precision: nil
     t.datetime "reviewed_at", precision: nil
     t.datetime "sensitized_at", precision: nil
@@ -216,6 +220,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.index "lower((username)::text), COALESCE(lower((domain)::text), ''::text)", name: "index_accounts_on_username_and_domain_lower", unique: true
     t.index ["domain", "id"], name: "index_accounts_on_domain_and_id"
     t.index ["moved_to_account_id"], name: "index_accounts_on_moved_to_account_id", where: "(moved_to_account_id IS NOT NULL)"
+    t.index ["referral_code"], name: "index_accounts_on_referral_code", unique: true
+    t.index ["referred_by_id"], name: "index_accounts_on_referred_by_id"
     t.index ["uri"], name: "index_accounts_on_uri"
     t.index ["url"], name: "index_accounts_on_url", opclass: :text_pattern_ops, where: "(url IS NOT NULL)"
   end
@@ -224,6 +230,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.bigint "account_id", null: false
     t.bigint "tag_id", null: false
     t.index ["account_id", "tag_id"], name: "index_accounts_tags_on_account_id_and_tag_id"
+  end
+
+  create_table "ad_campaigns", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.integer "budget"
+    t.decimal "crab_score"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.boolean "is_crab_verified"
+    t.string "media_url"
+    t.string "status"
+    t.string "target_url"
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_ad_campaigns_on_account_id"
   end
 
   create_table "admin_action_logs", force: :cascade do |t|
@@ -645,6 +666,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.index ["account_id", "year"], name: "index_generated_annual_reports_on_account_id_and_year", unique: true
   end
 
+  create_table "guild_memberships", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "guild_id", null: false
+    t.string "role", default: "member", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_guild_memberships_on_account_id"
+    t.index ["guild_id", "account_id"], name: "index_guild_memberships_on_guild_id_and_account_id", unique: true
+    t.index ["guild_id"], name: "index_guild_memberships_on_guild_id"
+  end
+
+  create_table "guilds", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "focus_area"
+    t.string "name", null: false
+    t.bigint "owner_id", null: false
+    t.string "owner_type", null: false
+    t.integer "reputation_points", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_guilds_on_name", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_guilds_on_owner"
+  end
+
   create_table "identities", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.string "provider", default: "", null: false
@@ -729,6 +774,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "user_id", null: false
     t.index ["user_id", "timeline"], name: "index_markers_on_user_id_and_timeline", unique: true
+  end
+
+  create_table "marketing_claims", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.integer "budget", default: 0
+    t.decimal "crab_score", default: "0.0"
+    t.datetime "created_at", null: false
+    t.boolean "is_crab_verified", default: false
+    t.text "marketing_text"
+    t.string "media_url"
+    t.string "product_name"
+    t.string "status", default: "pending_review"
+    t.string "target_url"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_marketing_claims_on_account_id"
   end
 
   create_table "media_attachments", id: :bigint, default: -> { "timestamp_id('media_attachments'::text)" }, force: :cascade do |t|
@@ -1191,6 +1251,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.bigint "account_id", null: false
     t.bigint "application_id"
     t.integer "bounty_amount"
+    t.string "claim_signature"
+    t.string "claim_type", default: "FACT", null: false
     t.bigint "conversation_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "deleted_at", precision: nil
@@ -1217,8 +1279,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
     t.boolean "reply", default: false, null: false
     t.integer "safe_count"
     t.boolean "sensitive", default: false, null: false
+    t.bigint "source_status_id"
     t.text "spoiler_text", default: "", null: false
     t.text "text", default: "", null: false
+    t.integer "transmission_path_length", default: 0, null: false
     t.boolean "trendable"
     t.float "truth_score", default: 0.0, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -1471,6 +1535,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
   add_foreign_key "account_warnings", "accounts", on_delete: :nullify
   add_foreign_key "account_warnings", "reports", on_delete: :cascade
   add_foreign_key "accounts", "accounts", column: "moved_to_account_id", on_delete: :nullify
+  add_foreign_key "ad_campaigns", "accounts"
   add_foreign_key "admin_action_logs", "accounts", on_delete: :cascade
   add_foreign_key "announcement_mutes", "accounts", on_delete: :cascade
   add_foreign_key "announcement_mutes", "announcements", on_delete: :cascade
@@ -1520,6 +1585,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
   add_foreign_key "follows", "accounts", column: "target_account_id", name: "fk_745ca29eac", on_delete: :cascade
   add_foreign_key "follows", "accounts", name: "fk_32ed1b5560", on_delete: :cascade
   add_foreign_key "generated_annual_reports", "accounts"
+  add_foreign_key "guild_memberships", "accounts"
+  add_foreign_key "guild_memberships", "guilds"
   add_foreign_key "identities", "users", name: "fk_bea040f377", on_delete: :cascade
   add_foreign_key "instance_moderation_notes", "accounts", on_delete: :cascade
   add_foreign_key "invites", "users", on_delete: :cascade
@@ -1530,6 +1597,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_115054) do
   add_foreign_key "lists", "accounts", on_delete: :cascade
   add_foreign_key "login_activities", "users", on_delete: :cascade
   add_foreign_key "markers", "users", on_delete: :cascade
+  add_foreign_key "marketing_claims", "accounts"
   add_foreign_key "media_attachments", "accounts", name: "fk_96dd81e81b", on_delete: :nullify
   add_foreign_key "media_attachments", "scheduled_statuses", on_delete: :nullify
   add_foreign_key "media_attachments", "statuses", on_delete: :nullify

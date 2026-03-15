@@ -1,0 +1,71 @@
+/Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/validations.rb:87:in 'ActiveRecord::Validations#raise_validation_error': Validation failed: Account must exist (ActiveRecord::RecordInvalid)
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/validations.rb:54:in 'ActiveRecord::Validations#save!'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:385:in 'block in ActiveRecord::Transactions#save!'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:438:in 'block (3 levels) in ActiveRecord::Transactions#with_transaction_returning_status'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/transaction.rb:648:in 'block in ActiveRecord::ConnectionAdapters::TransactionManager#within_new_transaction'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activesupport-8.1.2/lib/active_support/concurrency/null_lock.rb:9:in 'ActiveSupport::Concurrency::NullLock#synchronize'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/transaction.rb:645:in 'ActiveRecord::ConnectionAdapters::TransactionManager#within_new_transaction'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:386:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#within_new_transaction'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/database_statements.rb:378:in 'ActiveRecord::ConnectionAdapters::DatabaseStatements#transaction'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:434:in 'block (2 levels) in ActiveRecord::Transactions#with_transaction_returning_status'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/connection_pool.rb:485:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_pool_transaction_isolation_level'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:430:in 'block in ActiveRecord::Transactions#with_transaction_returning_status'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_adapters/abstract/connection_pool.rb:463:in 'ActiveRecord::ConnectionAdapters::ConnectionPool#with_connection'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/connection_handling.rb:313:in 'ActiveRecord::ConnectionHandling#with_connection'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:429:in 'ActiveRecord::Transactions#with_transaction_returning_status'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/transactions.rb:385:in 'ActiveRecord::Transactions#save!'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/suppressor.rb:56:in 'ActiveRecord::Suppressor#save!'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activerecord-8.1.2/lib/active_record/persistence.rb:55:in 'ActiveRecord::Persistence::ClassMethods#create!'
+	from /Users/sotatek/mastodon-budai/db/seeds/makai_truth_ecosystem.rb:7:in 'Object#create_truth_user'
+	from /Users/sotatek/mastodon-budai/db/seeds/makai_truth_ecosystem.rb:30:in '<main>'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/commands/runner/runner_command.rb:44:in 'Kernel.load'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/commands/runner/runner_command.rb:44:in 'block in Rails::Command::RunnerCommand#perform'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/activesupport-8.1.2/lib/active_support/execution_wrapper.rb:91:in 'ActiveSupport::ExecutionWrapper.wrap'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/commands/runner/runner_command.rb:70:in 'Rails::Command::RunnerCommand#conditional_executor'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/commands/runner/runner_command.rb:43:in 'Rails::Command::RunnerCommand#perform'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/thor-1.5.0/lib/thor/command.rb:28:in 'Thor::Command#run'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/thor-1.5.0/lib/thor/invocation.rb:127:in 'Thor::Invocation#invoke_command'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/command/base.rb:176:in 'Rails::Command::Base#invoke_command'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/thor-1.5.0/lib/thor.rb:538:in 'Thor.dispatch'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/command/base.rb:71:in 'Rails::Command::Base.perform'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/command.rb:65:in 'block in Rails::Command.invoke'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/command.rb:143:in 'Rails::Command.with_argv'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/command.rb:63:in 'Rails::Command.invoke'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/railties-8.1.2/lib/rails/commands.rb:18:in '<main>'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/3.4.0/bundled_gems.rb:82:in 'Kernel.require'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/3.4.0/bundled_gems.rb:82:in 'block (2 levels) in Kernel#replace_require'
+	from /Users/sotatek/.rbenv/versions/3.4.8/lib/ruby/gems/3.4.0/gems/bootsnap-1.23.0/lib/bootsnap/load_path_cache/core_ext/kernel_require.rb:33:in 'Kernel#require'
+	from bin/rails:4:in '<main>'
+[dotenv] Set [36mBIND[0m, [36mLOCAL_DOMAIN[0m, [36mACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY[0m, [36mACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT[0m, [36mACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY[0m
+[dotenv] Loaded [33m.env.development[0m
+Cache read: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/custom_css ({compress: true, compress_threshold: 1024})
+Cache generate: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/custom_css ({compress: true, compress_threshold: 1024})
+  [1m[36mSetting Load (97.9ms)[0m  [1m[34mSELECT "settings"."id", "settings"."created_at", "settings"."updated_at", "settings"."value", "settings"."var" FROM "settings" WHERE "settings"."var" = $1 LIMIT $2[0m  [["var", "custom_css"], ["LIMIT", 1]]
+  ↳ app/models/setting.rb:78:in 'block in Setting.[]'
+Cache write: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/custom_css ({compress: true, compress_threshold: 1024})
+--- 🏴‍☠️ Seeding MAKAI Truth Ecosystem ---
+Creating The Crew...
+  [1m[36mUserRole Load (5.8ms)[0m  [1m[34mSELECT "user_roles".* FROM "user_roles" WHERE "user_roles"."name" = 'User' LIMIT 1 /*application='Mastodon'*/[0m
+  [1m[36mTRANSACTION (0.9ms)[0m  [1m[35mBEGIN /*application='Mastodon'*/[0m
+  ↳ app/models/user_role.rb:116:in 'UserRole.everyone'
+  [1m[36mUserRole Load (18.1ms)[0m  [1m[34mSELECT "user_roles".* FROM "user_roles" WHERE "user_roles"."id" = -99 LIMIT 1 /*application='Mastodon'*/[0m
+  ↳ app/models/user_role.rb:116:in 'UserRole.everyone'
+  [1m[36mCACHE UserRole Load (0.0ms)[0m  [1m[34mSELECT "user_roles".* FROM "user_roles" WHERE "user_roles"."id" = -99 LIMIT 1[0m
+  ↳ app/models/user_role.rb:116:in 'UserRole.everyone'
+  [1m[36mUser Exists? (16.1ms)[0m  [1m[34mSELECT 1 AS one FROM "users" WHERE "users"."email" = 'luffy@makai.p2p' LIMIT 1 /*application='Mastodon'*/[0m
+Cache read: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/require_invite_text ({compress: true, compress_threshold: 1024})
+Cache generate: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/require_invite_text ({compress: true, compress_threshold: 1024})
+  [1m[36mSetting Load (0.8ms)[0m  [1m[34mSELECT "settings"."id", "settings"."created_at", "settings"."updated_at", "settings"."value", "settings"."var" FROM "settings" WHERE "settings"."var" = 'require_invite_text' LIMIT 1 /*application='Mastodon'*/[0m
+  ↳ app/models/setting.rb:78:in 'block in Setting.[]'
+Cache write: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/require_invite_text ({compress: true, compress_threshold: 1024})
+Cache read: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+Cache generate: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+  [1m[36mSetting Load (5.9ms)[0m  [1m[34mSELECT "settings"."id", "settings"."created_at", "settings"."updated_at", "settings"."value", "settings"."var" FROM "settings" WHERE "settings"."var" = 'min_age' LIMIT 1 /*application='Mastodon'*/[0m
+  ↳ app/models/setting.rb:78:in 'block in Setting.[]'
+Cache write: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+Cache read: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+Cache generate: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+  [1m[36mCACHE Setting Load (0.0ms)[0m  [1m[34mSELECT "settings"."id", "settings"."created_at", "settings"."updated_at", "settings"."value", "settings"."var" FROM "settings" WHERE "settings"."var" = 'min_age' LIMIT 1[0m
+  ↳ app/models/setting.rb:78:in 'block in Setting.[]'
+Cache write: rails_settings_cached/04bc1af4d11d98786636e7a4601c386b/min_age ({compress: true, compress_threshold: 1024})
+  [1m[36mTRANSACTION (1.1ms)[0m  [1m[31mROLLBACK /*application='Mastodon'*/[0m

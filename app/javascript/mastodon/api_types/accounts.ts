@@ -58,6 +58,7 @@ export interface BaseApiAccountJSON {
   roles?: ApiAccountJSON[];
   statuses_count: number;
   uri: string;
+  is_seeking_verification?: boolean;
   url?: string;
   username: string;
   moved?: ApiAccountJSON;
@@ -65,6 +66,8 @@ export interface BaseApiAccountJSON {
   limited?: boolean;
   memorial?: boolean;
   hide_collections: boolean;
+  campaign_pioneer?: boolean;
+  referral_code?: string;
 }
 
 // See app/serializers/rest/muted_account_serializer.rb

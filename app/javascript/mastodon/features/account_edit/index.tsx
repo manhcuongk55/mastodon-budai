@@ -16,7 +16,7 @@ import { useElementHandledLink } from '@/mastodon/components/status/handled_link
 import { useAccount } from '@/mastodon/hooks/useAccount';
 import { useCurrentAccountId } from '@/mastodon/hooks/useAccountId';
 import { autoPlayGif } from '@/mastodon/initial_state';
-import { fetchProfile } from '@/mastodon/reducers/slices/profile_edit';
+import { fetchProfile, patchProfile } from '@/mastodon/reducers/slices/profile_edit';
 import { useAppDispatch, useAppSelector } from '@/mastodon/store';
 
 import { AccountEditColumn, AccountEditEmptyColumn } from './components/column';
@@ -24,6 +24,7 @@ import { EditButton } from './components/edit_button';
 import { AccountField } from './components/field';
 import { AccountFieldActions } from './components/field_actions';
 import { AccountEditSection } from './components/section';
+import { ToggleField } from '@/mastodon/components/form_fields';
 import classes from './styles.module.scss';
 
 export const messages = defineMessages({
@@ -139,6 +140,14 @@ export const AccountEdit: FC = () => {
   const handleFeaturedTagsEdit = useCallback(() => {
     history.push('/profile/featured_tags');
   }, [history]);
+
+  const handleVerificationToggle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    void dispatch(patchProfile({ is_seeking_verification: e.target.checked }));
+  }, [dispatch]);
+
+  const handleVerificationSubmit = useCallback(() => {
+    handleOpenModal('ACCOUNT_EDIT_VERIFICATION' as ModalType);
+  }, [handleOpenModal]);
 
   // Normally we would use the account emoji, but we want all custom emojis to be available to render after editing.
   const emojis = useAppSelector((state) => state.custom_emojis);
@@ -292,6 +301,28 @@ export const AccountEdit: FC = () => {
             </Button>
           }
         />
+
+        <AccountEditSection
+          title={{ id: 'account_edit.identity_verification.title', defaultMessage: 'Identity Verification' }}
+          description={{ id: 'account_edit.identity_verification.description', defaultMessage: 'Submit proof of identity to gain the Verified Human badge via P2P Guardian Audit.' }}
+          showDescription
+        >
+          <div style={{ marginTop: '16px' }}>
+            <ToggleField
+              id="is_seeking_verification"
+              checked={!!profile.isSeekingVerification}
+              onChange={handleVerificationToggle}
+              label={<FormattedMessage id="account_edit.identity_verification.toggle_label" defaultMessage="I need Reality Verification (Cần xác thực danh tính)" />}
+            />
+            {profile.isSeekingVerification && (
+              <div style={{ marginTop: '16px' }}>
+                <Button onClick={handleVerificationSubmit}>
+                  <FormattedMessage id="account_edit.identity_verification.submit_button" defaultMessage="Submit Identity Dossier" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </AccountEditSection>
       </CustomEmojiProvider>
     </AccountEditColumn>
   );
