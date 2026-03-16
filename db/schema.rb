@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_091912) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_100655) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1477,6 +1477,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_091912) do
     t.index ["unconfirmed_email"], name: "index_users_on_unconfirmed_email", where: "(unconfirmed_email IS NOT NULL)"
   end
 
+  create_table "verification_evidences", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.float "confidence"
+    t.datetime "created_at", null: false
+    t.text "evidence_text"
+    t.string "evidence_type"
+    t.string "evidence_url"
+    t.datetime "updated_at", null: false
+    t.bigint "verification_task_id", null: false
+    t.string "vote"
+    t.index ["account_id"], name: "index_verification_evidences_on_account_id"
+    t.index ["verification_task_id"], name: "index_verification_evidences_on_verification_task_id"
+  end
+
+  create_table "verification_tasks", force: :cascade do |t|
+    t.text "claim_text"
+    t.string "claim_type"
+    t.datetime "created_at", null: false
+    t.integer "current_verifiers"
+    t.datetime "expires_at"
+    t.integer "required_verifiers"
+    t.integer "reward_berries"
+    t.bigint "status_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "verification_status"
+    t.index ["status_id"], name: "index_verification_tasks_on_status_id"
+  end
+
   create_table "vouches", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.datetime "created_at", null: false
@@ -1686,6 +1714,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_091912) do
   add_foreign_key "users", "invites", on_delete: :nullify
   add_foreign_key "users", "oauth_applications", column: "created_by_application_id", on_delete: :nullify
   add_foreign_key "users", "user_roles", column: "role_id", on_delete: :nullify
+  add_foreign_key "verification_evidences", "accounts"
+  add_foreign_key "verification_evidences", "verification_tasks"
+  add_foreign_key "verification_tasks", "statuses"
   add_foreign_key "vouches", "accounts", column: "target_account_id", on_delete: :cascade
   add_foreign_key "vouches", "accounts", on_delete: :cascade
   add_foreign_key "web_push_subscriptions", "oauth_access_tokens", column: "access_token_id", on_delete: :cascade

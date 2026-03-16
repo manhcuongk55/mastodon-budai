@@ -94,6 +94,7 @@ import {
   DiscoveryFeed,
   HumanZone,
   AiAgentRegistry,
+  VerificationDashboard,
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
 import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem } from './util/focusUtils';
@@ -255,6 +256,7 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/discover' component={DiscoveryFeed} content={children} />
             <WrappedRoute path='/human-zone' component={HumanZone} content={children} />
             <WrappedRoute path='/ai-registry' component={AiAgentRegistry} content={children} />
+            <WrappedRoute path='/verify' component={VerificationDashboard} content={children} />
             <WrappedRoute path='/p2p' component={P2PTimeline} content={children} />
             <WrappedRoute path={['/publish', '/statuses/new']} component={Compose} content={children} />
 

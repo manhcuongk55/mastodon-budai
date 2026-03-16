@@ -316,3 +316,7 @@ export function HumanZone () {
 export function AiAgentRegistry () {
   return import('../../ai_agent_registry');
 }
+
+export function VerificationDashboard () {
+  return import('../../verification_dashboard');
+}

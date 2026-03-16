@@ -171,6 +171,16 @@ namespace :api, format: false do
       end
     end
 
+    # Community Data Verification
+    resources :verification_tasks, only: [:index, :create, :show] do
+      member do
+        post :submit_evidence
+      end
+      collection do
+        get :my_contributions
+      end
+    end
+
     namespace :emails do
       resources :confirmations, only: [:create]
       get :check_confirmation, to: 'confirmations#check'

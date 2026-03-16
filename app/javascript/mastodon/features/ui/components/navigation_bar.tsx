@@ -217,6 +217,11 @@ export const NavigationBar: React.FC = () => {
               icon={<Icon id='' icon={GroupsIcon} />}
             />
             <IconLabelButton
+              title="Xác Thực"
+              to='/verify'
+              icon={<Icon id='' icon={GroupIcon} />}
+            />
+            <IconLabelButton
               title="Mời Bạn Bè"
               to='/referrals'
               icon={<Icon id='' icon={GroupIcon} />} 
