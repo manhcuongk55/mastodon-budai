@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_062412) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_091912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -259,6 +259,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_062412) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["account_id"], name: "index_admin_action_logs_on_account_id"
     t.index ["target_type", "target_id"], name: "index_admin_action_logs_on_target_type_and_target_id"
+  end
+
+  create_table "ai_agent_registrations", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "agent_name"
+    t.string "agent_type"
+    t.text "capabilities"
+    t.datetime "created_at", null: false
+    t.string "operator_name"
+    t.string "operator_url"
+    t.text "purpose"
+    t.string "status"
+    t.datetime "updated_at", null: false
+    t.boolean "verified"
+    t.index ["account_id"], name: "index_ai_agent_registrations_on_account_id"
   end
 
   create_table "announcement_mutes", force: :cascade do |t|
@@ -1540,6 +1555,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_062412) do
   add_foreign_key "accounts", "accounts", column: "moved_to_account_id", on_delete: :nullify
   add_foreign_key "ad_campaigns", "accounts"
   add_foreign_key "admin_action_logs", "accounts", on_delete: :cascade
+  add_foreign_key "ai_agent_registrations", "accounts"
   add_foreign_key "announcement_mutes", "accounts", on_delete: :cascade
   add_foreign_key "announcement_mutes", "announcements", on_delete: :cascade
   add_foreign_key "announcement_reactions", "accounts", on_delete: :cascade

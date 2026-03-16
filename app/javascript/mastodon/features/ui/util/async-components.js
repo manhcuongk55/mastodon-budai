@@ -312,3 +312,7 @@ export function DiscoveryFeed () {
 export function HumanZone () {
   return import('../../human_zone');
 }
+
+export function AiAgentRegistry () {
+  return import('../../ai_agent_registry');
+}

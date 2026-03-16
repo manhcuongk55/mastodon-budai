@@ -164,6 +164,13 @@ namespace :api, format: false do
       post :post, to: 'human_zone#post'
     end
 
+    # AI Agent Registry (Transparency)
+    resources :ai_agent_registry, only: [:index, :create, :show] do
+      collection do
+        get :stats
+      end
+    end
+
     namespace :emails do
       resources :confirmations, only: [:create]
       get :check_confirmation, to: 'confirmations#check'
