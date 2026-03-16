@@ -178,6 +178,7 @@ namespace :api, format: false do
       end
       collection do
         get :my_contributions
+        get :leaderboard
       end
     end
 

@@ -8,6 +8,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
 import { connect } from 'react-redux';
 
+import api from 'mastodon/api';
+
 import BookmarkIcon from '@/material-icons/400-24px/bookmark-fill.svg?react';
 import BookmarkBorderIcon from '@/material-icons/400-24px/bookmark.svg?react';
 import CheckIcon from '@/material-icons/400-24px/check-fill.svg?react';
@@ -190,6 +192,21 @@ class StatusActionBar extends ImmutablePureComponent {
   handleAddBounty = () => {
     const { status, dispatch } = this.props;
     dispatch(addBounty(status, 10)); // Default 10 berry bounty
+  };
+
+  handleRequestVerification = () => {
+    const { status } = this.props;
+    this.setState({ verifyLoading: true });
+    api().post('/api/v1/verification_tasks', {
+      status_id: status.get('id'),
+      claim_type: 'content',
+      claim_text: status.get('contentHtml')?.replace(/<[^>]*>/g, '')?.substring(0, 500) || 'Cần xác minh',
+    }).then(() => {
+      this.setState({ verifyLoading: false, verifySuccess: true });
+      setTimeout(() => this.setState({ verifySuccess: false }), 3000);
+    }).catch(() => {
+      this.setState({ verifyLoading: false });
+    });
   };
 
   handleDeleteClick = () => {
@@ -451,6 +468,27 @@ class StatusActionBar extends ImmutablePureComponent {
               title="Share an SOS challenge link to Zalo/Facebook to recruit expert fact-checkers."
             >
               🚨 Gọi Hội Thẩm
+            </button>
+          </div>
+        )}
+
+        {/* Epic AF: Request Community Verification */}
+        {signedIn && (
+          <div className='status__action-bar__button-wrapper'>
+            <button
+              onClick={this.handleRequestVerification}
+              disabled={this.state?.verifyLoading || this.state?.verifySuccess}
+              style={{
+                background: this.state?.verifySuccess ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                border: `1px solid ${this.state?.verifySuccess ? '#10B981' : '#6366F1'}`,
+                color: this.state?.verifySuccess ? '#10B981' : '#6366F1',
+                borderRadius: '4px', padding: '4px 8px', fontSize: '11px',
+                fontWeight: 'bold', cursor: 'pointer', whiteSpace: 'nowrap',
+                transition: 'all 0.3s',
+              }}
+              title="Yêu cầu cộng đồng xác minh bài viết này"
+            >
+              {this.state?.verifyLoading ? '⏳' : this.state?.verifySuccess ? '✅ Đã Gửi' : '🔍 Xác Minh'}
             </button>
           </div>
         )}

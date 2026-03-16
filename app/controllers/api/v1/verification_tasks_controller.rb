@@ -92,6 +92,32 @@ class Api::V1::VerificationTasksController < Api::BaseController
     }
   end
 
+  # GET /api/v1/verification_tasks/leaderboard
+  # Top verifiers in the community
+  def leaderboard
+    top_verifiers = VerificationEvidence
+                      .select('account_id, COUNT(*) as evidence_count')
+                      .group(:account_id)
+                      .order('evidence_count DESC')
+                      .limit(20)
+
+    leaderboard_data = top_verifiers.map.with_index(1) do |entry, rank|
+      account = Account.find(entry.account_id)
+      {
+        rank: rank,
+        account_id: account.id.to_s,
+        display_name: account.display_name,
+        acct: account.acct,
+        avatar: account.avatar&.url,
+        evidence_count: entry.evidence_count,
+        truth_berries: account.truth_berries || 0,
+        is_guardian: account.is_guardian || false,
+      }
+    end
+
+    render json: { leaderboard: leaderboard_data }
+  end
+
   private
 
   def set_task

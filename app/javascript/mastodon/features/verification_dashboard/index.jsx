@@ -22,6 +22,7 @@ class VerificationDashboard extends ImmutablePureComponent {
   state = {
     tasks: [],
     contributions: null,
+    leaderboard: [],
     loading: true,
     activeTab: 'tasks',
     selectedTask: null,
@@ -33,6 +34,7 @@ class VerificationDashboard extends ImmutablePureComponent {
   componentDidMount() {
     this.fetchTasks();
     this.fetchContributions();
+    this.fetchLeaderboard();
   }
 
   fetchTasks = () => {
@@ -45,6 +47,12 @@ class VerificationDashboard extends ImmutablePureComponent {
   fetchContributions = () => {
     api().get('/api/v1/verification_tasks/my_contributions')
       .then(res => this.setState({ contributions: res.data }))
+      .catch(() => {});
+  };
+
+  fetchLeaderboard = () => {
+    api().get('/api/v1/verification_tasks/leaderboard')
+      .then(res => this.setState({ leaderboard: res.data.leaderboard || [] }))
       .catch(() => {});
   };
 
@@ -72,7 +80,7 @@ class VerificationDashboard extends ImmutablePureComponent {
   };
 
   render() {
-    const { tasks, contributions, loading, activeTab, selectedTask, evidenceForm, submitting, message } = this.state;
+    const { tasks, contributions, leaderboard, loading, activeTab, selectedTask, evidenceForm, submitting, message } = this.state;
 
     return (
       <div style={styles.container}>
@@ -103,16 +111,16 @@ class VerificationDashboard extends ImmutablePureComponent {
 
         {/* Tabs */}
         <div style={styles.tabs}>
-          <button
-            style={{ ...styles.tab, ...(activeTab === 'tasks' ? styles.tabActive : {}) }}
-            onClick={() => this.setState({ activeTab: 'tasks' })}
-          >
+          <button style={{ ...styles.tab, ...(activeTab === 'tasks' ? styles.tabActive : {}) }}
+            onClick={() => this.setState({ activeTab: 'tasks' })}>
             📋 Nhiệm Vụ ({tasks.length})
           </button>
-          <button
-            style={{ ...styles.tab, ...(activeTab === 'history' ? styles.tabActive : {}) }}
-            onClick={() => this.setState({ activeTab: 'history' })}
-          >
+          <button style={{ ...styles.tab, ...(activeTab === 'leaderboard' ? styles.tabActive : {}) }}
+            onClick={() => this.setState({ activeTab: 'leaderboard' })}>
+            🏆 BXH
+          </button>
+          <button style={{ ...styles.tab, ...(activeTab === 'history' ? styles.tabActive : {}) }}
+            onClick={() => this.setState({ activeTab: 'history' })}>
             📊 Lịch Sử
           </button>
         </div>
@@ -237,6 +245,36 @@ class VerificationDashboard extends ImmutablePureComponent {
           </div>
         )}
 
+        {/* Leaderboard Tab */}
+        {activeTab === 'leaderboard' && (
+          <div>
+            {leaderboard.length === 0 && (
+              <div style={styles.empty}>
+                <span style={{ fontSize: '48px' }}>🏆</span>
+                <p>Chưa có ai tham gia xác minh.</p>
+              </div>
+            )}
+
+            {leaderboard.map(user => (
+              <div key={user.account_id} style={styles.leaderCard}>
+                <div style={styles.leaderRank}>
+                  {user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : user.rank === 3 ? '🥉' : `#${user.rank}`}
+                </div>
+                <img src={user.avatar} alt="" style={styles.leaderAvatar} />
+                <div style={styles.leaderInfo}>
+                  <div style={styles.leaderName}>
+                    {user.display_name || `@${user.acct}`}
+                    {user.is_guardian && <span style={styles.guardianBadge}> 🛡️</span>}
+                  </div>
+                  <div style={styles.leaderStats}>
+                    {user.evidence_count} xác minh · 🫐 {user.truth_berries} berries
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* History Tab */}
         {activeTab === 'history' && contributions && (
           <div>
@@ -305,6 +343,14 @@ const styles = {
   msgBox: { padding: '12px 16px', borderRadius: '12px', border: '1px solid', background: 'rgba(0,0,0,0.2)', marginBottom: '16px', fontSize: '14px' },
   loading: { textAlign: 'center', color: 'rgba(255,255,255,0.5)', padding: '40px' },
   empty: { textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' },
+
+  leaderCard: { display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px', background: 'rgba(10, 26, 16, 0.5)', borderRadius: '12px', marginBottom: '8px', border: '1px solid rgba(16, 185, 129, 0.1)' },
+  leaderRank: { fontSize: '20px', fontWeight: '800', color: '#fff', width: '36px', textAlign: 'center' },
+  leaderAvatar: { width: '40px', height: '40px', borderRadius: '50%', border: '2px solid #10B981' },
+  leaderInfo: { flex: 1 },
+  leaderName: { fontSize: '14px', fontWeight: '600', color: '#fff' },
+  guardianBadge: { fontSize: '12px' },
+  leaderStats: { fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '2px' },
 
   taskCard: { padding: '20px', background: 'rgba(10, 26, 16, 0.6)', borderRadius: '16px', marginBottom: '12px', border: '1px solid rgba(16, 185, 129, 0.15)' },
   taskHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' },
