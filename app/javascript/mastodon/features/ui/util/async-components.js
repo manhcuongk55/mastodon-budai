@@ -308,3 +308,7 @@ export function EmbedWidget () {
 export function DiscoveryFeed () {
   return import('../../discovery_feed/index.jsx');
 }
+
+export function HumanZone () {
+  return import('../../human_zone');
+}

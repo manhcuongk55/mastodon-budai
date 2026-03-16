@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_15_132642) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_15_202126) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1259,6 +1259,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_15_132642) do
     t.datetime "edited_at", precision: nil
     t.integer "fake_count"
     t.datetime "fetched_replies_at"
+    t.boolean "human_zone", default: false, null: false
     t.bigint "in_reply_to_account_id"
     t.bigint "in_reply_to_id"
     t.string "incident_state", default: "reported"

@@ -12,6 +12,7 @@
 #  edited_at                    :datetime
 #  fake_count                   :integer
 #  fetched_replies_at           :datetime
+#  human_zone                   :boolean          default(FALSE), not null
 #  incident_state               :string           default("reported")
 #  is_incident                  :boolean
 #  is_suspicious                :boolean          default(FALSE), not null
