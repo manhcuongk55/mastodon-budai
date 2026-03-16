@@ -5,6 +5,8 @@
 # Table name: statuses
 #
 #  id                           :bigint(8)        not null, primary key
+#  ai_confidence                :float            default(0.0), not null
+#  ai_detected                  :boolean          default(FALSE), not null
 #  bounty_amount                :integer
 #  claim_signature              :string
 #  claim_type                   :string           default("FACT"), not null
@@ -167,6 +169,7 @@ class Status < ApplicationRecord
 
   after_create_commit :store_uri, if: :local?
   after_create_commit :update_statistics, if: :local?
+  after_create_commit :run_ai_detection, if: :local?
 
   before_validation :prepare_contents, if: :local?
   before_validation :set_reblog
@@ -521,5 +524,11 @@ class Status < ApplicationRecord
 
   def trigger_update_webhooks
     TriggerWebhookWorker.perform_async('status.updated', 'Status', id) if local?
+  end
+
+  def run_ai_detection
+    AiAgentDetectionService.analyze(self)
+  rescue StandardError => e
+    Rails.logger.warn("AI Detection failed for Status##{id}: #{e.message}")
   end
 end

@@ -32,6 +32,7 @@ import StatusActionBar from './status_action_bar';
 import StatusContent from './status_content';
 import { StatusThreadLabel } from './status_thread_label';
 import BasaoPropertyCard from './basao_property_card';
+import AiDetectionBadge from './ai_detection_badge';
 
 const domParser = new DOMParser();
 
@@ -667,6 +668,11 @@ class Status extends ImmutablePureComponent {
                 />
 
                 <RealityDashboard status={status} />
+
+                <AiDetectionBadge
+                  aiDetected={status.get('ai_detected')}
+                  aiConfidence={status.get('ai_confidence')}
+                />
 
                 {children}
               </>

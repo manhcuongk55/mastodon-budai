@@ -11,7 +11,7 @@ class REST::StatusSerializer < ActiveModel::Serializer
              :favourites_count, :quotes_count, :edited_at,
              :bounty_amount, :truth_count, :safe_count, :fake_count, :is_incident,
              :real_estate_price, :real_estate_area, :real_estate_legal_status, :real_estate_zoning,
-             :truth_score, :is_suspicious, :human_zone
+             :truth_score, :is_suspicious, :human_zone, :ai_detected, :ai_confidence
 
   # Reality Engine / Truth Verification Protocol
   def truth_score
