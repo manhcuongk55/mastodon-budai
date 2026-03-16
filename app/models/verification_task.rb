@@ -80,5 +80,11 @@ class VerificationTask < ApplicationRecord
     confirming_evidences.find_each do |evidence|
       evidence.account.increment!(:truth_berries, reward_berries)
     end
+
+    # Mark the status as community verified
+    status.update!(
+      community_verified: true,
+      verification_count: confirming_evidences.count
+    )
   end
 end

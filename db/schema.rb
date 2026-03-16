@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_16_100655) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_16_111629) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -1270,6 +1270,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_100655) do
     t.integer "bounty_amount"
     t.string "claim_signature"
     t.string "claim_type", default: "FACT", null: false
+    t.boolean "community_verified", default: false, null: false
     t.bigint "conversation_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "deleted_at", precision: nil
@@ -1306,6 +1307,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_16_100655) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "uri"
     t.string "url"
+    t.integer "verification_count", default: 0, null: false
     t.integer "visibility", default: 0, null: false
     t.index ["account_id", "id", "visibility", "updated_at"], name: "index_statuses_20190820", order: { id: :desc }, where: "(deleted_at IS NULL)"
     t.index ["account_id"], name: "index_statuses_on_account_id"

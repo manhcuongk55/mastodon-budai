@@ -10,6 +10,7 @@
 #  bounty_amount                :integer
 #  claim_signature              :string
 #  claim_type                   :string           default("FACT"), not null
+#  community_verified           :boolean          default(FALSE), not null
 #  deleted_at                   :datetime
 #  edited_at                    :datetime
 #  fake_count                   :integer
@@ -38,6 +39,7 @@
 #  truth_score                  :float            default(0.0), not null
 #  uri                          :string
 #  url                          :string
+#  verification_count           :integer          default(0), not null
 #  visibility                   :integer          default("public"), not null
 #  created_at                   :datetime         not null
 #  updated_at                   :datetime         not null
@@ -123,6 +125,7 @@ class Status < ApplicationRecord
   has_one :quote, inverse_of: :status, dependent: :destroy
   
   has_many :truth_notes, dependent: :destroy
+  has_many :verification_tasks, dependent: :destroy
 
   validates :uri, uniqueness: true, presence: true, unless: :local?
   validates :text, presence: true, unless: -> { with_media? || reblog? || with_quote? }
